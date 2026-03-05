@@ -1529,6 +1529,65 @@
     @keyframes edp-spin { to { transform: rotate(360deg); } }
     .edp-ai-cancel-link { margin-left: auto; font-size: 12px; color: var(--text-muted); cursor: pointer; }
     .edp-ai-cancel-link:hover { color: var(--text-default); text-decoration: underline; }
+
+    /* ── Sidebar collapsed: fix avatar ── */
+    .sidenav-company-menu-avatar {
+      flex-shrink: 0;
+      padding-top: 0 !important; /* avatar-xs adds padding-top: 6px which fights flex centering */
+    }
+
+    /* ── Sidebar collapsed: swap search form for a nav-item-style icon ── */
+    .sidenav-container--collapsed .sidenav-top-section-search-input {
+      display: none;
+    }
+    .sidenav-search-collapsed-item {
+      display: none;
+    }
+    .sidenav-container--collapsed .sidenav-search-collapsed-item {
+      display: flex;
+    }
+    /* search icon positioning matches production sidenav-features-item pattern */
+    .sidenav-features-item-icon.search {
+      top: 9.5px;
+      left: 11.5px;
+      width: 12px;
+    }
+
+    /* ── Sidebar collapse toggle ── */
+    .sidenav-container {
+      transition: width 150ms ease;
+    }
+    .sidenav-company-switcher-collapse-toggle {
+      opacity: 0;
+      transition: opacity 150ms ease;
+      position: relative;
+    }
+    .sidenav-container:hover .sidenav-company-switcher-collapse-toggle {
+      opacity: 1;
+    }
+
+    /* Tooltip */
+    .sidenav-company-switcher-collapse-toggle::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: calc(100% + 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 100ms ease;
+      z-index: 9999;
+    }
+    .sidenav-company-switcher-collapse-toggle:hover::after {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -1550,7 +1609,7 @@
               <svg class="sidenav-company-menu-arrow" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 2.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
           </div>
-          <div class="sidenav-company-switcher-collapse-toggle">
+          <div id="sidebar-toggle" class="sidenav-company-switcher-collapse-toggle" data-tooltip="Hide sidebar" onclick="toggleSidebar()">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M6 2v12"/></svg>
           </div>
         </div>
@@ -1562,6 +1621,11 @@
             <span class="sidenav-top-section-search-label">Search</span>
             <div class="sidenav-top-section-search-command-key">&#8984;K</div>
           </div>
+          <!-- Collapsed-state: icon-only nav item -->
+          <a class="sidenav-features-item sidenav-search-collapsed-item" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon search" width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.657 18.3393L15.5348 14.217C15.5052 14.1875 15.4716 14.165 15.4393 14.1392C17.8307 10.8098 17.5388 6.14868 14.5457 3.15562C12.8819 1.49182 10.7013 0.660156 8.52071 0.660156C6.3401 0.660156 4.1595 1.49182 2.4957 3.15562C-0.8319 6.48322 -0.8319 11.878 2.4957 15.2056C4.1595 16.8694 6.3401 17.7011 8.52071 17.7011C10.4071 17.7011 12.2916 17.0756 13.8434 15.8307C13.8555 15.8442 13.865 15.8597 13.8781 15.8729L18.0003 19.9951C18.2289 20.2247 18.5288 20.339 18.8287 20.339C19.1285 20.339 19.4284 20.2247 19.657 19.996C20.1143 19.5383 20.1143 18.7966 19.657 18.3393ZM8.52069 15.3589C6.87045 15.3589 5.31912 14.716 4.15198 13.5494C1.7432 11.1406 1.7432 7.22123 4.15198 4.81245C5.31868 3.64575 6.87047 3.00298 8.52069 3.00298C10.1709 3.00298 11.7222 3.64584 12.8894 4.81245C15.2982 7.22123 15.2982 11.1406 12.8894 13.5494C11.7222 14.716 10.1709 15.3589 8.52069 15.3589Z" fill="#22AD01" shape-rendering="auto"></path></svg>
+          </a>
         </div>
 
         <!-- Top links -->
@@ -3917,6 +3981,21 @@
   }
   function closeDeleteModal() {
     document.getElementById('delete-note-modal').classList.add('hidden');
+  }
+
+  /* ── Sidebar collapse/expand ── */
+  function toggleSidebar() {
+    const container = document.querySelector('.sidenav-container');
+    const outer = document.getElementById('outer-wrapper');
+    const btn = document.getElementById('sidebar-toggle');
+    const isCollapsed = container.classList.toggle('sidenav-container--collapsed');
+    if (isCollapsed) {
+      outer.classList.remove('with-sidebar-expanded');
+      btn.setAttribute('data-tooltip', 'Show sidebar');
+    } else {
+      outer.classList.add('with-sidebar-expanded');
+      btn.setAttribute('data-tooltip', 'Hide sidebar');
+    }
   }
 </script>
 </body>
