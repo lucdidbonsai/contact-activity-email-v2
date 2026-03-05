@@ -24,6 +24,29 @@
     /* match production tab gap */
     .subnavigation-items { gap: 20px; }
 
+    /* Filters button icon spacing */
+    .filters-icon { margin-right: 4px; flex-shrink: 0; }
+
+    /* ── Consistent 20px horizontal margins throughout ── */
+    /* Override wrapper-full-width 40px at ≥768px */
+    .wrapper-full-width {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+    /* Override pl40 on subnavigation */
+    .subnavigation-items.pl40 {
+      padding-left: 20px !important;
+    }
+    /* Right sidebar sections */
+    .sidebar-section {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .page-properties-section {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
     /* ── Page scaffold ── */
     .contact-page-body {
       display: flex;
@@ -41,7 +64,7 @@
     .contact-main-content {
       flex: 1;
       overflow-y: auto;
-      padding: 40px 30px 40px 40px;
+      padding: 40px 20px;
     }
     .contact-sidebar {
       width: 340px;
@@ -1325,8 +1348,8 @@
     .email-inbox-list { display: flex; flex-direction: column; }
     .email-thread-row {
       display: flex; align-items: center; gap: 12px;
-      padding: 11px 8px; border-bottom: 1px solid var(--border-content);
-      cursor: pointer; border-radius: 6px; margin: 0 -8px;
+      padding: 11px 0; border-bottom: 1px solid var(--border-content);
+      cursor: pointer; border-radius: 6px; margin: 0;
       transition: background 0.1s;
     }
     .email-thread-row:hover { background: var(--bg-grey-fa); }
@@ -1536,6 +1559,237 @@
       padding-top: 0 !important; /* avatar-xs adds padding-top: 6px which fights flex centering */
     }
 
+    /* ════════════════════════════════════════
+       MOBILE RESPONSIVE
+       ════════════════════════════════════════ */
+
+    /* Hamburger toggle (mobile only, hidden on desktop) */
+    .mobile-menu-btn {
+      display: none;
+      width: 36px;
+      height: 36px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-right: 4px;
+    }
+    .mobile-menu-btn:hover { background: var(--bg-grey-f5); }
+
+    /* Overlay backdrop for mobile sidenav */
+    .mobile-sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+    .mobile-sidebar-backdrop.active { display: block; }
+
+    /* ── Tablet (≤1200px): sidenav hidden by default ── */
+    @media (max-width: 1199px) {
+      .sidenav-container {
+        transform: translateX(-100%);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 150ms ease;
+      }
+      .sidenav-container.mobile-open {
+        transform: translateX(0);
+        box-shadow: 4px 0 32px rgba(0,0,0,0.2);
+      }
+      .mobile-menu-btn { display: flex; }
+      /* Topbar: 20px left padding, zero out breadcrumb's 50px default */
+      #navigation {
+        padding-left: 20px;
+      }
+      .navigation-breadcumb {
+        padding-left: 0 !important;
+      }
+    }
+
+    /* ── Tablet (≤960px): stack right sidebar below main content ── */
+    @media (max-width: 960px) {
+      .contact-content-area {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .contact-main-content {
+        overflow-y: visible;
+        flex: none;
+      }
+      .contact-sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-content);
+        overflow-y: visible;
+      }
+      /* Slide-in panels: full width */
+      .meeting-detail-panel,
+      .email-detail-panel {
+        width: 100% !important;
+        border-left: none;
+      }
+    }
+
+    /* ── Mobile (≤768px) ── */
+    @media (max-width: 768px) {
+      /* Main content: no left gutter from sidenav (application.css only adds it at ≥1200px, but reset here for safety) */
+      #outer-wrapper.with-sidebar,
+      #outer-wrapper.with-sidebar.with-sidebar-expanded {
+        padding-left: 0 !important;
+      }
+      #navigation {
+        left: 0 !important;
+      }
+
+      /* Compact main content padding */
+      .contact-main-content {
+        padding: 20px 16px;
+      }
+
+      /* Scrollable subnavigation tabs */
+      .subnavigation-items {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-left: 16px !important;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+      }
+      .subnavigation-items::-webkit-scrollbar { display: none; }
+      .subnavigation-item { flex-shrink: 0; }
+
+      /* Contact page: allow natural height scrolling */
+      .contact-page-body {
+        height: auto;
+        min-height: calc(100vh - 60px);
+        overflow: visible;
+      }
+      .contact-content-area {
+        overflow: visible;
+      }
+
+      /* Contact header: wrap & reduce padding */
+      .top-header-content-in {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .company-details-inner-wrapper {
+        gap: 10px;
+      }
+      .company-details-name {
+        font-size: 22px;
+      }
+
+      /* Tab section: reduce title row spacing */
+      .tab-section-title-row {
+        margin-bottom: 16px;
+      }
+
+      /* Meeting detail panel: compact paddings */
+      .mdp-top-bar {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .mdp-metadata-bar {
+        padding-left: 16px;
+        padding-right: 16px;
+        flex-wrap: wrap;
+      }
+      .mdp-summary-section {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .mdp-subnavigation-items {
+        padding: 0 16px;
+        gap: 14px;
+      }
+      .mdp-transcript-block {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* Email detail panel: compact paddings */
+      .edp-top-bar {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .edp-subject-bar {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .edp-sender-bar {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .edp-thread-msg-header {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .edp-thread-msg-body {
+        padding: 0 16px 20px 16px;
+      }
+      .edp-comments-display,
+      .edp-comments-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* Email inbox: hide unread dot column (saves space) */
+      .email-thread-dot-col { display: none; }
+
+      /* Email access popover: full-width on mobile */
+      .email-access-popover {
+        width: calc(100vw - 32px);
+        right: 0;
+        left: auto;
+      }
+
+      /* Note composer: full width */
+      .note-composer-toolbar {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      /* Meeting cards: allow wrapping */
+      .meeting-card,
+      .doc-card {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    /* ── Small mobile (≤480px) ── */
+    @media (max-width: 480px) {
+      .contact-main-content { padding: 16px 20px; }
+      .company-details-name { font-size: 19px; }
+      /* Filters button: icon only */
+      .filters-label { display: none; }
+      .filters-icon { margin-right: 0 !important; }
+
+      /* Hide parent breadcrumb (Contacts /) on very small screens */
+      .navigation-breadcumb-item.navigation-breadcumb-item--link,
+      .navigation-breadcumb-separator {
+        display: none;
+      }
+
+      /* Emails section: stack toolbar */
+      .email-section-actions {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      /* Sidebar sections: reduce padding */
+      .sidebar-section,
+      .page-properties-section {
+        padding: 20px 16px;
+      }
+    }
+
     /* ── Sidebar collapsed: swap search form for a nav-item-style icon ── */
     .sidenav-container--collapsed .sidenav-top-section-search-input {
       display: none;
@@ -1718,11 +1972,22 @@
     </nav>
   </div>
 
+  <!-- Mobile backdrop: closes sidenav when tapped -->
+  <div class="mobile-sidebar-backdrop" id="mobile-sidebar-backdrop" onclick="closeMobileNav()"></div>
+
   <!-- ========== MAIN CONTENT AREA ========== -->
   <div class="page-content page-content-with-header">
 
     <!-- Top Navigation Bar -->
     <nav id="navigation">
+      <!-- Hamburger: visible only on mobile (≤1199px) -->
+      <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="Open navigation menu">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="2" y1="5" x2="16" y2="5"/>
+          <line x1="2" y1="9" x2="16" y2="9"/>
+          <line x1="2" y1="13" x2="16" y2="13"/>
+        </svg>
+      </button>
       <div class="navigation-breadcumb">
         <a href="#" class="navigation-breadcumb-item navigation-breadcumb-item--link">
           <span class="overflow-ellipsis">Contacts</span>
@@ -2272,8 +2537,8 @@
                     <input type="text" class="form-field input-smd" placeholder="Search emails..." style="padding-left:30px;width:220px;">
                   </div>
                   <button class="btn btn-default btn-smd">
-                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-right:4px;"><line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
-                    Filters
+                    <svg class="filters-icon" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+                    <span class="filters-label">Filters</span>
                   </button>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
@@ -3981,6 +4246,20 @@
   }
   function closeDeleteModal() {
     document.getElementById('delete-note-modal').classList.add('hidden');
+  }
+
+  /* ── Mobile sidenav toggle ── */
+  function toggleMobileNav() {
+    var container = document.querySelector('.sidenav-container');
+    var backdrop = document.getElementById('mobile-sidebar-backdrop');
+    var isOpen = container.classList.toggle('mobile-open');
+    backdrop.classList.toggle('active', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  function closeMobileNav() {
+    document.querySelector('.sidenav-container').classList.remove('mobile-open');
+    document.getElementById('mobile-sidebar-backdrop').classList.remove('active');
+    document.body.style.overflow = '';
   }
 
   /* ── Sidebar collapse/expand ── */
