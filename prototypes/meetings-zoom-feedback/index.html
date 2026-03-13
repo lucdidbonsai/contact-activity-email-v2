@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meetings — Bonsai</title>
+  <link rel="stylesheet" href="../prototype-kit/styles/application.css" />
+  <style>
+    /* ── Sidebar theme (set via React inline styles in prod) ── */
+    .sidenav {
+      --sidebar-primary-bg: var(--bg-sidebar, #ffffff);
+      --sidebar-primary-border: var(--border-content-alt, #d7d9d5);
+      --sidenav-text-color: var(--text-default, #121212);
+      --sidenav-item-hover-bg: var(--bg-hover-subtle, #fcfcfc);
+      --sidenav-item-selected-bg: var(--bg-grey-f1, #f1f1f1);
+    }
+    .sidenav-features-item-icon path,
+    .sidenav-features-item-icon line,
+    .sidenav-features-item-icon rect,
+    .sidenav-features-item-icon circle {
+      stroke: var(--sidenav-text-color);
+      fill: none !important;
+    }
+    .sidenav-features-item-icon.meetings {
+      top: 9px; left: 11px; width: 15px;
+    }
+    .sidenav-features-item-icon.more circle {
+      fill: var(--sidenav-text-color) !important;
+      stroke: none !important;
+    }
+    .sidenav-features-item.active { color: var(--sidenav-text-color); }
+
+    /* play icon fix */
+    .category-tag-icon--play-icon { width: 10px; height: auto; }
+
+    /* ── Feedback banner ── */
+    .meetings-feedback-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 24px;
+      background: #f0f8ff;
+      border-bottom: 1px solid #cde5fc;
+      position: relative;
+    }
+    .feedback-banner-zoom-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #0e72ed;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px 3px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: 0.1px;
+    }
+    .feedback-banner-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .feedback-banner-text strong {
+      color: var(--text-default);
+      font-weight: 500;
+    }
+    .feedback-banner-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      background: #fff;
+      border: 1px solid #b3d7f8;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0e72ed;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: inherit;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .feedback-banner-cta:hover {
+      background: #e8f4ff;
+      border-color: #0e72ed;
+    }
+    .feedback-banner-dismiss {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text-muted-alt);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .feedback-banner-dismiss:hover {
+      background: #d9ecfb;
+      color: var(--text-muted);
+    }
+
+    /* ── Meetings list grid ── */
+    .meetings-list-grid {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .meetings-toolbar {
+      display: flex;
+      align-items: center;
+      padding: 10px 24px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-content);
+      flex-shrink: 0;
+    }
+    .meetings-toolbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Feedback modal ── */
+    .feedback-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .feedback-modal-overlay.open { display: flex; }
+    .feedback-modal-wrap { position: relative; }
+    .feedback-modal {
+      background: var(--bg-content);
+      border-radius: 12px;
+      width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--box-shadow-large);
+      animation: modalSlideIn 0.18s ease;
+    }
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(6px) scale(0.99); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .feedback-modal-x {
+      position: absolute;
+      right: -40px;
+      top: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      background: transparent;
+      color: rgba(255,255,255,0.75);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .feedback-modal-x:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .feedback-modal-header {
+      padding: 24px 28px 18px;
+      border-bottom: 1px solid var(--border-content);
+    }
+    .feedback-modal-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .fm-zoom-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #0e72ed;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px 2px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.1px;
+    }
+    .feedback-modal-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-default);
+      margin-bottom: 4px;
+    }
+    .feedback-modal-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .feedback-modal-body { padding: 20px 28px 0; }
+    .fm-section { margin-bottom: 20px; }
+    .fm-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-default);
+      margin-bottom: 10px;
+    }
+    /* Stars */
+    .fm-stars { display: flex; gap: 5px; }
+    .fm-star {
+      background: none; border: none; cursor: pointer; padding: 0;
+      color: var(--border-content-alt);
+      line-height: 1; transition: color 0.1s, transform 0.1s;
+    }
+    .fm-star:hover, .fm-star.on { color: #f59e0b; }
+    .fm-star:hover { transform: scale(1.15); }
+    .fm-star svg { width: 26px; height: 26px; }
+    /* NPS */
+    .fm-nps { display: flex; gap: 4px; }
+    .fm-nps-btn {
+      flex: 1; height: 32px;
+      border: 1px solid var(--border-content);
+      border-radius: 5px;
+      background: var(--bg-content);
+      font-size: 12px; font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer; font-family: inherit;
+      transition: all 0.1s;
+    }
+    .fm-nps-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: #f0fde8; }
+    .fm-nps-btn.on { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
+    .fm-nps-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: var(--text-muted-alt); }
+    /* Textarea */
+    .fm-textarea {
+      width: 100%;
+      min-height: 84px;
+      padding: 9px 11px;
+      border: 1px solid var(--border-field);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text-default);
+      resize: vertical;
+      line-height: 1.5;
+      outline: none;
+      transition: border-color 0.15s;
+      background: var(--bg-content);
+    }
+    .fm-textarea:focus { border-color: var(--color-primary); }
+    .fm-textarea::placeholder { color: var(--text-muted-alt); }
+    /* Footer */
+    .feedback-modal-footer {
+      padding: 16px 28px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .fm-privacy { font-size: 11px; color: var(--text-muted-alt); }
+    /* Thank you */
+    .fm-thankyou {
+      display: none;
+      padding: 44px 28px;
+      text-align: center;
+    }
+    .fm-thankyou.show { display: block; }
+    .fm-thankyou-icon {
+      width: 48px; height: 48px;
+      background: #f0fde8;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .fm-thankyou-title { font-size: 16px; font-weight: 600; color: var(--text-default); margin-bottom: 6px; }
+    .fm-thankyou-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div id="outer-wrapper" class="with-sidebar with-sidebar-expanded">
+
+    <!-- ═══════ SIDEBAR ═══════ -->
+    <div class="sidenav-container theme-default">
+      <nav class="sidenav">
+        <div class="sidenav-top-section">
+          <div class="sidenav-company-section">
+            <div class="sidenav-company-menu">
+              <div class="sidenav-company-menu-link">
+                <div class="sidenav-company-menu-avatar avatar-img avatar-xs" style="background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; border-radius: 6px;">B</div>
+                <div class="sidenav-company-menu-details">
+                  <div class="sidenav-navigation-company-name overflow-ellipsis">Bonsai Dev</div>
+                </div>
+                <svg class="sidenav-company-menu-arrow" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 2.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div class="sidenav-company-switcher-collapse-toggle">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M6 2v12"/></svg>
+            </div>
+          </div>
+          <div class="sidenav-top-section-search">
+            <div class="form-field cursor-pointer relative input-sm with-icon sidenav-top-section-search-input">
+              <svg class="sidenav-top-section-search-icon form-field-icon icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span class="sidenav-top-section-search-label">Search</span>
+              <div class="sidenav-top-section-search-command-key">&#8984;K</div>
+            </div>
+          </div>
+          <div class="sidenav-top-section-links">
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon home" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7.5L10 2L17 7.5V16.5C17 17.0523 16.5523 17.5 16 17.5H4C3.44772 17.5 3 17.0523 3 16.5V7.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 17.5V10.5H12.5V17.5" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span class="sidenav-features-item-label">Home</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon notifications" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 7A5 5 0 0 0 5 7c0 5.5-2 7-2 7h14s-2-1.5-2-7Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 17a2 2 0 0 0 3 0" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span class="sidenav-features-item-label">Notifications</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon clients" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 8h6M7 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Clients</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon contacts" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 17.5c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Contacts</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="sidenav-link-section">
+          <div class="sidenav-link-section-header">
+            <span class="sidenav-link-section-header-label">Workspace</span>
+          </div>
+          <div class="sidenav-draggable-list">
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon deals" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="6" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.5"/></svg>
+              <span class="sidenav-features-item-label">Deals</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon scheduling-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 2v4M7 2v4M3 9h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Scheduling</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon tasks" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="sidenav-features-item-label">Tasks</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon timetracking" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 7.5V11l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8 2h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Time Tracking</span>
+            </a>
+            <a class="sidenav-features-item active" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon meetings" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="5" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 9l5-2.5v7L13 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="sidenav-features-item-label">Meetings</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon more" width="20" height="20" viewBox="0 0 20 20"><circle cx="4.5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="15.5" cy="10" r="1.5"/></svg>
+              <span class="sidenav-features-item-label">More</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="sidenav-navigation-bottom-links">
+          <a class="sidenav-features-item" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon reports" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="10" width="3" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="8.5" y="6" width="3" height="11" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="3" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span class="sidenav-features-item-label">Reports</span>
+          </a>
+          <a class="sidenav-features-item" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon automation" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M11 2L4 11h7l-2 7 7-9h-7l2-7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="sidenav-features-item-label">Automations</span>
+          </a>
+          <a class="sidenav-features-item" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon support" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 7.8a2.5 2.5 0 014.8.9c0 1.7-2.3 2.3-2.3 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="15" r="0.75" fill="currentColor"/></svg>
+            <span class="sidenav-features-item-label">Support</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- ═══════ MAIN CONTENT ═══════ -->
+    <div class="page-content page-content-with-header">
+
+      <!-- Topbar -->
+      <nav id="navigation">
+        <div class="navigation-right clearfix">
+          <div style="display: flex; align-items: center; height: 60px; padding-right: 20px; gap: 8px;">
+            <button class="navigation-action-cta" style="position:relative;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+            <button class="navigation-action-cta" style="position:relative;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <div class="avatar-img avatar-xs" style="background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; border-radius: 50%;">LD</div>
+          </div>
+        </div>
+      </nav>
+
+      <main class="wrapper-full-width app-page" style="display:flex; flex-direction:column; height:calc(100vh - 60px); overflow:hidden;">
+
+        <!-- Page header -->
+        <div class="page-header" style="flex-shrink:0;">
+          <div class="wrapper-full-width" style="display:flex; align-items:center; justify-content:space-between;">
+            <h1 class="page-title">Meetings</h1>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════
+             FEEDBACK BANNER — top of meetings content
+             ══════════════════════════════════════════════ -->
+        <div class="meetings-feedback-banner" id="feedbackBanner">
+          <!-- Zoom badge -->
+          <span class="feedback-banner-zoom-badge">
+            <svg width="14" height="10" viewBox="0 0 28 20" fill="none">
+              <rect width="18" height="18" x="0" y="1" rx="3" fill="white"/>
+              <rect width="18" height="18" x="0" y="1" rx="3" stroke="white" stroke-width="0.5"/>
+              <path d="M1 4.5C1 2.8 2.35 1.5 4 1.5H15C16.65 1.5 18 2.8 18 4.5V15.5C18 17.2 16.65 18.5 15 18.5H4C2.35 18.5 1 17.2 1 15.5V4.5Z" fill="white"/>
+              <path d="M19 7.5L27 4V16L19 12.5V7.5Z" fill="white"/>
+            </svg>
+            Zoom Meeting Sync
+          </span>
+
+          <span class="feedback-banner-text">
+            <strong>How's Meeting Sync working for you?</strong>
+            &nbsp;We're improving the Zoom integration — your feedback shapes what we build next.
+          </span>
+
+          <button class="feedback-banner-cta" onclick="openFeedbackModal()">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 1.667C5.397 1.667 1.667 5.081 1.667 9.306c0 2.213 1.025 4.198 2.648 5.556L3.333 17.5l3.156-1.473A8.97 8.97 0 0010 16.944c4.603 0 8.333-3.414 8.333-7.638C18.333 5.08 14.603 1.667 10 1.667z" stroke="#0e72ed" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            Share feedback
+          </button>
+
+          <button class="feedback-banner-dismiss" onclick="dismissBanner()" title="Dismiss">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 2L2 10M2 2l8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <!-- / feedback banner -->
+
+        <!-- Toolbar -->
+        <div class="meetings-toolbar">
+          <div class="relative" style="width:220px;">
+            <svg class="form-field-icon icon-left" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="form-field input-sm with-icon" placeholder="Search meetings..." style="width:100%;" />
+          </div>
+          <button class="btn btn-default btn-sm">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" style="margin-right:4px;"><path d="M11.4062 14.0625C11.9528 14.0625 12.3958 14.5055 12.3958 15.0521C12.3958 15.5986 11.9528 16.0417 11.4062 16.0417H9.42708C8.88054 16.0417 8.4375 15.5986 8.4375 15.0521C8.4375 14.5055 8.88054 14.0625 9.42708 14.0625H11.4062ZM14.375 9.11457C14.9215 9.11457 15.3646 9.55762 15.3646 10.1042C15.3646 10.6507 14.9215 11.0937 14.375 11.0937H6.45833C5.91179 11.0937 5.46875 10.6507 5.46875 10.1042C5.46875 9.55762 5.91179 9.11457 6.45833 9.11457H14.375ZM17.3438 4.16666C17.8903 4.16666 18.3333 4.6097 18.3333 5.15624C18.3333 5.70278 17.8903 6.14582 17.3438 6.14582H3.48958C2.94304 6.14582 2.5 5.70278 2.5 5.15624C2.5 4.6097 2.94304 4.16666 3.48958 4.16666H17.3438Z" fill="currentColor"/></svg>
+            Filter
+          </button>
+          <button class="btn btn-default btn-sm">Sort</button>
+          <div class="meetings-toolbar-right">
+            <button class="btn btn-default btn-sm btn-icon" title="Columns">
+              <svg width="14" height="12" viewBox="0 0 18 15" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 3.97C18 5.97 16.38 7.59 14.38 7.59C12.7 7.59 11.28 6.44 10.87 4.88H1.79C1.3 4.88 0.91 4.49 0.91 4C0.91 3.51 1.3 3.12 1.79 3.12H10.86C11.24 1.53 12.67 0.35 14.38 0.35C16.38 0.35 18 1.97 18 3.97ZM16.24 3.97C16.24 4.999 15.41 5.83 14.38 5.83C13.36 5.83 12.52 4.999 12.52 3.97C12.52 2.946 13.36 2.113 14.38 2.113C15.41 2.113 16.24 2.946 16.24 3.97Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.91 10.97C0.91 8.97 2.53 7.35 4.53 7.35C6.22 7.35 7.63 8.5 8.04 10.06H17.12C17.61 10.06 18 10.46 18 10.94C18 11.43 17.61 11.82 17.12 11.82H8.05C7.67 13.41 6.24 14.59 4.53 14.59C2.53 14.59 0.91 12.97 0.91 10.97ZM2.67 10.97C2.67 9.945 3.5 9.112 4.53 9.112C5.56 9.112 6.39 9.945 6.39 10.97C6.39 11.998 5.56 12.83 4.53 12.83C3.5 12.83 2.67 11.998 2.67 10.97Z" fill="currentColor"/></svg>
+            </button>
+            <button class="btn btn-default btn-sm btn-icon" title="More">
+              <svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Meetings grid -->
+        <div style="flex:1; overflow-y:auto;">
+          <div class="list-grid-wrapper">
+            <div class="list-grid">
+
+              <!-- Column headers -->
+              <div class="list-grid-col-headers">
+                <div class="list-grid-col-header list-grid-col-header-title" style="flex:1; min-width:220px;">
+                  <div class="list-grid-col-header-label">Meeting</div>
+                </div>
+                <div class="list-grid-col-header" style="width:130px;">
+                  <div class="list-grid-col-header-label">Date ↓</div>
+                </div>
+                <div class="list-grid-col-header" style="width:80px;">
+                  <div class="list-grid-col-header-label">Duration</div>
+                </div>
+                <div class="list-grid-col-header" style="width:130px;">
+                  <div class="list-grid-col-header-label">Owner</div>
+                </div>
+                <div class="list-grid-col-header" style="width:100px;">
+                  <div class="list-grid-col-header-label">Invitees</div>
+                </div>
+                <div class="list-grid-col-header" style="width:280px;">
+                  <div class="list-grid-col-header-label">Assets</div>
+                </div>
+                <div class="list-grid-col-header" style="width:48px;"></div>
+              </div>
+
+              <!-- Rows -->
+              <div class="list-grid-items">
+
+                <!-- Row helper macro (repeated below) -->
+                <!-- Row 1 -->
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;">
+                    <span class="list-item-title">Feb19 Meeting</span>
+                  </div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 19, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">2m</div>
+                  <div class="list-grid-item-cell" style="width:130px;">
+                    <div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div>
+                    <span style="font-size:13px; color:var(--text-muted);">Lucas Did</span>
+                  </div>
+                  <div class="list-grid-item-cell" style="width:100px;">
+                    <div style="display:flex; align-items:center;">
+                      <div class="avatar-img avatar-xs" style="background:#c7d2fe; color:#3730a3; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%; border:2px solid white; margin-left:-4px;">SC</div>
+                      <div class="avatar-img avatar-xs" style="background:#fde68a; color:#92400e; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%; border:2px solid white; margin-left:-6px;">MJ</div>
+                    </div>
+                  </div>
+                  <div class="list-grid-item-cell" style="width:280px;">
+                    <div class="flex align-center gap-5">
+                      <div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105C3.78086 0.36205 4.32422 0.659725 4.84282 0.939175L9.23247 3.30441C9.80345 3.61209 10.3895 3.92419 10.8125 4.23898C11.2107 4.53529 11.8164 5.08927 11.8995 5.98605L11.9092 6.16964V6.22238C11.8984 7.22806 11.2372 7.83796 10.8125 8.15402C10.3896 8.4687 9.80326 8.78004 9.23247 9.08761L4.84282 11.4528C4.32425 11.7323 3.78084 12.03 3.31254 12.1999C2.82769 12.3759 2.01741 12.5687 1.20415 12.0944C0.357852 11.5781 0.143517 10.7727 0.0684043 10.2624C-0.00411026 9.76957 4.49002e-05 9.15025 4.49002e-05 8.56125V3.83078C4.49002e-05 3.24168-0.00414424 2.62249 0.0684043 2.12961C0.143529 1.61929 0.357901 0.813909 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div>
+                      <div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon ml2" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3.46446 7.82701C3.62065 7.93843 3.80776 7.99824 3.99962 7.99806C4.19148 7.99788 4.37848 7.93772 4.53446 7.82601C4.69038 7.70946 4.80889 7.54994 4.87546 7.36701L5.22246 6.30001C5.30569 6.04862 5.4465 5.82016 5.63366 5.63283C5.82082 5.44549 6.04915 5.30447 6.30046 5.22101L7.38646 4.86801C7.56858 4.80268 7.72557 4.68178 7.83524 4.52237C7.94491 4.36297 8.00172 4.17314 7.99763 3.9797C7.99354 3.78625 7.92876 3.59899 7.81245 3.44436C7.69614 3.28974 7.53418 3.17558 7.34946 3.11801L6.28046 2.77201C6.02889 2.68891 5.80023 2.54816 5.61271 2.36099C5.4252 2.17383 5.28403 1.94542 5.20046 1.69401L4.84746 0.610008C4.7834 0.431001 4.66545 0.276238 4.50983 0.167003C4.35422 0.0577692 4.16858-0.000570284 3.97846 8.33508e-06C3.78561-0.000812336 3.59738 0.0589884 3.44037 0.17096C3.28336 0.282932 3.1655 0.441414 3.10346 0.624008L2.74746 1.71401C2.66386 1.95797 2.52617 2.17986 2.34468 2.36308C2.16319 2.5463 1.94262 2.6861 1.69946 2.77201L0.615459 3.12301C0.434367 3.187 0.277749 3.3059 0.167432 3.46313C0.0571155 3.62035-0.00140521 3.80808 2.56258e-05 4.00014C0.00145646 4.1922 0.0627675 4.37904 0.175415 4.5346C0.288062 4.69017 0.446433 4.80672 0.628459 4.86801L1.69546 5.21501C1.94737 5.29917 2.17622 5.44086 2.36386 5.62885C2.55149 5.81683 2.69276 6.04594 2.77646 6.29801L3.12846 7.37801C3.19146 7.55801 3.30946 7.71501 3.46546 7.82601" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Summary</div><div class="category-tag-bg" style="background-color:var(--color-accent-blue);"></div></div>
+                      <div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Transcript</div><div class="category-tag-bg" style="background-color:var(--color-accent-purple);"></div></div>
+                    </div>
+                  </div>
+                  <div class="list-grid-item-cell" style="width:48px;">
+                    <button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">Bonsai&lt;&gt;Zoom Test</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 19, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">3m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px;"><div style="display:flex;"><div class="avatar-img avatar-xs" style="background:#d1fae5; color:#065f46; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%;">E</div></div></div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105C3.78086 0.36205 4.32422 0.659725 4.84282 0.939175L9.23247 3.30441C9.80345 3.61209 10.3895 3.92419 10.8125 4.23898C11.2107 4.53529 11.8164 5.08927 11.8995 5.98605L11.9092 6.16964V6.22238C11.8984 7.22806 11.2372 7.83796 10.8125 8.15402C10.3896 8.4687 9.80326 8.78004 9.23247 9.08761L4.84282 11.4528C4.32425 11.7323 3.78084 12.03 3.31254 12.1999C2.82769 12.3759 2.01741 12.5687 1.20415 12.0944C0.357852 11.5781 0.143517 10.7727 0.0684043 10.2624C-0.00411026 9.76957 4.49002e-05 9.15025 4.49002e-05 8.56125V3.83078C4.49002e-05 3.24168-0.00414424 2.62249 0.0684043 2.12961C0.143529 1.61929 0.357901 0.813909 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Summary</div><div class="category-tag-bg" style="background-color:var(--color-accent-blue);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Transcript</div><div class="category-tag-bg" style="background-color:var(--color-accent-purple);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">Test Demo Zoom</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 19, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">1m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px;"><div style="display:flex;"><div class="avatar-img avatar-xs" style="background:#fce7f3; color:#9d174d; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%;">JM</div></div></div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105C3.78086 0.36205 4.32422 0.659725 4.84282 0.939175L9.23247 3.30441C9.80345 3.61209 10.3895 3.92419 10.8125 4.23898C11.2107 4.53529 11.8164 5.08927 11.8995 5.98605L11.9092 6.16964V6.22238C11.8984 7.22806 11.2372 7.83796 10.8125 8.15402C10.3896 8.4687 9.80326 8.78004 9.23247 9.08761L4.84282 11.4528C4.32425 11.7323 3.78084 12.03 3.31254 12.1999C2.82769 12.3759 2.01741 12.5687 1.20415 12.0944C0.357852 11.5781 0.143517 10.7727 0.0684043 10.2624C-0.00411026 9.76957 4.49002e-05 9.15025 4.49002e-05 8.56125V3.83078C4.49002e-05 3.24168-0.00414424 2.62249 0.0684043 2.12961C0.143529 1.61929 0.357901 0.813909 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <!-- Rows 4–8: simpler, no invitees -->
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">[Test Meeting Assets v4]</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 16, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">1m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px; color:var(--text-muted-alt); font-size:13px;">–</div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105L9.23247 3.30441C10.3895 3.92419 10.8125 4.23898 11.8995 5.98605V6.22238C11.8984 7.22806 10.3896 8.4687 9.23247 9.08761L4.84282 11.4528C3.78084 12.03 2.82769 12.3759 1.20415 12.0944C0.357852 11.5781 0.0684043 10.2624 4.49002e-05 8.56125V3.83078C4.49002e-05 2.62249 0.143529 1.61929 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">[Test Meeting Assets v4]</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 16, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">2m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px; color:var(--text-muted-alt); font-size:13px;">–</div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105L9.23247 3.30441C10.3895 3.92419 10.8125 4.23898 11.8995 5.98605V6.22238C11.8984 7.22806 10.3896 8.4687 9.23247 9.08761L4.84282 11.4528C3.78084 12.03 2.82769 12.3759 1.20415 12.0944C0.357852 11.5781 0.0684043 10.2624 4.49002e-05 8.56125V3.83078C4.49002e-05 2.62249 0.143529 1.61929 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Summary</div><div class="category-tag-bg" style="background-color:var(--color-accent-blue);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">[Test Zoom Sync] Discovery Call – Acme C...</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 16, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">2m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px;"><div style="display:flex;"><div class="avatar-img avatar-xs" style="background:#c7d2fe; color:#3730a3; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%;">SC</div><div class="avatar-img avatar-xs" style="background:#fde68a; color:#92400e; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%; margin-left:-6px;">MJ</div></div></div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105L9.23247 3.30441C10.3895 3.92419 10.8125 4.23898 11.8995 5.98605V6.22238C11.8984 7.22806 10.3896 8.4687 9.23247 9.08761L4.84282 11.4528C3.78084 12.03 2.82769 12.3759 1.20415 12.0944C0.357852 11.5781 0.0684043 10.2624 4.49002e-05 8.56125V3.83078C4.49002e-05 2.62249 0.143529 1.61929 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Summary</div><div class="category-tag-bg" style="background-color:var(--color-accent-blue);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Transcript</div><div class="category-tag-bg" style="background-color:var(--color-accent-purple);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">[Test Zoom Sync] Q1 Budget Planning – El...</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 16, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">1m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px; color:var(--text-muted-alt); font-size:13px;">–</div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105L9.23247 3.30441C10.3895 3.92419 10.8125 4.23898 11.8995 5.98605V6.22238C11.8984 7.22806 10.3896 8.4687 9.23247 9.08761L4.84282 11.4528C3.78084 12.03 2.82769 12.3759 1.20415 12.0944C0.357852 11.5781 0.0684043 10.2624 4.49002e-05 8.56125V3.83078C4.49002e-05 2.62249 0.143529 1.61929 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">Zoom Bonsai Demo</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 13, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">1m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px;"><div style="display:flex;"><div class="avatar-img avatar-xs" style="background:#fce7f3; color:#9d174d; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; border-radius:50%;">JM</div></div></div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105L9.23247 3.30441C10.3895 3.92419 10.8125 4.23898 11.8995 5.98605V6.22238C11.8984 7.22806 10.3896 8.4687 9.23247 9.08761L4.84282 11.4528C3.78084 12.03 2.82769 12.3759 1.20415 12.0944C0.357852 11.5781 0.0684043 10.2624 4.49002e-05 8.56125V3.83078C4.49002e-05 2.62249 0.143529 1.61929 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Summary</div><div class="category-tag-bg" style="background-color:var(--color-accent-blue);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Transcript</div><div class="category-tag-bg" style="background-color:var(--color-accent-purple);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+                <div class="list-grid-item">
+                  <div class="list-grid-item-cell list-grid-item-title" style="flex:1; min-width:220px;"><span class="list-item-title">TGIF</span></div>
+                  <div class="list-grid-item-cell" style="width:130px; color:var(--text-muted); font-size:13px;">Feb 13, 2026</div>
+                  <div class="list-grid-item-cell" style="width:80px; color:var(--text-muted); font-size:13px;">1m</div>
+                  <div class="list-grid-item-cell" style="width:130px;"><div class="avatar-img avatar-xs mr6" style="background:#e8d5c4; color:#8b6914; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; border-radius:50%; flex-shrink:0;">LD</div><span style="font-size:13px; color:var(--text-muted);">Lucas Did</span></div>
+                  <div class="list-grid-item-cell" style="width:100px; color:var(--text-muted-alt); font-size:13px;">–</div>
+                  <div class="list-grid-item-cell" style="width:280px;"><div class="flex align-center gap-5"><div class="category-tag overflow-ellipsis tag-xs"><svg class="category-tag-icon category-tag-icon--play-icon ml2" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M1.20415 0.297574C2.01735-0.176537 2.82772 0.0161719 3.31254 0.192105L9.23247 3.30441C10.3895 3.92419 10.8125 4.23898 11.8995 5.98605V6.22238C11.8984 7.22806 10.3896 8.4687 9.23247 9.08761L4.84282 11.4528C3.78084 12.03 2.82769 12.3759 1.20415 12.0944C0.357852 11.5781 0.0684043 10.2624 4.49002e-05 8.56125V3.83078C4.49002e-05 2.62249 0.143529 1.61929 1.16118 0.322964L1.20415 0.297574Z" fill="#22AD01"/></svg><div class="category-tag-label overflow-ellipsis">Recording</div><div class="category-tag-bg" style="background-color:var(--color-primary);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Summary</div><div class="category-tag-bg" style="background-color:var(--color-accent-blue);"></div></div><div class="category-tag overflow-ellipsis tag-xs"><div class="category-tag-label overflow-ellipsis">Transcript</div><div class="category-tag-bg" style="background-color:var(--color-accent-purple);"></div></div></div></div>
+                  <div class="list-grid-item-cell" style="width:48px;"><button class="list-item-dd-toggle"><svg width="14" height="4" viewBox="0 0 14 4" fill="none"><circle cx="2" cy="2" r="1.5" fill="currentColor"/><circle cx="7" cy="2" r="1.5" fill="currentColor"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg></button></div>
+                </div>
+
+              </div><!-- /list-grid-items -->
+            </div><!-- /list-grid -->
+          </div><!-- /list-grid-wrapper -->
+        </div>
+
+      </main>
+    </div><!-- /page-content -->
+  </div><!-- /outer-wrapper -->
+
+  <!-- ═══════ FEEDBACK MODAL ═══════ -->
+  <div class="feedback-modal-overlay" id="feedbackModal" onclick="handleOverlayClick(event)">
+    <div class="feedback-modal-wrap">
+      <button class="feedback-modal-x" onclick="closeFeedbackModal()">×</button>
+      <div class="feedback-modal">
+
+        <!-- Form state -->
+        <div id="fm-form">
+          <div class="feedback-modal-header">
+            <div class="feedback-modal-eyebrow">
+              <span class="fm-zoom-badge">
+                <svg width="13" height="9" viewBox="0 0 26 18" fill="none"><rect x="0.5" y="0.5" width="16" height="17" rx="2.5" fill="white" stroke="#e0e0e0"/><path d="M17 6.5L25 3V15L17 11.5V6.5Z" fill="white"/></svg>
+                Zoom Meeting Sync
+              </span>
+            </div>
+            <div class="feedback-modal-title">How's Meeting Sync working for you?</div>
+            <div class="feedback-modal-desc">We're actively improving the Zoom integration — your experience helps us prioritize what to build next.</div>
+          </div>
+
+          <div class="feedback-modal-body">
+
+            <div class="fm-section">
+              <div class="fm-label">Overall, how satisfied are you with Meeting Sync?</div>
+              <div class="fm-stars" id="fmStars">
+                <button class="fm-star" data-v="1" onclick="setStars(1)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="currentColor" stroke-width="0.5"/></svg></button>
+                <button class="fm-star" data-v="2" onclick="setStars(2)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="currentColor" stroke-width="0.5"/></svg></button>
+                <button class="fm-star" data-v="3" onclick="setStars(3)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="currentColor" stroke-width="0.5"/></svg></button>
+                <button class="fm-star" data-v="4" onclick="setStars(4)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="currentColor" stroke-width="0.5"/></svg></button>
+                <button class="fm-star" data-v="5" onclick="setStars(5)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="currentColor" stroke-width="0.5"/></svg></button>
+              </div>
+            </div>
+
+            <div class="fm-section">
+              <div class="fm-label">How likely are you to recommend Meeting Sync to a fellow freelancer?</div>
+              <div class="fm-nps" id="fmNps">
+                <button class="fm-nps-btn" onclick="setNps(0)">0</button>
+                <button class="fm-nps-btn" onclick="setNps(1)">1</button>
+                <button class="fm-nps-btn" onclick="setNps(2)">2</button>
+                <button class="fm-nps-btn" onclick="setNps(3)">3</button>
+                <button class="fm-nps-btn" onclick="setNps(4)">4</button>
+                <button class="fm-nps-btn" onclick="setNps(5)">5</button>
+                <button class="fm-nps-btn" onclick="setNps(6)">6</button>
+                <button class="fm-nps-btn" onclick="setNps(7)">7</button>
+                <button class="fm-nps-btn" onclick="setNps(8)">8</button>
+                <button class="fm-nps-btn" onclick="setNps(9)">9</button>
+                <button class="fm-nps-btn" onclick="setNps(10)">10</button>
+              </div>
+              <div class="fm-nps-labels"><span>Not likely</span><span>Very likely</span></div>
+            </div>
+
+            <div class="fm-section" style="margin-bottom:0;">
+              <div class="fm-label">Any other thoughts? What's working well or could be better?</div>
+              <textarea class="fm-textarea" placeholder="e.g. Recordings sync instantly, but I'd love transcripts to appear faster..."></textarea>
+            </div>
+          </div>
+
+          <div class="feedback-modal-footer">
+            <span class="fm-privacy">Your response is anonymous.</span>
+            <button class="btn btn-primary btn-sm" onclick="submitFeedback()">Submit feedback</button>
+          </div>
+        </div>
+
+        <!-- Thank you state -->
+        <div class="fm-thankyou" id="fm-thanks">
+          <div class="fm-thankyou-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="fm-thankyou-title">Thanks for your feedback!</div>
+          <div class="fm-thankyou-desc">We read every response and use it to improve Meeting Sync.<br>You're helping us build a better product.</div>
+          <button class="btn btn-default btn-sm" style="margin-top:20px;" onclick="closeFeedbackModal()">Close</button>
+        </div>
+
+      </div><!-- /.feedback-modal -->
+    </div>
+  </div>
+
+  <script>
+    /* Banner */
+    function dismissBanner() {
+      document.getElementById('feedbackBanner').style.display = 'none';
+    }
+
+    /* Modal */
+    function openFeedbackModal() {
+      document.getElementById('feedbackModal').classList.add('open');
+    }
+    function closeFeedbackModal() {
+      document.getElementById('feedbackModal').classList.remove('open');
+      setTimeout(resetForm, 250);
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('feedbackModal')) closeFeedbackModal();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFeedbackModal(); });
+
+    /* Stars */
+    let stars = 0;
+    function setStars(n) {
+      stars = n;
+      document.querySelectorAll('.fm-star').forEach((b, i) => b.classList.toggle('on', i < n));
+    }
+    document.querySelectorAll('.fm-star').forEach(btn => {
+      const v = parseInt(btn.dataset.v);
+      btn.addEventListener('mouseenter', () => {
+        document.querySelectorAll('.fm-star').forEach((b, i) => b.style.color = i < v ? '#f59e0b' : '');
+      });
+      btn.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.fm-star').forEach((b, i) => b.style.color = '');
+        setStars(stars);
+      });
+    });
+
+    /* NPS */
+    let nps = null;
+    function setNps(n) {
+      nps = n;
+      document.querySelectorAll('.fm-nps-btn').forEach((b, i) => b.classList.toggle('on', i === n));
+    }
+
+    /* Submit */
+    function submitFeedback() {
+      document.getElementById('fm-form').style.display = 'none';
+      document.getElementById('fm-thanks').classList.add('show');
+      document.getElementById('feedbackBanner').style.display = 'none';
+    }
+
+    /* Reset */
+    function resetForm() {
+      document.getElementById('fm-form').style.display = '';
+      document.getElementById('fm-thanks').classList.remove('show');
+      stars = 0;
+      nps = null;
+      document.querySelectorAll('.fm-star').forEach(b => { b.classList.remove('on'); b.style.color = ''; });
+      document.querySelectorAll('.fm-nps-btn').forEach(b => b.classList.remove('on'));
+      document.querySelector('.fm-textarea').value = '';
+    }
+  </script>
+</body>
+</html>

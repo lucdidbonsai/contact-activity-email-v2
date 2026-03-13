@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports — Bonsai</title>
+  <link rel="stylesheet" href="../prototype-kit/styles/application.css" />
+  <style>
+    /* Sidebar theme variables */
+    .sidenav {
+      --sidebar-primary-bg: var(--bg-sidebar, #ffffff);
+      --sidebar-primary-border: var(--border-content-alt, #d7d9d5);
+      --sidenav-text-color: var(--text-default, #121212);
+      --sidenav-item-hover-bg: var(--bg-hover-subtle, #fcfcfc);
+      --sidenav-item-selected-bg: var(--bg-grey-f1, #f1f1f1);
+    }
+    .sidenav-features-item-icon path,
+    .sidenav-features-item-icon line,
+    .sidenav-features-item-icon rect,
+    .sidenav-features-item-icon circle {
+      stroke: var(--sidenav-text-color);
+      fill: none !important;
+    }
+    .sidenav-features-item-icon.meetings { top: 9px; left: 11px; width: 15px; }
+    .sidenav-features-item-icon.more circle {
+      fill: var(--sidenav-text-color) !important;
+      stroke: none !important;
+    }
+    .sidenav-features-item.active { color: var(--sidenav-text-color); }
+
+    /* ── Reports page ── */
+
+    /* Theme accent variables */
+    :root {
+      --theme-resourcing:   #4B7BEC;
+      --theme-financial:    #22AD01;
+      --theme-project:      #E07B39;
+    }
+
+    .reports-content {
+      padding: 40px 32px 52px;
+    }
+
+    .report-section {
+      margin-bottom: 36px;
+    }
+
+    /* Reduce default app-page top padding (normally assumes a page-header block) */
+    main.app-page { padding-top: 0 !important; }
+
+    /* Section header row */
+    .report-section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .report-section-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+    }
+
+    /* Standalone card grid — cards are individual, not merged */
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .report-card {
+      background: var(--bg-content);
+      border: 1px solid var(--border-content);
+      border-radius: 8px;
+      padding: 18px 20px 20px;
+      cursor: pointer;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+    .report-card:hover {
+      border-color: var(--border-content-alt);
+      box-shadow: var(--box-shadow-small);
+    }
+
+    /* Icon badge */
+    .report-card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+    .report-card-icon svg {
+      display: block;
+    }
+
+    /* Theme tints */
+    .icon-resourcing  { background: rgba(75, 123, 236, 0.10); }
+    .icon-financial   { background: rgba(34, 173,   1, 0.10); }
+    .icon-project     { background: rgba(224, 123,  57, 0.10); }
+
+    .report-card-title {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-default);
+      margin-bottom: 5px;
+    }
+    .report-card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Footer note */
+    .reports-footer-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .reports-footer-note a {
+      color: var(--color-primary);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .reports-footer-note a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div id="outer-wrapper" class="with-sidebar with-sidebar-expanded">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <div class="sidenav-container theme-default">
+      <nav class="sidenav">
+        <div class="sidenav-top-section">
+          <div class="sidenav-company-section">
+            <div class="sidenav-company-menu">
+              <div class="sidenav-company-menu-link">
+                <div class="sidenav-company-menu-avatar avatar-img avatar-xs" style="background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; border-radius: 6px;">B</div>
+                <div class="sidenav-company-menu-details">
+                  <div class="sidenav-navigation-company-name overflow-ellipsis">Bonsai Dev</div>
+                </div>
+                <svg class="sidenav-company-menu-arrow" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 2.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div class="sidenav-company-switcher-collapse-toggle">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M6 2v12"/></svg>
+            </div>
+          </div>
+          <div class="sidenav-top-section-search">
+            <div class="form-field cursor-pointer relative input-sm with-icon sidenav-top-section-search-input">
+              <svg class="sidenav-top-section-search-icon form-field-icon icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span class="sidenav-top-section-search-label">Search</span>
+              <div class="sidenav-top-section-search-command-key">&#8984;K</div>
+            </div>
+          </div>
+          <div class="sidenav-top-section-links">
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon home" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7.5L10 2L17 7.5V16.5C17 17.0523 16.5523 17.5 16 17.5H4C3.44772 17.5 3 17.0523 3 16.5V7.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7.5 17.5V10.5H12.5V17.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <span class="sidenav-features-item-label">Home</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon notifications" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 7A5 5 0 0 0 5 7c0 5.5-2 7-2 7h14s-2-1.5-2-7Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8.5 17a2 2 0 0 0 3 0" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <span class="sidenav-features-item-label">Notifications</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon clients" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7 8h6M7 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Clients</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon contacts" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M3.5 17.5c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              <span class="sidenav-features-item-label">Contacts</span>
+            </a>
+          </div>
+        </div>
+        <div class="sidenav-link-section">
+          <div class="sidenav-link-section-header">
+            <span class="sidenav-link-section-header-label">Workspace</span>
+          </div>
+          <div class="sidenav-draggable-list">
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon deals" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="6" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <span class="sidenav-features-item-label">Deals</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon scheduling-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M13 2v4M7 2v4M3 9h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Scheduling</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon tasks" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              <span class="sidenav-features-item-label">Tasks</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon client-portal" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 2h12a1 1 0 011 1v14l-2.5-1.5L12 17l-2.5-1.5L7 17l-2.5-1.5L4 17V3a1 1 0 00-1 0z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <span class="sidenav-features-item-label">Client Portal</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon timetracking" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M10 7.5V11l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8 2h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="sidenav-features-item-label">Time Tracking</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon meetings" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="5" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M13 9l5-2.5v7L13 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="sidenav-features-item-label">Meetings</span>
+            </a>
+            <a class="sidenav-features-item" href="#">
+              <div class="sidenav-features-item-bg"></div>
+              <svg class="sidenav-features-item-icon more" width="20" height="20" viewBox="0 0 20 20"><circle cx="4.5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="15.5" cy="10" r="1.5"/></svg>
+              <span class="sidenav-features-item-label">More</span>
+            </a>
+          </div>
+        </div>
+        <div class="sidenav-navigation-bottom-links">
+          <a class="sidenav-features-item active" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon reports" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="10" width="3" height="7" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="8.5" y="6" width="3" height="11" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="14" y="3" width="3" height="14" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            <span class="sidenav-features-item-label">Reports</span>
+          </a>
+          <a class="sidenav-features-item" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon automation" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M11 2L4 11h7l-2 7 7-9h-7l2-7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            <span class="sidenav-features-item-label">Automations</span>
+          </a>
+          <a class="sidenav-features-item" href="#">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon support" width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7.5 7.8a2.5 2.5 0 014.8.9c0 1.7-2.3 2.3-2.3 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="10" cy="15" r="0.75" fill="currentColor"/></svg>
+            <span class="sidenav-features-item-label">Support</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="page-content page-content-with-header">
+
+      <!-- ── Top Navigation Bar ── -->
+      <nav id="navigation" class="">
+        <div class="navigation-breadcumb">
+          <div class="navigation-breadcumb-item navigation-breadcumb-item--dashboard-title">
+            <span class="overflow-ellipsis">Reports</span>
+          </div>
+        </div>
+
+        <div class="navigation-right clearfix">
+          <!-- User avatar -->
+          <div class="navigation-user-menu" data-popover-trigger="true">
+            <div class="navigation-user-menu-trigger">
+              <div class="avatar-xs flex-shrink-0 user-avatar" style="background-image: url('https://lh3.googleusercontent.com/a/ACg8ocLu2z9Odeus60yMg3YYxlTfEumuaGxWvn71VKzCLse8FadGp2uB=s96-c');"></div>
+            </div>
+          </div>
+
+          <!-- Create New -->
+          <div class="relative">
+            <a class="navigation-action-cta">
+              <svg class="navigation-action-cta-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.48338 1.21578e-07H11.5166C12.8234 -6.2017e-06 13.8573 -1.13819e-05 14.6903 0.0680474C15.5416 0.1376 16.2593 0.282544 16.9139 0.61605C17.9774 1.15794 18.8421 2.02262 19.3839 3.08614C19.7175 3.74068 19.8624 4.45844 19.932 5.30972C20 6.14272 20 7.17661 20 8.48336V11.5166C20 12.8234 20 13.8573 19.932 14.6903C19.8624 15.5416 19.7175 16.2593 19.3839 16.9139C18.8421 17.9774 17.9774 18.8421 16.9139 19.3839C16.2593 19.7175 15.5416 19.8624 14.6903 19.932C13.8573 20 12.8234 20 11.5166 20H8.48336C7.17661 20 6.14272 20 5.30972 19.932C4.45844 19.8624 3.74068 19.7175 3.08614 19.3839C2.02262 18.8421 1.15794 17.9774 0.61605 16.9139C0.282544 16.2593 0.1376 15.5416 0.0680474 14.6903C-1.13819e-05 13.8573 -6.2017e-06 12.8234 1.21578e-07 11.5166V8.48338C-6.2017e-06 7.17662 -1.13819e-05 6.14272 0.0680474 5.30972C0.1376 4.45844 0.282544 3.74068 0.61605 3.08614C1.15794 2.02262 2.02262 1.15794 3.08614 0.61605C3.74068 0.282544 4.45844 0.1376 5.30972 0.0680474C6.14272 -1.13819e-05 7.17662 -6.2017e-06 8.48338 1.21578e-07ZM5.45134 1.8014C4.70761 1.86217 4.2442 1.97786 3.87569 2.16563C3.1394 2.54078 2.54078 3.1394 2.16563 3.87569C1.97786 4.2442 1.86217 4.70761 1.8014 5.45134C1.73981 6.20523 1.73913 7.16813 1.73913 8.52174V11.4783C1.73913 12.8319 1.73981 13.7948 1.8014 14.5487C1.86217 15.2924 1.97786 15.7558 2.16563 16.1243C2.54078 16.8606 3.1394 17.4592 3.87569 17.8344C4.2442 18.0221 4.70761 18.1378 5.45134 18.1986C6.20523 18.2602 7.16813 18.2609 8.52174 18.2609H11.4783C12.8319 18.2609 13.7948 18.2602 14.5487 18.1986C15.2924 18.1378 15.7558 18.0221 16.1243 17.8344C16.8606 17.4592 17.4592 16.8606 17.8344 16.1243C18.0221 15.7558 18.1378 15.2924 18.1986 14.5487C18.2602 13.7948 18.2609 12.8319 18.2609 11.4783V8.52174C18.2609 7.16813 18.2602 6.20523 18.1986 5.45134C18.1378 4.70761 18.0221 4.2442 17.8344 3.87569C17.4592 3.1394 16.8606 2.54078 16.1243 2.16563C15.7558 1.97786 15.2924 1.86217 14.5487 1.8014C13.7948 1.73981 12.8319 1.73913 11.4783 1.73913H8.52174C7.16813 1.73913 6.20523 1.73981 5.45134 1.8014ZM10 4.78261C10.4802 4.78261 10.8696 5.17193 10.8696 5.65217V9.13043H14.3478C14.8281 9.13043 15.2174 9.51975 15.2174 10C15.2174 10.4802 14.8281 10.8696 14.3478 10.8696H10.8696V14.3478C10.8696 14.8281 10.4802 15.2174 10 15.2174C9.51975 15.2174 9.13043 14.8281 9.13043 14.3478V10.8696H5.65217C5.17193 10.8696 4.78261 10.4802 4.78261 10C4.78261 9.51975 5.17193 9.13043 5.65217 9.13043H9.13043V5.65217C9.13043 5.17193 9.51975 4.78261 10 4.78261Z" fill="#22AD01"></path></svg>
+              <div class="top-navigation-link-tooltip">Create New</div>
+            </a>
+          </div>
+
+          <!-- Timer -->
+          <div class="timetracker-container">
+            <div class="timetracker-nav-item start-timer-text">
+              <div>
+                <button class="timetracker-nav-item-icon-bg" type="button">
+                  <svg class="timetracker-nav-item-icon timetracker-nav-item-icon-play" width="21" height="27" viewBox="0 0 21 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.7336 11.7714L3.58765 1.02538C2.21067 0.107363 0.347656 1.10642 0.347656 2.7534V24.2184C0.347656 25.8923 2.21067 26.8643 3.58765 25.9464L19.7336 15.2004C20.9485 14.4174 20.9485 12.5814 19.7335 11.7714L19.7336 11.7714Z" fill="#22AD01"></path></svg>
+                </button>
+                <div class="timetracker-nav-item-icon-border play"></div>
+              </div>
+              <div class="top-navigation-link-tooltip">New Timer</div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main class="wrapper-full-width app-page">
+        <div class="wrapper-full-width reports-content">
+
+          <!-- ── Resourcing ── -->
+          <div class="report-section">
+            <div class="report-section-header">
+              <div class="report-section-label">Resourcing</div>
+            </div>
+            <div class="report-grid">
+
+              <div class="report-card">
+                <div class="report-card-icon icon-resourcing">
+                  <!-- Activity: pulse wave -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4B7BEC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,8 4,8 5,3 7,13 9,5 11,10 12,8 15,8"/></svg>
+                </div>
+                <div class="report-card-title">Activity</div>
+                <div class="report-card-desc">Discover how time is utilized across tasks and projects within your chosen timeframe.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-resourcing">
+                  <!-- Utilization: donut chart -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4B7BEC" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="3"/><line x1="8" y1="2" x2="8" y2="5"/></svg>
+                </div>
+                <div class="report-card-title">Utilization</div>
+                <div class="report-card-desc">View total and billable utilization for each member of the team based on their capacity.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-resourcing">
+                  <!-- Utilization Forecast: trend + dashed -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4B7BEC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,12 5,8 8,10 11,5"/><line x1="11" y1="5" x2="15" y2="3" stroke-dasharray="2 2"/><polyline points="11,5 15,5 15,1"/></svg>
+                </div>
+                <div class="report-card-title">Utilization Forecast</div>
+                <div class="report-card-desc">See the forecasted utilization based on resourcing allocations against total capacity.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-resourcing">
+                  <!-- Capacity Forecast: gauge -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4B7BEC" stroke-width="1.5" stroke-linecap="round"><path d="M2 11a6 6 0 1 1 12 0"/><line x1="8" y1="11" x2="11" y2="7"/><circle cx="8" cy="11" r="1" fill="#4B7BEC" stroke="none"/></svg>
+                </div>
+                <div class="report-card-title">Capacity Forecast</div>
+                <div class="report-card-desc">See the forecasted capacity against allocations and tracked time.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── Financial Reporting ── -->
+          <div class="report-section">
+            <div class="report-section-header">
+              <div class="report-section-label">Financial Reporting</div>
+            </div>
+            <div class="report-grid">
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Time Profitability: clock -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,10"/></svg>
+                </div>
+                <div class="report-card-title">Time Profitability</div>
+                <div class="report-card-desc">See how profitable tracked time is across projects, members, and tasks by comparing billable amounts against internal costs.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Team Profitability: people -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-2.76 2.24-5 5-5s5 2.24 5 5"/><circle cx="12" cy="5" r="2" opacity="0.6"/><path d="M14 14c0-1.86-.96-3.5-2.5-4.3" opacity="0.6"/></svg>
+                </div>
+                <div class="report-card-title">Team Profitability</div>
+                <div class="report-card-desc">See how profitable each of your members are, comparing billable totals against total costs.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Client Profitability: briefcase -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="5" width="14" height="9" rx="1.5"/><path d="M5 5V3.5A1.5 1.5 0 016.5 2h3A1.5 1.5 0 0111 3.5V5"/><line x1="1" y1="9" x2="15" y2="9"/></svg>
+                </div>
+                <div class="report-card-title">Client Profitability</div>
+                <div class="report-card-desc">See how profitable each of your clients are, comparing billable totals against total costs.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Project Profitability: folder -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><path d="M1 3.5A1.5 1.5 0 012.5 2H6l2 2h5.5A1.5 1.5 0 0115 5.5v7a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 12.5V3.5z"/></svg>
+                </div>
+                <div class="report-card-title">Project Profitability</div>
+                <div class="report-card-desc">See how profitable each of your projects are, comparing billable totals against total costs.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Project Profitability Forecast: trending up -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,12 5,8 8,10 12,4 15,2"/><polyline points="12,2 15,2 15,5"/></svg>
+                </div>
+                <div class="report-card-title">Project Profitability Forecast</div>
+                <div class="report-card-desc">See the forecasted revenue, costs, and profit margins of all projects based on task estimates.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Revenue by Service: stacked bars -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="9" width="4" height="5" rx="0.5"/><rect x="6" y="5" width="4" height="9" rx="0.5"/><rect x="11" y="2" width="4" height="12" rx="0.5"/></svg>
+                </div>
+                <div class="report-card-title">Revenue by Service</div>
+                <div class="report-card-desc">View hours worked and total revenue based on tracked time for each service.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Deals Revenue Forecast: calendar + chart -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="2" width="14" height="13" rx="1.5"/><line x1="1" y1="6" x2="15" y2="6"/><line x1="5" y1="1" x2="5" y2="3"/><line x1="11" y1="1" x2="11" y2="3"/><polyline points="4,12 7,9 10,11 13,8"/></svg>
+                </div>
+                <div class="report-card-title">Deals Revenue Forecast</div>
+                <div class="report-card-desc">See a month-by-month revenue projection for Deals over your chosen timeframe.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-financial">
+                  <!-- Invoices: document with lines -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round"><path d="M3 1h10v14l-2-1.5L9 15l-2-1.5L5 15l-2-1.5V1z"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="8" y2="11"/></svg>
+                </div>
+                <div class="report-card-title">Invoices</div>
+                <div class="report-card-desc">Get a full overview of all your invoices, including totals, amounts paid, due dates, and payment statuses.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── Project Management ── -->
+          <div class="report-section">
+            <div class="report-section-header">
+              <div class="report-section-label">Project Management</div>
+            </div>
+            <div class="report-grid">
+
+              <div class="report-card">
+                <div class="report-card-icon icon-project">
+                  <!-- Project Billing: receipt -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#E07B39" stroke-width="1.5" stroke-linecap="round"><path d="M3 1h10v15l-2-1.5L9 16l-2-1.5L5 16l-2-1.5V1z"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+                </div>
+                <div class="report-card-title">Project Billing</div>
+                <div class="report-card-desc">Get a detailed breakdown of billing for each project, including billable totals as well as billed and unbilled amounts.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-project">
+                  <!-- Project Health: pulse heartbeat -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#E07B39" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13.5S2 9.5 2 5.5A3 3 0 018 4a3 3 0 016 1.5c0 4-6 8-6 8z"/></svg>
+                </div>
+                <div class="report-card-title">Project Health</div>
+                <div class="report-card-desc">Get a realtime overview of how all projects are progressing and their underlying tasks.</div>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-icon icon-project">
+                  <!-- Estimated vs Actual: two overlapping bars -->
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#E07B39" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="4" width="4" height="10" rx="0.5"/><rect x="1" y="7" width="4" height="7" rx="0.5" opacity="0.4"/><rect x="6.5" y="2" width="4" height="12" rx="0.5"/><rect x="6.5" y="5" width="4" height="9" rx="0.5" opacity="0.4"/><rect x="12" y="5" width="3" height="9" rx="0.5"/><rect x="12" y="8" width="3" height="6" rx="0.5" opacity="0.4"/></svg>
+                </div>
+                <div class="report-card-title">Estimated vs Actual Tasks</div>
+                <div class="report-card-desc">Compare estimates against actual time spent and due dates vs completed dates for all tasks.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="reports-footer-note">
+            Can't find what you're looking for? <a href="#">Request a report.</a>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
