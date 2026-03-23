@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Michael Fawler — Contacts — Bonsai</title>
+  <title>Michael Fawler — Messages — Bonsai</title>
   <link rel="stylesheet" href="../prototype-kit/styles/application.css" />
   <style>
     /* ── Sidebar theme (normally set via React inline styles) ── */
@@ -20,32 +20,31 @@
       left: 11px;
       width: 14px;
     }
+    .sidenav-features-item-icon.messages-nav {
+      top: 9px;
+      left: 10px;
+      width: 16px;
+    }
+    /* Avatar: prevent squish (avatar-xs has padding-top:6px that breaks flex centering) */
+    .sidenav-company-menu-avatar {
+      flex-shrink: 0;
+      padding-top: 0 !important;
+    }
+    /* Sidebar collapse transition */
+    .sidenav-container {
+      transition: width 150ms ease;
+    }
+    /* Collapse toggle: hidden at rest, visible on hover */
+    .sidenav-company-switcher-collapse-toggle {
+      opacity: 0;
+      transition: opacity 150ms ease;
+    }
+    .sidenav-container:hover .sidenav-company-switcher-collapse-toggle {
+      opacity: 1;
+    }
 
     /* match production tab gap */
     .subnavigation-items { gap: 20px; }
-
-    /* Filters button icon spacing */
-    .filters-icon { margin-right: 4px; flex-shrink: 0; }
-
-    /* ── Consistent 20px horizontal margins throughout ── */
-    /* Override wrapper-full-width 40px at ≥768px */
-    .wrapper-full-width {
-      padding-left: 20px !important;
-      padding-right: 20px !important;
-    }
-    /* Override pl40 on subnavigation */
-    .subnavigation-items.pl40 {
-      padding-left: 20px !important;
-    }
-    /* Right sidebar sections */
-    .sidebar-section {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-    .page-properties-section {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
 
     /* ── Page scaffold ── */
     .contact-page-body {
@@ -64,7 +63,7 @@
     .contact-main-content {
       flex: 1;
       overflow-y: auto;
-      padding: 40px 20px;
+      padding: 40px 30px 40px 40px;
     }
     .contact-sidebar {
       width: 340px;
@@ -1348,8 +1347,8 @@
     .email-inbox-list { display: flex; flex-direction: column; }
     .email-thread-row {
       display: flex; align-items: center; gap: 12px;
-      padding: 11px 0; border-bottom: 1px solid var(--border-content);
-      cursor: pointer; border-radius: 6px; margin: 0;
+      padding: 11px 8px; border-bottom: 1px solid var(--border-content);
+      cursor: pointer; border-radius: 6px; margin: 0 -8px;
       transition: background 0.1s;
     }
     .email-thread-row:hover { background: var(--bg-grey-fa); }
@@ -1553,295 +1552,907 @@
     .edp-ai-cancel-link { margin-left: auto; font-size: 12px; color: var(--text-muted); cursor: pointer; }
     .edp-ai-cancel-link:hover { color: var(--text-default); text-decoration: underline; }
 
-    /* ── Sidebar collapsed: fix avatar ── */
-    .sidenav-company-menu-avatar {
-      flex-shrink: 0;
-      padding-top: 0 !important; /* avatar-xs adds padding-top: 6px which fights flex centering */
+    /* ══════════════════════════════════════════
+       MESSAGES TAB — Zoom Chat-style UI
+    ══════════════════════════════════════════ */
+
+    /* When messages tab is active, remove padding + overflow from parent */
+    .contact-main-content.messages-mode {
+      padding: 0 !important;
+      overflow: hidden !important;
+      display: flex;
+      flex-direction: column;
+    }
+    #tab-messages {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      height: 100%;
+    }
+    #tab-messages.active {
+      display: flex;
     }
 
-    /* ════════════════════════════════════════
-       MOBILE RESPONSIVE
-       ════════════════════════════════════════ */
-
-    /* Hamburger toggle (mobile only, hidden on desktop) */
-    .mobile-menu-btn {
-      display: none;
-      width: 36px;
-      height: 36px;
+    /* Chat header (contact name + Zoom status) */
+    .mc-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 30px 14px 40px;
+      border-bottom: 1px solid var(--border-content);
+      flex-shrink: 0;
+    }
+    .mc-header-avatar {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .mc-header-avatar .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+    }
+    .mc-header-status-dot {
+      position: absolute;
+      bottom: 1px;
+      right: 1px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22AD01;
+      border: 1.5px solid white;
+    }
+    .mc-header-info { flex: 1; min-width: 0; }
+    .mc-header-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-default);
+      line-height: 1.3;
+    }
+    .mc-header-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    .mc-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .mc-header-action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
       background: none;
       border: none;
       cursor: pointer;
-      border-radius: 6px;
+      display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-muted);
-      flex-shrink: 0;
-      margin-right: 4px;
+      transition: background 0.12s, color 0.12s;
     }
-    .mobile-menu-btn:hover { background: var(--bg-grey-f5); }
-
-    /* Overlay backdrop for mobile sidenav */
-    .mobile-sidebar-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 999;
+    .mc-header-action-btn:hover {
+      background: var(--bg-grey-f5);
+      color: var(--text-default);
     }
-    .mobile-sidebar-backdrop.active { display: block; }
-
-    /* ── Tablet (≤1200px): sidenav hidden by default ── */
-    @media (max-width: 1199px) {
-      .sidenav-container {
-        transform: translateX(-100%);
-        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 150ms ease;
-      }
-      .sidenav-container.mobile-open {
-        transform: translateX(0);
-        box-shadow: 4px 0 32px rgba(0,0,0,0.2);
-      }
-      .mobile-menu-btn { display: flex; }
-      /* Topbar: 20px left padding, zero out breadcrumb's 50px default */
-      #navigation {
-        padding-left: 20px;
-      }
-      .navigation-breadcumb {
-        padding-left: 0 !important;
-      }
-    }
-
-    /* ── Tablet (≤960px): stack right sidebar below main content ── */
-    @media (max-width: 960px) {
-      .contact-content-area {
-        flex-direction: column;
-        overflow-y: auto;
-      }
-      .contact-main-content {
-        overflow-y: visible;
-        flex: none;
-      }
-      .contact-sidebar {
-        width: 100%;
-        border-left: none;
-        border-top: 1px solid var(--border-content);
-        overflow-y: visible;
-      }
-      /* Slide-in panels: full width */
-      .meeting-detail-panel,
-      .email-detail-panel {
-        width: 100% !important;
-        border-left: none;
-      }
-    }
-
-    /* ── Mobile (≤768px) ── */
-    @media (max-width: 768px) {
-      /* Main content: no left gutter from sidenav (application.css only adds it at ≥1200px, but reset here for safety) */
-      #outer-wrapper.with-sidebar,
-      #outer-wrapper.with-sidebar.with-sidebar-expanded {
-        padding-left: 0 !important;
-      }
-      #navigation {
-        left: 0 !important;
-      }
-
-      /* Compact main content padding */
-      .contact-main-content {
-        padding: 20px 16px;
-      }
-
-      /* Scrollable subnavigation tabs */
-      .subnavigation-items {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding-left: 16px !important;
-        flex-wrap: nowrap;
-        white-space: nowrap;
-      }
-      .subnavigation-items::-webkit-scrollbar { display: none; }
-      .subnavigation-item { flex-shrink: 0; }
-
-      /* Contact page: allow natural height scrolling */
-      .contact-page-body {
-        height: auto;
-        min-height: calc(100vh - 60px);
-        overflow: visible;
-      }
-      .contact-content-area {
-        overflow: visible;
-      }
-
-      /* Contact header: wrap & reduce padding */
-      .top-header-content-in {
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      .company-details-inner-wrapper {
-        gap: 10px;
-      }
-      .company-details-name {
-        font-size: 22px;
-      }
-
-      /* Tab section: reduce title row spacing */
-      .tab-section-title-row {
-        margin-bottom: 16px;
-      }
-
-      /* Meeting detail panel: compact paddings */
-      .mdp-top-bar {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .mdp-metadata-bar {
-        padding-left: 16px;
-        padding-right: 16px;
-        flex-wrap: wrap;
-      }
-      .mdp-summary-section {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .mdp-subnavigation-items {
-        padding: 0 16px;
-        gap: 14px;
-      }
-      .mdp-transcript-block {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      /* Email detail panel: compact paddings */
-      .edp-top-bar {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .edp-subject-bar {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .edp-sender-bar {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .edp-thread-msg-header {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .edp-thread-msg-body {
-        padding: 0 16px 20px 16px;
-      }
-      .edp-comments-display,
-      .edp-comments-body {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      /* Email inbox: hide unread dot column (saves space) */
-      .email-thread-dot-col { display: none; }
-
-      /* Email access popover: full-width on mobile */
-      .email-access-popover {
-        width: calc(100vw - 32px);
-        right: 0;
-        left: auto;
-      }
-
-      /* Note composer: full width */
-      .note-composer-toolbar {
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-
-      /* Meeting cards: allow wrapping */
-      .meeting-card,
-      .doc-card {
-        display: flex;
-        width: 100%;
-        box-sizing: border-box;
-      }
-    }
-
-    /* ── Small mobile (≤480px) ── */
-    @media (max-width: 480px) {
-      .contact-main-content { padding: 16px 20px; }
-      .company-details-name { font-size: 19px; }
-      /* Filters button: icon only */
-      .filters-label { display: none; }
-      .filters-icon { margin-right: 0 !important; }
-
-      /* Hide parent breadcrumb (Contacts /) on very small screens */
-      .navigation-breadcumb-item.navigation-breadcumb-item--link,
-      .navigation-breadcumb-separator {
-        display: none;
-      }
-
-      /* Emails section: stack toolbar */
-      .email-section-actions {
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-
-      /* Sidebar sections: reduce padding */
-      .sidebar-section,
-      .page-properties-section {
-        padding: 20px 16px;
-      }
-    }
-
-    /* ── Sidebar collapsed: swap search form for a nav-item-style icon ── */
-    .sidenav-container--collapsed .sidenav-top-section-search-input {
-      display: none;
-    }
-    .sidenav-search-collapsed-item {
-      display: none;
-    }
-    .sidenav-container--collapsed .sidenav-search-collapsed-item {
-      display: flex;
-    }
-    /* search icon positioning matches production sidenav-features-item pattern */
-    .sidenav-features-item-icon.search {
-      top: 9.5px;
-      left: 11.5px;
-      width: 12px;
-    }
-
-    /* ── Sidebar collapse toggle ── */
-    .sidenav-container {
-      transition: width 150ms ease;
-    }
-    .sidenav-company-switcher-collapse-toggle {
-      opacity: 0;
-      transition: opacity 150ms ease;
-      position: relative;
-    }
-    .sidenav-container:hover .sidenav-company-switcher-collapse-toggle {
-      opacity: 1;
-    }
-
-    /* Tooltip */
-    .sidenav-company-switcher-collapse-toggle::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      left: calc(100% + 8px);
-      top: 50%;
-      transform: translateY(-50%);
-      background: #1a1a1a;
-      color: #fff;
+    .mc-member-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border: 1px solid var(--border-content);
+      border-radius: 6px;
       font-size: 12px;
       font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.12s;
+      margin-right: 6px;
+      user-select: none;
+    }
+    .mc-member-pill:hover { background: var(--bg-grey-f5); color: var(--text-default); }
+    .mc-header-divider {
+      width: 1px; height: 18px;
+      background: var(--border-content);
+      margin: 0 4px;
+    }
+
+    /* Scrollable chat area */
+    .mc-chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 40px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Date separator */
+    .mc-date-sep {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+      color: var(--text-lighter);
+      font-size: 12px;
+    }
+    .mc-date-sep::before,
+    .mc-date-sep::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-content);
+    }
+    .mc-date-sep-label {
       white-space: nowrap;
-      padding: 4px 8px;
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--text-muted-alt);
+    }
+
+    /* Message group */
+    .mc-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .mc-group--me {
+      flex-direction: row-reverse;
+    }
+    .mc-group-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .mc-group-avatar--placeholder {
+      width: 34px;
+      flex-shrink: 0;
+    }
+    .mc-group-body {
+      flex: 1;
+      min-width: 0;
+      max-width: 70%;
+    }
+    .mc-group-body:has(.mc-ai-actions),
+    .mc-group-body:has(.mc-ai-replies-wrap) {
+      max-width: 85%;
+    }
+    .mc-group--me .mc-group-body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .mc-group-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+    .mc-group--me .mc-group-meta {
+      flex-direction: row-reverse;
+    }
+    .mc-group-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-default);
+    }
+    .mc-group-time {
+      font-size: 11px;
+      color: var(--text-lighter);
+    }
+
+    /* Bubble list */
+    .mc-bubbles { display: flex; flex-direction: column; gap: 3px; }
+    .mc-group--me .mc-bubbles { align-items: flex-end; }
+
+    /* Individual bubble */
+    .mc-bubble {
+      display: inline-block;
+      max-width: 100%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--text-default);
+      line-height: 1.55;
+      position: relative;
+      word-break: break-word;
+    }
+    /* Contact bubbles: left, light grey */
+    .mc-bubble--them {
+      background: #f0f0f0;
+      border-radius: 4px 12px 12px 12px;
+    }
+    /* First in group gets the pointed corner */
+    .mc-bubbles .mc-bubble--them:first-child {
+      border-radius: 4px 12px 12px 12px;
+    }
+    .mc-bubbles .mc-bubble--them:not(:first-child) {
+      border-radius: 4px 12px 12px 12px;
+    }
+    /* My bubbles: right, subtle teal/green tint */
+    .mc-bubble--me {
+      background: #e8f5e3;
+      color: #1a2e12;
+      border-radius: 12px 4px 12px 12px;
+    }
+    .mc-bubbles .mc-bubble--me:first-child {
+      border-radius: 12px 4px 12px 12px;
+    }
+    .mc-bubbles .mc-bubble--me:not(:first-child) {
+      border-radius: 12px 12px 12px 4px;
+    }
+
+    /* File attachment bubble */
+    .mc-file-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      max-width: 280px;
+      cursor: pointer;
+    }
+    .mc-file-bubble--me {
+      background: #e8f5e3;
+    }
+    .mc-file-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: rgba(34,173,1,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mc-file-info { min-width: 0; }
+    .mc-file-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-default);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+    .mc-file-size {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Seen label */
+    .mc-seen {
+      font-size: 11px;
+      color: var(--text-lighter);
+      text-align: right;
+      margin-top: 2px;
+      padding-right: 2px;
+    }
+
+    /* Hover actions row */
+    .mc-bubble-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: flex-start;
+    }
+    .mc-group--me .mc-bubble-wrap {
+      flex-direction: row-reverse;
+    }
+    .mc-hover-actions {
+      display: none;
+      align-items: center;
+      gap: 2px;
+      position: absolute;
+      top: -14px;
+      right: -4px;
+      background: var(--bg-content);
+      border: 1px solid var(--border-content);
+      border-radius: 8px;
+      padding: 3px 4px;
+      box-shadow: var(--box-shadow-small);
+      z-index: 10;
+      white-space: nowrap;
+    }
+    .mc-group--me .mc-hover-actions {
+      right: auto;
+      left: -4px;
+    }
+    .mc-bubbles:hover .mc-hover-actions,
+    .mc-bubble-wrap:hover .mc-hover-actions {
+      display: flex;
+    }
+    .mc-action-btn {
+      width: 26px;
+      height: 26px;
       border-radius: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: background 0.1s;
+    }
+    .mc-action-btn:hover {
+      background: var(--bg-grey-f5);
+      color: var(--text-default);
+    }
+
+    /* Reactions */
+    .mc-reactions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .mc-reaction {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      background: #f5f5f5;
+      border: 1px solid var(--border-content);
+      border-radius: 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .mc-reaction:hover { background: var(--bg-grey-f1); }
+    .mc-reaction-count { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+    /* Summarize button */
+    .mc-thread-replies {
+      font-size: 12px;
+      color: #22AD01;
+      font-weight: 500;
+    }
+    .mc-summarize-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: none;
+      border: 1px solid var(--border-content);
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+    .mc-summarize-btn:hover {
+      background: var(--bg-grey-f5);
+      color: var(--text-default);
+    }
+
+    /* ── Composer ── */
+    .mc-composer {
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-content);
+      background: var(--bg-content);
+      padding: 12px 40px 16px;
+    }
+    .mc-composer-inner {
+      border: 1.5px solid var(--border-content-alt);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .mc-composer-inner:focus-within {
+      border-color: #22AD01;
+      box-shadow: 0 0 0 3px rgba(34,173,1,0.1);
+    }
+
+    /* Format toolbar */
+    .mc-fmt-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      padding: 6px 10px 5px;
+      border-bottom: 1px solid var(--border-content);
+      background: var(--bg-grey-fa);
+    }
+    .mc-fmt-btn {
+      width: 28px;
+      height: 26px;
+      border-radius: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.1s, color 0.1s;
+      flex-shrink: 0;
+    }
+    .mc-fmt-btn:hover { background: var(--bg-grey-f1); color: var(--text-default); }
+    .mc-fmt-sep {
+      width: 1px;
+      height: 15px;
+      background: var(--border-content);
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+    /* Font size dropdown trigger */
+    .mc-fmt-size {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 0 6px;
+      height: 26px;
+      border-radius: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: background 0.1s;
+      white-space: nowrap;
+    }
+    .mc-fmt-size:hover { background: var(--bg-grey-f1); color: var(--text-default); }
+
+    /* Editable body */
+    .mc-composer-body {
+      min-height: 60px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--text-default);
+      line-height: 1.6;
+      outline: none;
+      caret-color: #22AD01;
+    }
+    .mc-composer-body:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-lighter);
       pointer-events: none;
+    }
+
+    /* Bottom action bar */
+    .mc-bottom-bar {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px 8px;
+      border-top: 1px solid var(--border-content);
+      background: var(--bg-content);
+      gap: 2px;
+    }
+    .mc-attach-btn {
+      width: 32px;
+      height: 30px;
+      border-radius: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: background 0.1s, color 0.1s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .mc-attach-btn:hover { background: var(--bg-grey-f5); color: var(--text-default); }
+    .mc-attach-btn[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c2c2c;
+      color: white;
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
       opacity: 0;
-      transition: opacity 100ms ease;
-      z-index: 9999;
+      pointer-events: none;
+      transition: opacity 0.15s;
     }
-    .sidenav-company-switcher-collapse-toggle:hover::after {
-      opacity: 1;
+    .mc-attach-btn:hover[data-tooltip]::after { opacity: 1; }
+    .mc-attach-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--border-content);
+      margin: 0 4px;
+      flex-shrink: 0;
     }
+    .mc-bottom-spacer { flex: 1; }
+    .mc-send-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 16px;
+      height: 32px;
+      background: #22AD01;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s;
+      flex-shrink: 0;
+    }
+    .mc-send-btn:hover { background: #1d9900; }
+    .mc-send-btn:active { background: #178800; }
+
+    /* Zoom connection banner */
+    .mc-zoom-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f0f7ff;
+      border: 1px solid #c5dff8;
+      border-radius: 8px;
+      margin: 20px 40px 0;
+      font-size: 13px;
+      color: #2a5db0;
+      flex-shrink: 0;
+    }
+    .mc-zoom-banner-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mc-zoom-banner-text { flex: 1; line-height: 1.4; }
+    .mc-zoom-banner-text strong { color: #1a3f80; }
+    .mc-zoom-banner-btn {
+      padding: 5px 12px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.12s;
+    }
+    .mc-zoom-banner-btn:hover { background: #1558c2; }
+
+    /* ── Composer suggested replies (inside the editor) ── */
+    .mc-composer-suggestions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 7px 12px 8px;
+      border-top: 1px solid var(--border-content);
+      background: #fafffe;
+    }
+    .mc-cs-label {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700; color: #2e7d32;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .mc-cs-divider { width: 1px; height: 14px; background: #c8e6c9; flex-shrink: 0; }
+    .mc-cs-chip {
+      display: inline-flex; align-items: center;
+      padding: 4px 10px;
+      background: white; border: 1px solid #c8e6c9;
+      border-radius: 14px; font-size: 12px; font-weight: 500; color: #1b5e20;
+      cursor: pointer; transition: background 0.1s, border-color 0.1s;
+      white-space: nowrap;
+    }
+    .mc-cs-chip:hover { background: #e8f5e9; border-color: #a5d6a7; }
+    .mc-cs-dismiss {
+      margin-left: auto; flex-shrink: 0;
+      width: 20px; height: 20px; border-radius: 4px;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-lighter); transition: background 0.1s, color 0.1s;
+    }
+    .mc-cs-dismiss:hover { background: #e8f5e9; color: var(--text-muted); }
+
+    /* ── Thread Panel (fixed, works across all views) ── */
+    .mc-thread-panel {
+      position: fixed; top: 60px; right: 0;
+      width: 360px; height: calc(100% - 60px);
+      background: var(--bg-content);
+      border-left: 1px solid var(--border-content);
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+      z-index: 50;
+      box-shadow: -6px 0 24px rgba(0,0,0,0.07);
+    }
+    .mc-thread-panel.open { transform: translateX(0); }
+    .mc-thread-panel-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 16px; height: 52px;
+      border-bottom: 1px solid var(--border-content); flex-shrink: 0;
+    }
+    .mc-thread-panel-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-default); }
+    .mc-thread-panel-channel { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .mc-thread-panel-close {
+      width: 28px; height: 28px; border-radius: 5px;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: background 0.12s;
+    }
+    .mc-thread-panel-close:hover { background: var(--bg-grey-f5); }
+    .mc-thread-panel-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+    /* Original message in thread */
+    .mc-thread-orig { padding-bottom: 16px; border-bottom: 1px solid var(--border-content); margin-bottom: 18px; }
+    .mc-thread-orig-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .mc-thread-orig-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background-size: cover; background-position: center; }
+    .mc-thread-orig-name { font-size: 13px; font-weight: 600; color: var(--text-default); }
+    .mc-thread-orig-time { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+    .mc-thread-orig-text { font-size: 13px; color: var(--text-default); line-height: 1.6; padding-left: 36px; }
+    /* Reply count header */
+    .mc-thread-replies-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+    .mc-thread-replies-header::after { content: ''; flex: 1; height: 1px; background: var(--border-content); }
+    /* Thread reply items */
+    .mc-thread-reply { display: flex; gap: 8px; margin-bottom: 16px; }
+    .mc-thread-reply-avatar { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; background-size: cover; background-position: center; }
+    .mc-thread-reply-body { flex: 1; }
+    .mc-thread-reply-meta { display: flex; align-items: baseline; gap: 6px; margin-bottom: 3px; }
+    .mc-thread-reply-name { font-size: 12px; font-weight: 600; color: var(--text-default); }
+    .mc-thread-reply-time { font-size: 11px; color: var(--text-lighter); }
+    .mc-thread-reply-text { font-size: 13px; color: var(--text-default); line-height: 1.55; }
+    /* Thread composer */
+    .mc-thread-composer { flex-shrink: 0; padding: 10px 16px 14px; border-top: 1px solid var(--border-content); }
+    .mc-thread-composer-inner { border: 1.5px solid var(--border-content-alt); border-radius: 8px; overflow: hidden; }
+    .mc-thread-composer-inner:focus-within { border-color: #22AD01; box-shadow: 0 0 0 2px rgba(34,173,1,0.1); }
+    .mc-thread-composer-body { min-height: 52px; max-height: 100px; overflow-y: auto; padding: 9px 12px; font-size: 13px; color: var(--text-default); line-height: 1.55; outline: none; }
+    .mc-thread-composer-body:empty::before { content: attr(data-placeholder); color: var(--text-lighter); pointer-events: none; }
+    .mc-thread-composer-footer { display: flex; align-items: center; justify-content: flex-end; padding: 5px 8px 7px; border-top: 1px solid var(--border-content); background: var(--bg-grey-fa); }
+    .mc-thread-send-btn { display: inline-flex; align-items: center; gap: 5px; padding: 0 12px; height: 28px; background: #22AD01; color: white; border: none; border-radius: 5px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.12s; }
+    .mc-thread-send-btn:hover { background: #1c9701; }
+
+    /* ── Thread bar upgrade ── */
+    .mc-thread-bar {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 6px; padding: 4px 8px 4px 4px;
+      border-radius: 6px; cursor: pointer;
+      transition: background 0.12s; max-width: 100%;
+    }
+    .mc-thread-bar:hover { background: var(--bg-grey-f5); }
+    .mc-thread-avatar-stack { display: flex; align-items: center; }
+    .mc-thread-avatar-mini { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--bg-content); background-size: cover; background-position: center; flex-shrink: 0; }
+    .mc-thread-avatar-mini + .mc-thread-avatar-mini { margin-left: -6px; }
+
+    /* ── AI Suggested Actions ── */
+    .mc-ai-actions {
+      margin: 10px 0 2px;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      background: #f4fdf4;
+      position: relative;
+    }
+    /* Collapsible header (multi-action) */
+    .mc-ai-actions-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 10px 7px 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .mc-ai-actions-header:hover { background: rgba(46,125,50,0.04); }
+    .mc-ai-actions-label { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #2e7d32; }
+    .mc-ai-header-right { display: flex; align-items: center; gap: 6px; }
+    /* Count badge — shown when collapsed, hidden when open */
+    .mc-ai-count-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #c8e6c9; color: #2e7d32;
+      font-size: 10px; font-weight: 700;
+      width: 16px; height: 16px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .mc-ai-actions--open .mc-ai-count-badge { display: none; }
+    /* Chevron rotates when open */
+    .mc-ai-chevron { color: #2e7d32; transition: transform 0.15s ease; flex-shrink: 0; }
+    .mc-ai-actions--open .mc-ai-chevron { transform: rotate(180deg); }
+    .mc-ai-dismiss-all { font-size: 11px; color: var(--text-muted); cursor: pointer; background: none; border: none; padding: 0; transition: color 0.12s; }
+    .mc-ai-dismiss-all:hover { color: var(--text-default); }
+    /* Items wrapper — hidden by default, pops above when open */
+    .mc-ai-actions-items {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 0;
+      min-width: 280px;
+      background: #f4fdf4;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      z-index: 200;
+      overflow: hidden;
+    }
+    .mc-ai-actions--open .mc-ai-actions-items { display: block; }
+    /* Drop downward when there's space below */
+    .mc-ai-actions--drop-down .mc-ai-actions-items {
+      bottom: auto;
+      top: calc(100% + 4px);
+    }
+    /* Action items */
+    .mc-ai-action-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-top: 1px solid #dceede; cursor: pointer; transition: background 0.1s; }
+    .mc-ai-action-item:hover { background: #e8f5e9; }
+    .mc-ai-action-icon { width: 28px; height: 28px; border-radius: 6px; background: #e8f5e9; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #2e7d32; }
+    .mc-ai-action-body { flex: 1; min-width: 0; }
+    .mc-ai-action-title { font-size: 12px; font-weight: 600; color: var(--text-default); margin-bottom: 1px; }
+    .mc-ai-action-subtitle { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mc-ai-action-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .mc-ai-action-arrow { color: var(--text-lighter); display: flex; }
+    .mc-ai-action-dismiss { width: 20px; height: 20px; border-radius: 4px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-lighter); transition: background 0.1s, color 0.1s; }
+    .mc-ai-action-dismiss:hover { background: #c8e6c9; color: var(--text-muted); }
+
+    /* ── Single-action compact layout ── */
+    .mc-ai-actions--single { background: #f4fdf4; }
+    .mc-ai-actions--single .mc-ai-action-item {
+      border-top: none;
+      padding: 8px 10px 8px 12px;
+      gap: 8px;
+    }
+    .mc-ai-single-star {
+      display: flex; align-items: center; flex-shrink: 0; color: #2e7d32;
+    }
+    .mc-ai-actions--single .mc-ai-action-icon {
+      width: 22px; height: 22px; border-radius: 5px;
+    }
+    .mc-ai-actions--single .mc-ai-action-title { font-size: 12px; }
+    .mc-ai-actions--single .mc-ai-action-subtitle { font-size: 11px; }
+
+    /* ── AI Suggested Replies ── */
+    .mc-ai-replies-wrap { margin-top: 8px; }
+    .mc-ai-replies-label { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #2e7d32; margin-bottom: 7px; }
+    .mc-ai-replies { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mc-ai-reply-chip {
+      display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+      background: #f4fdf4; border: 1px solid #c8e6c9;
+      border-radius: 20px; font-size: 12px; font-weight: 500; color: #2e7d32;
+      cursor: pointer; transition: background 0.1s, border-color 0.1s;
+    }
+    .mc-ai-reply-chip:hover { background: #e8f5e9; border-color: #a5d6a7; }
+
+/* ── Messages Page ── */
+#messages-page {
+  display: none;
+  position: fixed;
+  top: 60px;           /* below top nav */
+  left: 275px;         /* right of expanded sidebar (--sidebar-width) */
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: var(--bg-content);
+  z-index: 200;
+}
+#messages-page.active {
+  display: flex;
+}
+.msg-page-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-content);
+  overflow-y: auto;
+  background: var(--bg-content);
+  display: flex;
+  flex-direction: column;
+}
+.msg-page-sidebar-header {
+  padding: 20px 16px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-default);
+  flex-shrink: 0;
+}
+.msg-section {
+  flex-shrink: 0;
+}
+.msg-section {
+  border-top: 1px solid var(--border-content);
+}
+.msg-section:first-child {
+  border-top: none;
+}
+.msg-section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  user-select: none;
+}
+.msg-section-toggle:hover { background: var(--bg-grey-fa); }
+.msg-section-chevron {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+  color: var(--text-lighter);
+}
+.msg-section--collapsed .msg-section-chevron {
+  transform: rotate(-90deg);
+}
+.msg-section-items { }
+.msg-section--collapsed .msg-section-items { display: none; }
+.msg-conv-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  cursor: pointer;
+  border-radius: 0;
+  position: relative;
+}
+.msg-conv-item:hover { background: var(--bg-grey-fa); }
+.msg-conv-item.active { background: var(--bg-grey-f1); }
+.msg-conv-item.active .msg-conv-name { font-weight: 600; color: var(--text-default); }
+.msg-conv-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  background-size: cover;
+  background-position: center;
+}
+.msg-conv-avatar.square { border-radius: 6px; }
+.msg-conv-name {
+  font-size: 13px;
+  color: var(--text-default);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.msg-conv-unread {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22AD01;
+  flex-shrink: 0;
+}
+.msg-page-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-content);
+}
+/* reuse existing mc- chat styles in the messages page */
+#messages-page .mc-chat-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
   </style>
 </head>
 <body>
@@ -1863,7 +2474,7 @@
               <svg class="sidenav-company-menu-arrow" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 2.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
           </div>
-          <div id="sidebar-toggle" class="sidenav-company-switcher-collapse-toggle" data-tooltip="Hide sidebar" onclick="toggleSidebar()">
+          <div class="sidenav-company-switcher-collapse-toggle">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M6 2v12"/></svg>
           </div>
         </div>
@@ -1875,11 +2486,6 @@
             <span class="sidenav-top-section-search-label">Search</span>
             <div class="sidenav-top-section-search-command-key">&#8984;K</div>
           </div>
-          <!-- Collapsed-state: icon-only nav item -->
-          <a class="sidenav-features-item sidenav-search-collapsed-item" href="#">
-            <div class="sidenav-features-item-bg"></div>
-            <svg class="sidenav-features-item-icon search" width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.657 18.3393L15.5348 14.217C15.5052 14.1875 15.4716 14.165 15.4393 14.1392C17.8307 10.8098 17.5388 6.14868 14.5457 3.15562C12.8819 1.49182 10.7013 0.660156 8.52071 0.660156C6.3401 0.660156 4.1595 1.49182 2.4957 3.15562C-0.8319 6.48322 -0.8319 11.878 2.4957 15.2056C4.1595 16.8694 6.3401 17.7011 8.52071 17.7011C10.4071 17.7011 12.2916 17.0756 13.8434 15.8307C13.8555 15.8442 13.865 15.8597 13.8781 15.8729L18.0003 19.9951C18.2289 20.2247 18.5288 20.339 18.8287 20.339C19.1285 20.339 19.4284 20.2247 19.657 19.996C20.1143 19.5383 20.1143 18.7966 19.657 18.3393ZM8.52069 15.3589C6.87045 15.3589 5.31912 14.716 4.15198 13.5494C1.7432 11.1406 1.7432 7.22123 4.15198 4.81245C5.31868 3.64575 6.87047 3.00298 8.52069 3.00298C10.1709 3.00298 11.7222 3.64584 12.8894 4.81245C15.2982 7.22123 15.2982 11.1406 12.8894 13.5494C11.7222 14.716 10.1709 15.3589 8.52069 15.3589Z" fill="#22AD01" shape-rendering="auto"></path></svg>
-          </a>
         </div>
 
         <!-- Top links -->
@@ -1899,7 +2505,7 @@
             <svg class="sidenav-features-item-icon company" width="20" height="20" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 12.088C6.05225 12.088 6.49995 12.5357 6.5 13.088V15.088C6.5 15.6403 6.05228 16.088 5.5 16.088C4.94772 16.088 4.5 15.6403 4.5 15.088V13.088C4.50005 12.5357 4.94775 12.088 5.5 12.088Z" fill="#22AD01"/><path d="M9.5 12.088C10.0523 12.088 10.5 12.5357 10.5 13.088V15.088C10.5 15.6403 10.0523 16.088 9.5 16.088C8.94772 16.088 8.5 15.6403 8.5 15.088V13.088C8.50005 12.5357 8.94775 12.088 9.5 12.088Z" fill="#22AD01"/><path d="M5.5 6.08797C6.05225 6.08797 6.49995 6.53573 6.5 7.08797V9.08797C6.5 9.64025 6.05228 10.088 5.5 10.088C4.94772 10.088 4.5 9.64025 4.5 9.08797V7.08797C4.50005 6.53573 4.94775 6.08797 5.5 6.08797Z" fill="#22AD01"/><path d="M9.5 6.08797C10.0523 6.08797 10.5 6.53573 10.5 7.08797V9.08797C10.5 9.64025 10.0523 10.088 9.5 10.088C8.94772 10.088 8.5 9.64025 8.5 9.08797V7.08797C8.50005 6.53573 8.94775 6.08797 9.5 6.08797Z" fill="#22AD01"/><path fill-rule="evenodd" clip-rule="evenodd" d="M9.95996 0.139729C12.5014 -0.54448 14.9997 1.37023 15 4.00203V7.1368L16.7842 7.49422C18.6537 7.86814 19.9998 9.50961 20 11.4161V16.4688C19.9999 18.6779 18.2091 20.4688 16 20.4688H13.1367C12.5184 20.8604 11.786 21.088 11 21.088H4C1.79086 21.088 4.83192e-08 19.2971 0 17.088V5.8868C0.000177254 4.07835 1.21368 2.49469 2.95996 2.02449L9.95996 0.139729ZM13 4.00203C12.9997 2.6864 11.751 1.72957 10.4805 2.07137L3.48047 3.95614C2.60737 4.1912 2.00018 4.98264 2 5.8868V17.088C2 18.1925 2.89543 19.088 4 19.088H11C12.1046 19.088 13 18.1925 13 17.088V4.00203ZM15 17.088C15 17.5733 14.9132 18.0384 14.7549 18.4688H16C17.1045 18.4688 17.9999 17.5733 18 16.4688V11.4161C17.9998 10.4631 17.3271 9.64223 16.3926 9.45516L15 9.17586V17.088Z" fill="#22AD01"/></svg>
             <span class="sidenav-features-item-label">Clients</span>
           </a>
-          <a class="sidenav-features-item active" href="#">
+          <a class="sidenav-features-item active" href="#" onclick="showContactPage(); return false;">
             <div class="sidenav-features-item-bg"></div>
             <svg class="sidenav-features-item-icon contact" width="20" height="20" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.6299 5.00488C14.6792 5.10682 16.3096 6.77116 16.3096 8.80859L16.3037 9.00391C16.2 11.0169 14.5057 12.6161 12.4307 12.6162H12.4023C10.2676 12.6092 8.54378 10.9046 8.55176 8.80859C8.55176 6.70549 10.2887 5 12.4307 5L12.6299 5.00488ZM12.4307 7.28027C11.5084 7.28027 10.832 8.00386 10.832 8.80859V8.81738C10.8291 9.61505 11.4954 10.3338 12.4092 10.3369H12.4307C13.3531 10.3368 14.0291 9.61376 14.0293 8.80859C14.0293 8.00392 13.3528 7.28038 12.4307 7.28027Z" fill="#22AD01"/><path fill-rule="evenodd" clip-rule="evenodd" d="M18.9287 0C21.1772 7.5932e-05 22.9998 1.83941 23 4.1084V16.8916C22.9998 19.1606 21.1772 20.9999 18.9287 21H12.5879C12.5585 21.0001 12.5292 21.001 12.5 21.001L12.4219 21H4.07129C1.82287 20.9999 0.000159335 19.1606 0 16.8916V4.1084C0.000159336 1.83941 1.82287 7.61931e-05 4.07129 0H18.9287ZM4.07129 2.28223C3.07208 2.2823 2.26188 3.10006 2.26172 4.1084V7H3.86035C4.48968 7.00019 4.99981 7.51032 5 8.13965C5 8.76914 4.48979 9.28008 3.86035 9.28027H2.26172V12H3.86035C4.48968 12.0002 4.99981 12.5103 5 13.1396C5 13.7691 4.48979 14.2801 3.86035 14.2803H2.26172V16.8916C2.26188 17.9 3.07208 18.7177 4.07129 18.7178H6.22266C6.10974 18.4556 6.03659 18.1644 6.01074 17.8408L6 17.5723C6 14.6462 9.65607 13.6671 12.5 13.667C15.359 13.667 19 14.646 19 17.5947L18.9893 17.8633C18.964 18.1783 18.8916 18.4615 18.7832 18.7178H18.9287C19.9279 18.7177 20.7381 17.9 20.7383 16.8916V4.1084C20.7381 3.10006 19.9279 2.2823 18.9287 2.28223H4.07129ZM12.5 15.9463C11.2807 15.9463 10.0281 16.1654 9.17188 16.5771C8.36365 16.9658 8.28027 17.2989 8.28027 17.5723C8.28035 17.7949 8.33302 17.8524 8.35938 17.8838C8.42045 17.9565 8.592 18.107 8.99805 18.2637C9.80201 18.5738 10.9719 18.7028 12.2461 18.7178H12.7539C14.0265 18.7033 15.1974 18.5788 16.0049 18.2715C16.4124 18.1163 16.5836 17.9671 16.6436 17.8965C16.6674 17.8683 16.7197 17.8149 16.7197 17.5947C16.7197 17.2975 16.625 16.9623 15.8291 16.5771C14.9782 16.1655 13.7284 15.9463 12.5 15.9463Z" fill="#22AD01"/></svg>
             <span class="sidenav-features-item-label">Contacts</span>
@@ -1943,6 +2549,11 @@
             <svg class="sidenav-features-item-icon meetings" width="20" height="20" viewBox="0 0 28 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.5 3.25C2.70507 3.25 1.25 4.70507 1.25 6.5V18.5C1.25 20.2949 2.70507 21.75 4.5 21.75H16.5C18.2949 21.75 19.75 20.2949 19.75 18.5V16.5L24.1459 19.5973C24.9162 20.14 26 19.5853 26 18.6459V6.35414C26 5.41472 24.9162 4.86001 24.1459 5.40271L19.75 8.5V6.5C19.75 4.70507 18.2949 3.25 16.5 3.25H4.5ZM19.75 11.5V13.5L23.5 16.1541V8.8459L19.75 11.5ZM4.5 5.75C4.08579 5.75 3.75 6.08579 3.75 6.5V18.5C3.75 18.9142 4.08579 19.25 4.5 19.25H16.5C16.9142 19.25 17.25 18.9142 17.25 18.5V6.5C17.25 6.08579 16.9142 5.75 16.5 5.75H4.5Z" fill="#22AD01"/></svg>
             <span class="sidenav-features-item-label">Meetings</span>
           </a>
+          <a class="sidenav-features-item" id="sidenav-messages-btn" href="#" onclick="showMessagesPage(); return false;">
+            <div class="sidenav-features-item-bg"></div>
+            <svg class="sidenav-features-item-icon messages-nav" width="20" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 0C1.79086 0 0 1.79086 0 4V12C0 14.2091 1.79086 16 4 16H7.17157L9.29289 18.1213C9.68342 18.5118 10.3166 18.5118 10.7071 18.1213L12.8284 16H18C20.2091 16 22 14.2091 22 12V4C22 1.79086 20.2091 0 18 0H4ZM2 4C2 2.89543 2.89543 2 4 2H18C19.1046 2 20 2.89543 20 4V12C20 13.1046 19.1046 14 18 14H12.4142C12.149 14 11.8946 14.1054 11.7071 14.2929L10 16L8.29289 14.2929C8.10536 14.1054 7.851 14 7.58579 14H4C2.89543 14 2 13.1046 2 12V4ZM5 6C5 5.44772 5.44772 5 6 5H16C16.5523 5 17 5.44772 17 6C17 6.55228 16.5523 7 16 7H6C5.44772 7 5 6.55228 5 6ZM6 9C5.44772 9 5 9.44772 5 10C5 10.5523 5.44772 11 6 11H12C12.5523 11 13 10.5523 13 10C13 9.44772 12.5523 9 12 9H6Z" fill="#22AD01"/></svg>
+            <span class="sidenav-features-item-label">Messages</span>
+          </a>
           <a class="sidenav-features-item" href="#">
             <div class="sidenav-features-item-bg"></div>
             <svg class="sidenav-features-item-icon more" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="7" r="1.25" fill="currentColor"/><circle cx="7" cy="7" r="1.25" fill="currentColor"/><circle cx="11" cy="7" r="1.25" fill="currentColor"/></svg>
@@ -1972,24 +2583,13 @@
     </nav>
   </div>
 
-  <!-- Mobile backdrop: closes sidenav when tapped -->
-  <div class="mobile-sidebar-backdrop" id="mobile-sidebar-backdrop" onclick="closeMobileNav()"></div>
-
   <!-- ========== MAIN CONTENT AREA ========== -->
   <div class="page-content page-content-with-header">
 
     <!-- Top Navigation Bar -->
     <nav id="navigation">
-      <!-- Hamburger: visible only on mobile (≤1199px) -->
-      <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="Open navigation menu">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="2" y1="5" x2="16" y2="5"/>
-          <line x1="2" y1="9" x2="16" y2="9"/>
-          <line x1="2" y1="13" x2="16" y2="13"/>
-        </svg>
-      </button>
       <div class="navigation-breadcumb">
-        <a href="#" class="navigation-breadcumb-item navigation-breadcumb-item--link">
+        <a href="#" class="navigation-breadcumb-item navigation-breadcumb-item--link" onclick="showContactPage(); return false;">
           <span class="overflow-ellipsis">Contacts</span>
         </a>
         <div class="navigation-breadcumb-separator">/</div>
@@ -2020,8 +2620,8 @@
       </div>
     </nav>
 
-    <!-- ========== CONTACT PAGE ========== -->
-    <div class="contact-page-body">
+  <!-- ========== CONTACT PAGE ========== -->
+  <div class="contact-page-body">
 
       <!-- Profile Header -->
       <div class="top-header-section company mb0 contact-header-with-nav" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
@@ -2052,15 +2652,14 @@
               </div>
             </div>
           </div>
-
         </div>
-
         <!-- Tabs — outside wrapper-full-width so the bottom border spans full width -->
         <div class="subnavigation mt20">
           <div class="subnavigation-items pl40">
             <a class="subnavigation-item active" id="tab-btn-activity" onclick="switchTab('activity')">Activity</a>
             <a class="subnavigation-item" id="tab-btn-notes" onclick="switchTab('notes')">Notes</a>
             <a class="subnavigation-item" id="tab-btn-meetings" onclick="switchTab('meetings')">Meetings</a>
+            <a class="subnavigation-item" id="tab-btn-messages" onclick="switchTab('messages')">Messages</a>
             <a class="subnavigation-item" id="tab-btn-emails" onclick="switchTab('emails')">Emails</a>
           </div>
         </div>
@@ -2476,6 +3075,576 @@
             </div><!-- /overflow-x:auto -->
           </div>
 
+          <!-- ── MESSAGES TAB ── -->
+          <div id="tab-messages" class="tab-panel">
+
+
+            <!-- Scrollable message area -->
+            <div class="mc-chat-area" id="mc-chat-area">
+
+              <!-- ── Jan 13 ── -->
+              <div class="mc-date-sep"><span class="mc-date-sep-label">Jan 13</span></div>
+
+              <!-- Michael's messages at 03:42 -->
+              <div class="mc-group">
+                <div class="mc-group-avatar" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Michael Fawler</span>
+                    <span class="mc-group-time">Jan 13, 3:42 AM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Hi 👋</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-bubbles" style="margin-top:3px;">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Please complete your pending Workday tasks for payroll and benefits as soon as possible. This is required to avoid any delays or issues with your pay or benefits. Let me know if you have any questions!</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tom's reply at 16:34 -->
+              <div class="mc-group mc-group--me">
+                <div class="mc-group-avatar--placeholder"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Tom Bradley</span>
+                    <span class="mc-group-time">Jan 13, 4:34 PM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--me">Thanks Michael. Actually I will cancel it</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Michael's response at 16:34 -->
+              <div class="mc-group">
+                <div class="mc-group-avatar" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Michael Fawler</span>
+                    <span class="mc-group-time">Jan 13, 4:34 PM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Hi Tom! Please hold off</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-bubbles" style="margin-top:3px;">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">If you've submitted before, we'll check something from our end</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tom at 18:23 -->
+              <div class="mc-group mc-group--me">
+                <div class="mc-group-avatar--placeholder"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Tom Bradley</span>
+                    <span class="mc-group-time">Jan 13, 6:23 PM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--me">I haven't submitted. I started the market positioning analysis but stopped — just want to confirm the scope before going further.</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-reactions">
+                    <span class="mc-reaction">😊 <span class="mc-reaction-count">1</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Feb 18 ── -->
+              <div class="mc-date-sep"><span class="mc-date-sep-label">Feb 18</span></div>
+
+              <!-- Michael at 14:52 -->
+              <div class="mc-group">
+                <div class="mc-group-avatar" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Michael Fawler</span>
+                    <span class="mc-group-time">Feb 18, 2:52 PM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Hi Tom!</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-bubbles" style="margin-top:3px;">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Are you free for a couple of minutes?</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-bubbles" style="margin-top:3px;">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Just need to check the Q1 retainer scope together</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Thread reply bar -->
+                  <div class="mc-thread-bar" onclick="openThread(1)">
+                    <div class="mc-thread-avatar-stack">
+                      <div class="mc-thread-avatar-mini" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                      <div class="mc-thread-avatar-mini" style="background-image:url('https://ui-avatars.com/api/?name=TB&size=250&background=3b82f6&color=ffffff&format=png');"></div>
+                    </div>
+                    <span class="mc-thread-replies">2 replies</span>
+                    <span style="font-size:11px;color:var(--text-muted);">Last reply Feb 18, 6:10 PM</span>
+                    <button class="mc-summarize-btn" onclick="event.stopPropagation()">
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M2 6h5M2 9h3"/></svg>
+                      Summarize
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tom at 17:38 -->
+              <div class="mc-group mc-group--me">
+                <div class="mc-group-avatar--placeholder"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Tom Bradley</span>
+                    <span class="mc-group-time">Feb 18, 5:38 PM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--me">Hey Michael! Yes</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-bubbles" style="margin-top:3px;">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--me">I'm available :)</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Feb 24 ── -->
+              <div class="mc-date-sep"><span class="mc-date-sep-label">Feb 24</span></div>
+
+              <!-- Michael at Feb 24 with file attachment -->
+              <div class="mc-group">
+                <div class="mc-group-avatar" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Michael Fawler</span>
+                    <span class="mc-group-time">Feb 24, 8:18 AM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Hey Tom! Can you review the brand refresh brief? Still waiting on the final sign-off to move to the next phase.</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- File attachment -->
+                  <div class="mc-bubbles" style="margin-top:6px;">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-file-bubble">
+                        <div class="mc-file-icon">
+                          <svg width="16" height="16" viewBox="0 0 16 18" fill="none"><path d="M9 1H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6L9 1z" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 1v5h5" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="mc-file-info">
+                          <div class="mc-file-name">Brand_Refresh_Brief.pdf</div>
+                          <div class="mc-file-size">2.4 MB</div>
+                        </div>
+                      </div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Thread replies -->
+                  <div class="mc-thread-bar" onclick="openThread(2)">
+                    <div class="mc-thread-avatar-stack">
+                      <div class="mc-thread-avatar-mini" style="background-image:url('https://ui-avatars.com/api/?name=TB&size=250&background=3b82f6&color=ffffff&format=png');"></div>
+                      <div class="mc-thread-avatar-mini" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                    </div>
+                    <span class="mc-thread-replies">2 replies</span>
+                    <span style="font-size:11px;color:var(--text-muted);">Last reply Feb 25, 11:30 AM</span>
+                    <button class="mc-summarize-btn" onclick="event.stopPropagation()">
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M2 6h5M2 9h3"/></svg>
+                      Summarize
+                    </button>
+                  </div>
+
+                  <!-- AI Suggested Actions (2 → collapsed by default) -->
+                  <div class="mc-ai-actions" id="ai-actions-brief">
+                    <div class="mc-ai-actions-header" onclick="toggleAiActions('ai-actions-brief')">
+                      <div class="mc-ai-actions-label">
+                        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6L11 6 7.2 7.4 6 11 4.8 7.4 1 6l3.8-1.4z" fill="#2e7d32"/></svg>
+                        AI Suggested Actions
+                        <span class="mc-ai-count-badge">2</span>
+                      </div>
+                      <div class="mc-ai-header-right">
+                        <svg class="mc-ai-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#2e7d32" stroke-width="1.8" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></svg>
+                        <button class="mc-ai-dismiss-all" onclick="document.getElementById('ai-actions-brief').style.display='none'; event.stopPropagation();">Dismiss</button>
+                      </div>
+                    </div>
+                    <div class="mc-ai-actions-items">
+                      <div class="mc-ai-action-item">
+                        <div class="mc-ai-action-icon">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="12" height="9" rx="1.5"/><path d="M1 5l6 4 6-4"/></svg>
+                        </div>
+                        <div class="mc-ai-action-body">
+                          <div class="mc-ai-action-title">Send approval email</div>
+                          <div class="mc-ai-action-subtitle">Confirm sign-off on Brand Refresh Brief to unblock next phase</div>
+                        </div>
+                        <div class="mc-ai-action-right">
+                          <div class="mc-ai-action-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></div>
+                          <button class="mc-ai-action-dismiss" onclick="this.closest('.mc-ai-action-item').remove(); event.stopPropagation();">
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="mc-ai-action-item">
+                        <div class="mc-ai-action-icon">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="1.5"/><path d="M4 6h6M4 8.5h4"/></svg>
+                        </div>
+                        <div class="mc-ai-action-body">
+                          <div class="mc-ai-action-title">Create task</div>
+                          <div class="mc-ai-action-subtitle">Review Brand_Refresh_Brief.pdf — assign to yourself</div>
+                        </div>
+                        <div class="mc-ai-action-right">
+                          <div class="mc-ai-action-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></div>
+                          <button class="mc-ai-action-dismiss" onclick="this.closest('.mc-ai-action-item').remove(); event.stopPropagation();">
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Today ── -->
+              <div class="mc-date-sep"><span class="mc-date-sep-label">Today</span></div>
+
+              <!-- Michael — follow-up on contract -->
+              <div class="mc-group">
+                <div class="mc-group-avatar" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Michael Fawler</span>
+                    <span class="mc-group-time">Today, 9:05 AM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Hey Tom — any updates on the brand brief sign-off? We're waiting on that to kick off phase 2.</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply in thread" onclick="openThread(3)">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tom today -->
+              <div class="mc-group mc-group--me">
+                <div class="mc-group-avatar--placeholder"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Tom Bradley</span>
+                    <span class="mc-group-time">Today, 9:40 AM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--me">Hello! What's the status of this project?</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mc-seen">Seen · 9:41 AM</div>
+                </div>
+              </div>
+
+              <!-- Michael — awaiting response (unanswered) -->
+              <div class="mc-group">
+                <div class="mc-group-avatar" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                <div class="mc-group-body">
+                  <div class="mc-group-meta">
+                    <span class="mc-group-name">Michael Fawler</span>
+                    <span class="mc-group-time">Today, 11:17 AM</span>
+                  </div>
+                  <div class="mc-bubbles">
+                    <div class="mc-bubble-wrap">
+                      <div class="mc-bubble mc-bubble--them">Also — are you available for a quick call this week to align on Q2 priorities?</div>
+                      <div class="mc-hover-actions">
+                        <button class="mc-action-btn" title="React">😊</button>
+                        <button class="mc-action-btn" title="Reply">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg>
+                        </button>
+                        <button class="mc-action-btn" title="More">···</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- AI Suggested Actions (2 → collapsed by default) -->
+                  <div class="mc-ai-actions" id="ai-actions-call">
+                    <div class="mc-ai-actions-header" onclick="toggleAiActions('ai-actions-call')">
+                      <div class="mc-ai-actions-label">
+                        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6L11 6 7.2 7.4 6 11 4.8 7.4 1 6l3.8-1.4z" fill="#2e7d32"/></svg>
+                        AI Suggested Actions
+                        <span class="mc-ai-count-badge">2</span>
+                      </div>
+                      <div class="mc-ai-header-right">
+                        <svg class="mc-ai-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#2e7d32" stroke-width="1.8" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></svg>
+                        <button class="mc-ai-dismiss-all" onclick="document.getElementById('ai-actions-call').style.display='none'; event.stopPropagation();">Dismiss</button>
+                      </div>
+                    </div>
+                    <div class="mc-ai-actions-items">
+                      <div class="mc-ai-action-item">
+                        <div class="mc-ai-action-icon">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="2"/><path d="M1 5h12"/><path d="M5 2v3M9 2v3"/></svg>
+                        </div>
+                        <div class="mc-ai-action-body">
+                          <div class="mc-ai-action-title">Schedule meeting</div>
+                          <div class="mc-ai-action-subtitle">Q2 priorities sync with Michael — this week</div>
+                        </div>
+                        <div class="mc-ai-action-right">
+                          <div class="mc-ai-action-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></div>
+                          <button class="mc-ai-action-dismiss" onclick="this.closest('.mc-ai-action-item').remove(); event.stopPropagation();">
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="mc-ai-action-item">
+                        <div class="mc-ai-action-icon">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="12" height="9" rx="1.5"/><path d="M1 5l6 4 6-4"/></svg>
+                        </div>
+                        <div class="mc-ai-action-body">
+                          <div class="mc-ai-action-title">Write draft reply</div>
+                          <div class="mc-ai-action-subtitle">Confirm availability and propose a time slot</div>
+                        </div>
+                        <div class="mc-ai-action-right">
+                          <div class="mc-ai-action-arrow"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg></div>
+                          <button class="mc-ai-action-dismiss" onclick="this.closest('.mc-ai-action-item').remove(); event.stopPropagation();">
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /mc-chat-area -->
+
+            <!-- Composer -->
+            <div class="mc-composer">
+              <div class="mc-composer-inner">
+
+                <!-- Formatting toolbar -->
+                <div class="mc-fmt-toolbar">
+                  <button class="mc-fmt-btn" title="Bold" onclick="document.execCommand('bold')"><strong>B</strong></button>
+                  <button class="mc-fmt-btn" title="Italic" onclick="document.execCommand('italic')"><em style="font-style:italic;">I</em></button>
+                  <button class="mc-fmt-btn" title="Underline" onclick="document.execCommand('underline')"><span style="text-decoration:underline;">U</span></button>
+                  <button class="mc-fmt-btn" title="Strikethrough" onclick="document.execCommand('strikeThrough')"><span style="text-decoration:line-through;">S</span></button>
+                  <button class="mc-fmt-size" title="Font size">
+                    Aa
+                    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 1l3 3 3-3"/></svg>
+                  </button>
+                  <div class="mc-fmt-sep"></div>
+                  <button class="mc-fmt-btn" title="Link">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5.5 7.5a3.5 3.5 0 0 0 5 0l1.5-1.5a3.536 3.536 0 0 0-5-5L6.25 1.75"/><path d="M8.5 6.5a3.5 3.5 0 0 0-5 0L2 8a3.536 3.536 0 0 0 5 5l.75-.75"/></svg>
+                  </button>
+                  <button class="mc-fmt-btn" title="Ordered list" onclick="document.execCommand('insertOrderedList')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="5" y1="3" x2="12" y2="3"/><line x1="5" y1="7" x2="12" y2="7"/><line x1="5" y1="11" x2="12" y2="11"/><text x="1" y="4" font-size="4" fill="currentColor" stroke="none">1</text><text x="1" y="8" font-size="4" fill="currentColor" stroke="none">2</text><text x="1" y="12" font-size="4" fill="currentColor" stroke="none">3</text></svg>
+                  </button>
+                  <button class="mc-fmt-btn" title="Bullet list" onclick="document.execCommand('insertUnorderedList')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="2.5" cy="3" r="1" fill="currentColor" stroke="none"/><circle cx="2.5" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="2.5" cy="11" r="1" fill="currentColor" stroke="none"/><line x1="5" y1="3" x2="12" y2="3"/><line x1="5" y1="7" x2="12" y2="7"/><line x1="5" y1="11" x2="12" y2="11"/></svg>
+                  </button>
+                  <div class="mc-fmt-sep"></div>
+                  <button class="mc-fmt-btn" title="Inline code" onclick="document.execCommand('formatBlock', false, 'code')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4L1 7l3 3"/><path d="M10 4l3 3-3 3"/></svg>
+                  </button>
+                </div>
+
+                <!-- Message body -->
+                <div class="mc-composer-body" id="mc-input" contenteditable="true" data-placeholder="Message Michael Fawler..."></div>
+
+                <!-- AI suggested replies (inside editor) -->
+                <div class="mc-composer-suggestions" id="mc-composer-suggestions">
+                  <div class="mc-cs-label">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6L11 6 7.2 7.4 6 11 4.8 7.4 1 6l3.8-1.4z" fill="#2e7d32"/></svg>
+                    AI
+                  </div>
+                  <div class="mc-cs-divider"></div>
+                  <button class="mc-cs-chip" onclick="useQuickReply(this)">Yes, Thursday works for me</button>
+                  <button class="mc-cs-chip" onclick="useQuickReply(this)">Can we push to next week?</button>
+                  <button class="mc-cs-chip" onclick="useQuickReply(this)">Sounds good!</button>
+                  <button class="mc-cs-dismiss" title="Dismiss" onclick="this.closest('.mc-composer-suggestions').style.display='none';"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg></button>
+                </div>
+
+                <!-- Bottom attach/actions bar -->
+                <div class="mc-bottom-bar">
+                  <!-- Emoji -->
+                  <button class="mc-attach-btn" data-tooltip="Emoji">
+                    <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="8.5"/><path d="M6.5 12.5c.9 1.2 2.2 2 3.5 2s2.6-.8 3.5-2"/><circle cx="7.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="8.5" r="1" fill="currentColor" stroke="none"/></svg>
+                  </button>
+                  <!-- GIF -->
+                  <button class="mc-attach-btn" data-tooltip="GIF" style="font-size:11px;font-weight:700;color:var(--text-muted);width:36px;">GIF</button>
+                  <!-- File -->
+                  <button class="mc-attach-btn" data-tooltip="Attach file">
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.5l-7.5 7.5a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-7.5 7.5a2 2 0 0 1-2.5-3L11 5"/></svg>
+                  </button>
+                  <!-- Screenshot -->
+                  <button class="mc-attach-btn" data-tooltip="Screenshot">
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="16" height="12" rx="2"/><circle cx="9" cy="9" r="3"/></svg>
+                  </button>
+                  <div class="mc-attach-sep"></div>
+                  <!-- Audio -->
+                  <button class="mc-attach-btn" data-tooltip="Audio message">
+                    <svg width="14" height="17" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="1" width="6" height="10" rx="3"/><path d="M1 9a6 6 0 0 0 12 0"/><line x1="7" y1="15" x2="7" y2="17"/><line x1="4" y1="17" x2="10" y2="17"/></svg>
+                  </button>
+                  <!-- Video -->
+                  <button class="mc-attach-btn" data-tooltip="Video message">
+                    <svg width="17" height="13" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="11" height="10" rx="2"/><path d="M12 5.5l5-3v9l-5-3"/></svg>
+                  </button>
+                  <!-- Code snippet -->
+                  <button class="mc-attach-btn" data-tooltip="Code snippet">
+                    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3L1 7l3 4"/><path d="M12 3l3 4-3 4"/><path d="M9.5 1.5l-3 11"/></svg>
+                  </button>
+                  <div class="mc-attach-sep"></div>
+                  <!-- More -->
+                  <button class="mc-attach-btn" data-tooltip="More options" style="font-size:16px;letter-spacing:1px;color:var(--text-muted);">···</button>
+                  <div class="mc-bottom-spacer"></div>
+                  <!-- Send -->
+                  <button class="mc-send-btn" onclick="sendMessage()">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 1L7 7M13 1L9 13 7 7 1 5z"/></svg>
+                    Send Message
+                  </button>
+                </div>
+
+              </div><!-- /mc-composer-inner -->
+            </div><!-- /mc-composer -->
+
+          <!-- ── THREAD PANEL ── -->
+          <div class="mc-thread-panel" id="mc-thread-panel">
+            <div class="mc-thread-panel-header">
+              <div>
+                <div class="mc-thread-panel-title">Thread</div>
+                <div class="mc-thread-panel-channel" id="mc-thread-channel">in Zoom Chat · Michael Fawler</div>
+              </div>
+              <button class="mc-thread-panel-close" onclick="closeThread()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>
+              </button>
+            </div>
+            <div class="mc-thread-panel-body" id="mc-thread-panel-body">
+              <!-- injected by openThread() -->
+            </div>
+            <div class="mc-thread-composer">
+              <div class="mc-thread-composer-inner">
+                <div class="mc-thread-composer-body" contenteditable="true" data-placeholder="Reply in thread…" id="mc-thread-input"></div>
+                <div class="mc-thread-composer-footer">
+                  <button class="mc-thread-send-btn" onclick="sendThreadReply()">
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 1L7 7M13 1L9 13 7 7 1 5z"/></svg>
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div><!-- /tab-messages -->
+
           <!-- ── EMAILS TAB ── -->
           <div id="tab-emails" class="tab-panel">
 
@@ -2537,8 +3706,8 @@
                     <input type="text" class="form-field input-smd" placeholder="Search emails..." style="padding-left:30px;width:220px;">
                   </div>
                   <button class="btn btn-default btn-smd">
-                    <svg class="filters-icon" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
-                    <span class="filters-label">Filters</span>
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-right:4px;"><line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+                    Filters
                   </button>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
@@ -2868,8 +4037,379 @@
       </div>
     </div>
 
+</div>
+
+<!-- ========== MESSAGES PAGE ========== -->
+<div id="messages-page">
+
+  <!-- Left sidebar: conversation list -->
+  <div class="msg-page-sidebar">
+    <!-- Clients section -->
+    <div class="msg-section" id="msg-section-clients">
+      <div class="msg-section-toggle" onclick="toggleMsgSection('clients')">
+        <svg class="msg-section-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 3.5l3 3 3-3"/></svg>
+        Clients
+      </div>
+      <div class="msg-section-items">
+        <div class="msg-conv-item active" onclick="selectMsgConv(this, 'TechStart Labs', 'client')">
+          <div class="msg-conv-avatar square" style="background-color:#1a3f80;">T</div>
+          <span class="msg-conv-name">TechStart Labs</span>
+          <span class="msg-conv-unread"></span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Adobe', 'client')">
+          <div class="msg-conv-avatar square" style="background-color:#eb1000;">A</div>
+          <span class="msg-conv-name">Adobe</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Stripe', 'client')">
+          <div class="msg-conv-avatar square" style="background-color:#6772e5;">S</div>
+          <span class="msg-conv-name">Stripe</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Notion', 'client')">
+          <div class="msg-conv-avatar square" style="background-color:#191919;">N</div>
+          <span class="msg-conv-name">Notion</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Linear', 'client')">
+          <div class="msg-conv-avatar square" style="background-color:#5e6ad2;">L</div>
+          <span class="msg-conv-name">Linear</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contacts section -->
+    <div class="msg-section" id="msg-section-contacts">
+      <div class="msg-section-toggle" onclick="toggleMsgSection('contacts')">
+        <svg class="msg-section-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 3.5l3 3 3-3"/></svg>
+        Contacts
+      </div>
+      <div class="msg-section-items">
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Michael Fawler', 'contact')">
+          <div class="msg-conv-avatar" style="background-color:#4c525a;">MF</div>
+          <span class="msg-conv-name">Michael Fawler</span>
+          <span class="msg-conv-unread"></span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Sarah Chen', 'contact')">
+          <div class="msg-conv-avatar" style="background-color:#2e7d32;">SC</div>
+          <span class="msg-conv-name">Sarah Chen</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'James Wilson', 'contact')">
+          <div class="msg-conv-avatar" style="background-color:#6a1b9a;">JW</div>
+          <span class="msg-conv-name">James Wilson</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Emily Rodriguez', 'contact')">
+          <div class="msg-conv-avatar" style="background-color:#c62828;">ER</div>
+          <span class="msg-conv-name">Emily Rodriguez</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'David Kim', 'contact')">
+          <div class="msg-conv-avatar" style="background-color:#0277bd;">DK</div>
+          <span class="msg-conv-name">David Kim</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Priya Nair', 'contact')">
+          <div class="msg-conv-avatar" style="background-color:#e65100;">PN</div>
+          <span class="msg-conv-name">Priya Nair</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects section -->
+    <div class="msg-section" id="msg-section-projects">
+      <div class="msg-section-toggle" onclick="toggleMsgSection('projects')">
+        <svg class="msg-section-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 3.5l3 3 3-3"/></svg>
+        Projects
+      </div>
+      <div class="msg-section-items">
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Website Redesign', 'project')">
+          <div class="msg-conv-avatar square" style="background-color:#22AD01;">W</div>
+          <span class="msg-conv-name">Website Redesign</span>
+          <span class="msg-conv-unread"></span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Brand Strategy', 'project')">
+          <div class="msg-conv-avatar square" style="background-color:#f57c00;">B</div>
+          <span class="msg-conv-name">Brand Strategy</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Q1 Planning', 'project')">
+          <div class="msg-conv-avatar square" style="background-color:#00838f;">Q</div>
+          <span class="msg-conv-name">Q1 Planning</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'Marketing Campaign', 'project')">
+          <div class="msg-conv-avatar square" style="background-color:#ad1457;">M</div>
+          <span class="msg-conv-name">Marketing Campaign</span>
+        </div>
+        <div class="msg-conv-item" onclick="selectMsgConv(this, 'API Integration', 'project')">
+          <div class="msg-conv-avatar square" style="background-color:#455a64;">A</div>
+          <span class="msg-conv-name">API Integration</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: active chat panel -->
+  <div class="msg-page-main">
+    <div class="mc-chat-wrap" id="msg-page-chat-wrap">
+      <!-- Chat header -->
+      <div class="mc-header">
+        <div class="mc-header-avatar">
+          <div id="msg-active-avatar" class="msg-conv-avatar square" style="width:32px;height:32px;background-color:#1a3f80;">T</div>
+        </div>
+        <div class="mc-header-info">
+          <div class="mc-header-name" id="msg-active-name">TechStart Labs</div>
+          <div class="mc-header-subtitle" id="msg-active-subtitle">Client</div>
+        </div>
+        <div class="mc-header-actions">
+          <div class="mc-member-pill" id="msg-member-pill" title="View members">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3 2.3-5 5-5s5 2 5 5"/><circle cx="12" cy="5" r="2.2"/><path d="M14 13c.4-.7.6-1.5.6-2.3 0-1.8-1.2-3.3-2.6-3.7"/></svg>
+            <span id="msg-member-count">8</span>
+          </div>
+          <div class="mc-header-divider"></div>
+          <button class="mc-header-action-btn" title="Search messages">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M11 11l2.5 2.5"/></svg>
+          </button>
+          <button class="mc-header-action-btn" title="More options">
+            <svg width="16" height="4" viewBox="0 0 16 4" fill="currentColor"><circle cx="2" cy="2" r="1.8"/><circle cx="8" cy="2" r="1.8"/><circle cx="14" cy="2" r="1.8"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable chat area -->
+      <div class="mc-chat-area" id="msg-page-chat-area">
+
+        <div class="mc-date-sep"><span class="mc-date-sep-label">Jan 13</span></div>
+
+        <!-- Michael Fawler — inbound -->
+        <div class="mc-group">
+          <div class="mc-group-avatar" style="background-color:#4c525a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">MF</div>
+          <div class="mc-group-body">
+            <div class="mc-group-meta">
+              <span class="mc-group-name">Michael Fawler</span>
+              <span class="mc-group-time">Jan 13, 6:23 PM</span>
+            </div>
+            <div class="mc-bubbles">
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--them">Hi Tom! Quick question about the project scope — are we still on track for the Q1 deadline?</div>
+                <div class="mc-hover-actions">
+                  <button class="mc-action-btn" title="React">😊</button>
+                  <button class="mc-action-btn" title="Reply"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg></button>
+                  <button class="mc-action-btn" title="More">···</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tom — outbound -->
+        <div class="mc-group mc-group--me">
+          <div class="mc-group-avatar--placeholder"></div>
+          <div class="mc-group-body">
+            <div class="mc-group-meta">
+              <span class="mc-group-name">Tom Bradley</span>
+              <span class="mc-group-time">Jan 13, 6:31 PM</span>
+            </div>
+            <div class="mc-bubbles">
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--me">Yes, we're on track! I'll send you a status update by EOD Friday.</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mc-date-sep"><span class="mc-date-sep-label">Feb 18</span></div>
+
+        <!-- Michael — inbound, multi-bubble + thread -->
+        <div class="mc-group">
+          <div class="mc-group-avatar" style="background-color:#4c525a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">MF</div>
+          <div class="mc-group-body">
+            <div class="mc-group-meta">
+              <span class="mc-group-name">Michael Fawler</span>
+              <span class="mc-group-time">Feb 18, 2:52 PM</span>
+            </div>
+            <div class="mc-bubbles">
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--them">Hi Tom!</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="Reply"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg></button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--them">Are you free for a couple of minutes?</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="Reply"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg></button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--them">Just need to check the Q1 retainer scope together</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="Reply"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg></button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+            </div>
+            <div class="mc-thread-bar">
+              <span class="mc-thread-replies">↩ 2 replies</span>
+              <button class="mc-summarize-btn">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1l1.5 3h3l-2.5 1.8.9 3L5 7.2 2.1 8.8l.9-3L.5 4h3z" fill="#22AD01"/></svg>
+                Summarize
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tom — outbound reply -->
+        <div class="mc-group mc-group--me">
+          <div class="mc-group-avatar--placeholder"></div>
+          <div class="mc-group-body">
+            <div class="mc-group-meta">
+              <span class="mc-group-name">Tom Bradley</span>
+              <span class="mc-group-time">Feb 18, 5:38 PM</span>
+            </div>
+            <div class="mc-bubbles">
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--me">Hey Michael! Yes</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--me">I'm available :)</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mc-date-sep"><span class="mc-date-sep-label">Feb 24</span></div>
+
+        <!-- Michael — file attachment -->
+        <div class="mc-group">
+          <div class="mc-group-avatar" style="background-color:#4c525a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">MF</div>
+          <div class="mc-group-body">
+            <div class="mc-group-meta">
+              <span class="mc-group-name">Michael Fawler</span>
+              <span class="mc-group-time">Feb 24, 8:18 AM</span>
+            </div>
+            <div class="mc-bubbles">
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--them">Hey Tom! Can you review the brand refresh brief? Still waiting on the final sign-off to move to the next phase.</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="Reply"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg></button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+              <div class="mc-bubble-wrap">
+                <div class="mc-file-bubble">
+                  <div class="mc-file-icon">
+                    <svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6z"/><polyline points="9 1 9 6 14 6"/></svg>
+                  </div>
+                  <div class="mc-file-info">
+                    <div class="mc-file-name">Brand_Refresh_Brief.pdf</div>
+                    <div class="mc-file-size">2.4 MB</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mc-thread-bar">
+              <span class="mc-thread-replies">↩ 2 replies</span>
+              <button class="mc-summarize-btn">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1l1.5 3h3l-2.5 1.8.9 3L5 7.2 2.1 8.8l.9-3L.5 4h3z" fill="#22AD01"/></svg>
+                Summarize
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mc-date-sep"><span class="mc-date-sep-label">Today</span></div>
+
+        <!-- Tom — today outbound -->
+        <div class="mc-group mc-group--me">
+          <div class="mc-group-avatar--placeholder"></div>
+          <div class="mc-group-body">
+            <div class="mc-group-meta">
+              <span class="mc-group-name">Tom Bradley</span>
+              <span class="mc-group-time">Today, 9:40 AM</span>
+            </div>
+            <div class="mc-bubbles">
+              <div class="mc-bubble-wrap">
+                <div class="mc-bubble mc-bubble--me">Hello! What's the status of this project?</div>
+                <div class="mc-hover-actions"><button class="mc-action-btn" title="React">😊</button><button class="mc-action-btn" title="More">···</button></div>
+              </div>
+            </div>
+            <div class="mc-seen">Seen · 9:41 AM</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Composer — identical pattern to contact Messages tab -->
+      <div class="mc-composer">
+        <div class="mc-composer-inner">
+
+          <!-- Formatting toolbar -->
+          <div class="mc-fmt-toolbar">
+            <button class="mc-fmt-btn" title="Bold" onclick="document.execCommand('bold')"><strong>B</strong></button>
+            <button class="mc-fmt-btn" title="Italic" onclick="document.execCommand('italic')"><em style="font-style:italic;">I</em></button>
+            <button class="mc-fmt-btn" title="Underline" onclick="document.execCommand('underline')"><span style="text-decoration:underline;">U</span></button>
+            <button class="mc-fmt-btn" title="Strikethrough" onclick="document.execCommand('strikeThrough')"><span style="text-decoration:line-through;">S</span></button>
+            <button class="mc-fmt-size" title="Font size">
+              Aa
+              <svg width="8" height="5" viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 1l3 3 3-3"/></svg>
+            </button>
+            <div class="mc-fmt-sep"></div>
+            <button class="mc-fmt-btn" title="Link">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5.5 7.5a3.5 3.5 0 0 0 5 0l1.5-1.5a3.536 3.536 0 0 0-5-5L6.25 1.75"/><path d="M8.5 6.5a3.5 3.5 0 0 0-5 0L2 8a3.536 3.536 0 0 0 5 5l.75-.75"/></svg>
+            </button>
+            <button class="mc-fmt-btn" title="Ordered list">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="5" y1="3" x2="12" y2="3"/><line x1="5" y1="7" x2="12" y2="7"/><line x1="5" y1="11" x2="12" y2="11"/><text x="1" y="4" font-size="4" fill="currentColor" stroke="none">1</text><text x="1" y="8" font-size="4" fill="currentColor" stroke="none">2</text><text x="1" y="12" font-size="4" fill="currentColor" stroke="none">3</text></svg>
+            </button>
+            <button class="mc-fmt-btn" title="Bullet list">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="2.5" cy="3" r="1" fill="currentColor" stroke="none"/><circle cx="2.5" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="2.5" cy="11" r="1" fill="currentColor" stroke="none"/><line x1="5" y1="3" x2="12" y2="3"/><line x1="5" y1="7" x2="12" y2="7"/><line x1="5" y1="11" x2="12" y2="11"/></svg>
+            </button>
+            <div class="mc-fmt-sep"></div>
+            <button class="mc-fmt-btn" title="Code">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4L1 7l3 3"/><path d="M10 4l3 3-3 3"/></svg>
+            </button>
+          </div>
+
+          <!-- Message body -->
+          <div class="mc-composer-body" id="msg-page-composer" contenteditable="true" data-placeholder="Message TechStart Labs..."></div>
+
+          <!-- AI suggested replies (inside editor, shown contextually) -->
+          <div class="mc-composer-suggestions" id="msg-page-suggestions" style="display:none;">
+            <div class="mc-cs-label">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6L11 6 7.2 7.4 6 11 4.8 7.4 1 6l3.8-1.4z" fill="#2e7d32"/></svg>
+              AI
+            </div>
+            <div class="mc-cs-divider"></div>
+            <button class="mc-cs-chip" id="msg-page-chip-1" onclick="useQuickReply(this)"></button>
+            <button class="mc-cs-chip" id="msg-page-chip-2" onclick="useQuickReply(this)" style="display:none;"></button>
+            <button class="mc-cs-chip" id="msg-page-chip-3" onclick="useQuickReply(this)" style="display:none;"></button>
+            <button class="mc-cs-dismiss" title="Dismiss" onclick="this.closest('.mc-composer-suggestions').style.display='none';"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg></button>
+          </div>
+
+        </div>
+
+        <!-- Bottom attach/send bar -->
+        <div class="mc-bottom-bar">
+          <button class="mc-attach-btn" data-tooltip="Emoji">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="8.5"/><path d="M6.5 12.5c.9 1.2 2.2 2 3.5 2s2.6-.8 3.5-2"/><circle cx="7.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="12.5" cy="8.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </button>
+          <button class="mc-attach-btn" data-tooltip="GIF" style="font-size:11px;font-weight:700;color:var(--text-muted);width:36px;">GIF</button>
+          <button class="mc-attach-btn" data-tooltip="Attach file">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.5l-7.5 7.5a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-7.5 7.5a2 2 0 0 1-2.5-3L11 5"/></svg>
+          </button>
+          <button class="mc-attach-btn" data-tooltip="Screenshot">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="16" height="12" rx="2"/><circle cx="9" cy="9" r="3"/></svg>
+          </button>
+          <div class="mc-attach-sep"></div>
+          <button class="mc-attach-btn" data-tooltip="Audio message">
+            <svg width="14" height="17" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="1" width="6" height="10" rx="3"/><path d="M1 9a6 6 0 0 0 12 0"/><line x1="7" y1="15" x2="7" y2="17"/><line x1="4" y1="17" x2="10" y2="17"/></svg>
+          </button>
+          <button class="mc-attach-btn" data-tooltip="Video message">
+            <svg width="17" height="13" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="11" height="10" rx="2"/><path d="M12 5.5l5-3v9l-5-3"/></svg>
+          </button>
+          <button class="mc-attach-btn" data-tooltip="Code snippet">
+            <svg width="16" height="14" viewBox="0 0 16 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3L1 7l3 4"/><path d="M12 3l3 4-3 4"/><path d="M9.5 1.5l-3 11"/></svg>
+          </button>
+          <div class="mc-attach-sep"></div>
+          <button class="mc-attach-btn" data-tooltip="More options" style="font-size:16px;letter-spacing:1px;color:var(--text-muted);">···</button>
+          <div class="mc-bottom-spacer"></div>
+          <button class="mc-send-btn" onclick="sendMsgPageMessage()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 1L7 7M13 1L9 13 7 7 1 5z"/></svg>
+            Send Message
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+  </div><!-- /page-content -->
 
 <!-- ====== EMAIL DETAIL PANEL ====== -->
 <div id="email-detail-panel" class="email-detail-panel">
@@ -3192,6 +4732,309 @@
     document.getElementById('tab-' + name).classList.add('active');
     document.getElementById('tab-btn-' + name).classList.add('active');
     closeAllDropdowns();
+    // Messages tab: remove content padding and switch to flex layout
+    var mainContent = document.querySelector('.contact-main-content');
+    if (name === 'messages') {
+      mainContent.classList.add('messages-mode');
+      // Scroll chat to bottom
+      setTimeout(function() {
+        var chat = document.getElementById('mc-chat-area');
+        if (chat) chat.scrollTop = chat.scrollHeight;
+      }, 50);
+    } else {
+      mainContent.classList.remove('messages-mode');
+    }
+  }
+
+  // ── Send message ──
+  function sendMessage() {
+    var input = document.getElementById('mc-input');
+    var text = input.innerText.trim();
+    if (!text) return;
+    var chat = document.getElementById('mc-chat-area');
+    // Date sep for today if needed
+    var todaySeps = chat.querySelectorAll('.mc-date-sep-label');
+    var hasTodaySep = false;
+    todaySeps.forEach(function(s) { if (s.textContent === 'Today') hasTodaySep = true; });
+    // Build message bubble
+    var now = new Date();
+    var timeStr = 'Today, ' + now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+    var group = document.createElement('div');
+    group.className = 'mc-group mc-group--me';
+    group.innerHTML = '<div class="mc-group-avatar--placeholder"></div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta" style="flex-direction:row-reverse;">' +
+          '<span class="mc-group-name">Tom Bradley</span>' +
+          '<span class="mc-group-time">' + timeStr + '</span>' +
+        '</div>' +
+        '<div class="mc-bubbles">' +
+          '<div class="mc-bubble-wrap">' +
+            '<div class="mc-bubble mc-bubble--me">' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' +
+            '<div class="mc-hover-actions">' +
+              '<button class="mc-action-btn" title="React">😊</button>' +
+              '<button class="mc-action-btn" title="More">···</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    chat.appendChild(group);
+    input.innerHTML = '';
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  // ── Thread data ──
+  // Suggestions config per conversation (for Messages page)
+  var CONV_SUGGESTIONS = {
+    'Michael Fawler':       { show: true,  chips: ['Sounds good, 3pm works!', 'Can we do 4pm instead?', 'I\'ll send the invite now'] },
+    'Emily Rodriguez':      { show: false, chips: [] },
+    'TechStart Labs':       { show: true,  chips: ['Sending the MSA now!', 'Happy to jump on a call', 'I\'ll have it ready by EOD'] },
+    'Adobe':                { show: true,  chips: ['Sending the proposal now', 'Let\'s book a call this week', 'I\'ll update the CRM now'] },
+    'Stripe':               { show: true,  chips: ['SOW is on its way!', 'I\'ll send it over now', 'Scheduling the kick-off call'] },
+    'Notion':               { show: true,  chips: ['Proposal is ready to send', 'I\'ll get that over to you today', 'Sounds great — let\'s move forward'] },
+    'Linear':               { show: true,  chips: ['I\'ll get the proposal to you today', 'Happy to schedule a call', 'Sending the contract now'] },
+    'James Wilson':         { show: true,  chips: ['Sending proposal + contract now!', 'I\'ll have it ready by EOD', 'Let\'s schedule a kick-off call'] },
+    'Sarah Chen':           { show: true,  chips: ['Sending the proposal now', 'I\'ll draft the NDA today', 'I\'ll add it to the calendar'] },
+    'Marketing Campaign':   { show: true,  chips: ['Sending contract + invoice today!', 'I\'ll get the kick-off booked', 'On it — sending now'] },
+    'API Integration':      { show: true,  chips: ['Sending contract + invoice now!', 'I\'ll get it to you today', 'Scheduling the onboarding call'] }
+  };
+
+  var threadData = {
+    10: {
+      channel: 'Messages · Michael Fawler',
+      original: {
+        name: 'Michael Fawler',
+        avatar: null, color: '#4c525a', initials: 'MF',
+        time: 'Today, 8:55 AM',
+        text: 'Tom, received the proposal — looks solid. One question on the retainer structure on page 4.'
+      },
+      replies: [
+        { name: 'Tom Bradley', color: '#3b82f6', initials: 'TB', time: 'Today, 9:05 AM', text: 'Of course — page 4 covers the monthly retainer: 20h strategy + 10h execution at $8,800/mo. Happy to walk through the breakdown.' },
+        { name: 'Michael Fawler', color: '#4c525a', initials: 'MF', time: 'Today, 9:10 AM', text: 'Got it. My main concern is the minimum commitment period — we\'d prefer month-to-month to start.' },
+        { name: 'Tom Bradley', color: '#3b82f6', initials: 'TB', time: 'Today, 9:18 AM', text: 'Totally fair — we can do a 3-month pilot with no lock-in after that. I\'ll update the proposal.' }
+      ]
+    },
+    1: {
+      channel: 'Zoom Chat · Michael Fawler',
+      original: {
+        name: 'Michael Fawler',
+        avatar: 'https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png',
+        time: 'Feb 18, 2:52 PM',
+        text: 'Just need to check the Q1 retainer scope together'
+      },
+      replies: [
+        { name: 'Tom Bradley', avatar: 'https://ui-avatars.com/api/?name=TB&size=250&background=3b82f6&color=ffffff&format=png', time: 'Feb 18, 4:01 PM', text: 'Sure — the scope doc says 20h/month for strategy, 10h for execution. Does that still match what you had in mind?' },
+        { name: 'Michael Fawler', avatar: 'https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png', time: 'Feb 18, 6:10 PM', text: 'Yes, that works. Let\'s keep it as is and revisit in April.' }
+      ]
+    },
+    2: {
+      channel: 'Zoom Chat · Michael Fawler',
+      original: {
+        name: 'Michael Fawler',
+        avatar: 'https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png',
+        time: 'Feb 24, 8:18 AM',
+        text: 'Hey Tom! Can you review the brand refresh brief? Still waiting on the final sign-off to move to the next phase.'
+      },
+      replies: [
+        { name: 'Tom Bradley', avatar: 'https://ui-avatars.com/api/?name=TB&size=250&background=3b82f6&color=ffffff&format=png', time: 'Feb 24, 2:45 PM', text: 'Just opened it — looks solid overall. A few minor comments on the color palette section, will leave notes in the doc.' },
+        { name: 'Michael Fawler', avatar: 'https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png', time: 'Feb 25, 11:30 AM', text: 'Great, I\'ll address them today and send over the revised version. Should be ready for final sign-off by EOD.' }
+      ]
+    },
+    3: {
+      channel: 'Zoom Chat · Michael Fawler',
+      original: {
+        name: 'Michael Fawler',
+        avatar: 'https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png',
+        time: 'Today, 9:05 AM',
+        text: 'Hey Tom — any updates on the brand brief sign-off? We\'re waiting on that to kick off phase 2.'
+      },
+      replies: []
+    },
+    20: {
+      channel: 'Messages · TechStart Labs',
+      original: {
+        name: 'Jessica Moore', color: '#1a3f80', initials: 'JM',
+        time: 'Feb 18, 2:52 PM',
+        text: 'Just need to check the Q1 retainer scope together'
+      },
+      replies: [
+        { name: 'Tom Bradley', color: '#3b82f6', initials: 'TB', time: 'Feb 18, 5:38 PM', text: 'Sure — the scope is 20h strategy + 10h execution per month. Aligns with what we agreed in December.' },
+        { name: 'Jessica Moore', color: '#1a3f80', initials: 'JM', time: 'Feb 18, 5:44 PM', text: 'Perfect, that\'s what I had too. Just wanted to confirm before the billing cycle closes.' }
+      ]
+    },
+    21: {
+      channel: 'Messages · TechStart Labs',
+      original: {
+        name: 'Michael Fawler', color: '#4c525a', initials: 'MF',
+        time: 'Feb 24, 8:18 AM',
+        text: 'Hey Tom! Can you review the brand refresh brief? Still waiting on the final sign-off to move to the next phase.'
+      },
+      replies: [
+        { name: 'Tom Bradley', color: '#3b82f6', initials: 'TB', time: 'Feb 24, 11:52 AM', text: 'Just went through it — strong direction overall. Left a few notes on the color palette section in the doc.' },
+        { name: 'Michael Fawler', color: '#4c525a', initials: 'MF', time: 'Feb 24, 1:30 PM', text: 'Thanks! Will address by EOD and send the revised version for final sign-off.' }
+      ]
+    },
+    22: {
+      channel: 'Messages · Linear',
+      original: {
+        name: 'Dana Park', color: '#5e6ad2', initials: 'DP',
+        time: 'Feb 22, 4:00 PM',
+        text: 'The LIN-204 bug is still in review. Dev says it\'s blocked on a design decision — can you unblock?'
+      },
+      replies: [
+        { name: 'Tom Bradley', color: '#3b82f6', initials: 'TB', time: 'Feb 22, 4:18 PM', text: 'Connecting with the design lead now — Mia is on it. Should have a decision before standup.' },
+        { name: 'Dana Park', color: '#5e6ad2', initials: 'DP', time: 'Feb 22, 5:01 PM', text: 'Great, Mia confirmed. Dev can proceed. Thanks for the fast turnaround.' }
+      ]
+    }
+  };
+
+  function _threadAvStyle(r) {
+    if (r.avatar) return 'background-image:url(\'' + r.avatar + '\');';
+    return 'background-color:' + (r.color||'#888') + ';color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;';
+  }
+
+  function openThread(id) {
+    var data = threadData[id];
+    if (!data) return;
+    var panel = document.getElementById('mc-thread-panel');
+    var body = document.getElementById('mc-thread-panel-body');
+    var channel = document.getElementById('mc-thread-channel');
+    if (channel) channel.textContent = 'in ' + data.channel;
+    var orig = data.original;
+    var origAvStyle = _threadAvStyle(orig);
+    var html = '<div class="mc-thread-orig">' +
+      '<div class="mc-thread-orig-meta">' +
+        '<div class="mc-thread-orig-avatar" style="' + origAvStyle + '">' + (orig.avatar ? '' : (orig.initials||'')) + '</div>' +
+        '<span class="mc-thread-orig-name">' + orig.name + '</span>' +
+        '<span class="mc-thread-orig-time">' + orig.time + '</span>' +
+      '</div>' +
+      '<div class="mc-thread-orig-text">' + orig.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' +
+    '</div>';
+    if (data.replies.length > 0) {
+      html += '<div class="mc-thread-replies-header">' + data.replies.length + ' ' + (data.replies.length === 1 ? 'reply' : 'replies') + '</div>';
+      data.replies.forEach(function(r) {
+        var avStyle = _threadAvStyle(r);
+        html += '<div class="mc-thread-reply">' +
+          '<div class="mc-thread-reply-avatar" style="' + avStyle + '">' + (r.avatar ? '' : (r.initials||'')) + '</div>' +
+          '<div class="mc-thread-reply-body">' +
+            '<div class="mc-thread-reply-meta">' +
+              '<span class="mc-thread-reply-name">' + r.name + '</span>' +
+              '<span class="mc-thread-reply-time">' + r.time + '</span>' +
+            '</div>' +
+            '<div class="mc-thread-reply-text">' + r.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' +
+          '</div>' +
+        '</div>';
+      });
+    } else {
+      html += '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;">No replies yet. Be the first to reply!</div>';
+    }
+    body.innerHTML = html;
+    panel.classList.add('open');
+    setTimeout(function() { var inp = document.getElementById('mc-thread-input'); if (inp) inp.focus(); }, 250);
+  }
+
+  function closeThread() {
+    document.getElementById('mc-thread-panel').classList.remove('open');
+  }
+
+  function sendThreadReply() {
+    var input = document.getElementById('mc-thread-input');
+    var text = input ? input.innerText.trim() : '';
+    if (!text) return;
+    var body = document.getElementById('mc-thread-panel-body');
+    var now = new Date();
+    var timeStr = 'Today, ' + now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+    // Ensure replies header exists
+    var existingHeader = body.querySelector('.mc-thread-replies-header');
+    var noReplyMsg = body.querySelector('[style*="No replies"]');
+    if (noReplyMsg) noReplyMsg.remove();
+    if (!existingHeader) {
+      var header = document.createElement('div');
+      header.className = 'mc-thread-replies-header';
+      header.textContent = '1 reply';
+      body.appendChild(header);
+    } else {
+      var count = body.querySelectorAll('.mc-thread-reply').length + 1;
+      existingHeader.textContent = count + (count === 1 ? ' reply' : ' replies');
+    }
+    var replyDiv = document.createElement('div');
+    replyDiv.className = 'mc-thread-reply';
+    replyDiv.innerHTML = '<div class="mc-thread-reply-avatar" style="background-image:url(\'https://ui-avatars.com/api/?name=TB&size=250&background=3b82f6&color=ffffff&format=png\');"></div>' +
+      '<div class="mc-thread-reply-body">' +
+        '<div class="mc-thread-reply-meta"><span class="mc-thread-reply-name">Tom Bradley</span><span class="mc-thread-reply-time">' + timeStr + '</span></div>' +
+        '<div class="mc-thread-reply-text">' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' +
+      '</div>';
+    body.appendChild(replyDiv);
+    input.innerHTML = '';
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function toggleAiActions(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var opening = !el.classList.contains('mc-ai-actions--open');
+    // Close all other open dropdowns first
+    document.querySelectorAll('.mc-ai-actions--open').forEach(function(other) {
+      if (other !== el) other.classList.remove('mc-ai-actions--open');
+    });
+    if (opening) {
+      var rect = el.getBoundingClientRect();
+      var itemsEl = el.querySelector('.mc-ai-actions-items');
+      var popoverH = itemsEl ? Math.max(itemsEl.scrollHeight, 120) : 120;
+      // Use the chat container's bottom as the boundary, not the window
+      var chatArea = el.closest('.mc-chat-area');
+      var boundary = chatArea ? chatArea.getBoundingClientRect().bottom : window.innerHeight;
+      var spaceBelow = boundary - rect.bottom;
+      if (spaceBelow >= popoverH + 16) {
+        el.classList.add('mc-ai-actions--drop-down');
+      } else {
+        el.classList.remove('mc-ai-actions--drop-down');
+      }
+    }
+    el.classList.toggle('mc-ai-actions--open');
+  }
+
+  // Click-away: close any open AI action dropdown
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.mc-ai-actions')) {
+      document.querySelectorAll('.mc-ai-actions--open').forEach(function(el) {
+        el.classList.remove('mc-ai-actions--open');
+      });
+    }
+  });
+
+  function useQuickReply(btn) {
+    var text = btn.textContent.trim();
+    // Try tab-messages composer first, then messages-page composer
+    var input = document.getElementById('mc-input') || document.getElementById('msg-page-composer');
+    if (input) {
+      input.innerText = text;
+      input.focus();
+      var range = document.createRange();
+      var sel = window.getSelection();
+      range.selectNodeContents(input);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    // Hide the suggestions row after use
+    var suggestions = document.getElementById('mc-composer-suggestions') || document.getElementById('msg-page-suggestions');
+    if (suggestions) suggestions.style.display = 'none';
+  }
+
+  // ── Zoom connect / dismiss banner ──
+  function connectZoom() {
+    var banner = document.getElementById('zoom-connect-banner');
+    if (banner) {
+      banner.style.background = '#f0fff5';
+      banner.style.borderColor = '#a8e6a3';
+      banner.querySelector('.mc-zoom-banner-text').innerHTML = '<strong>Zoom Chat connected</strong> — messages with Michael Fawler are now synced in real time.';
+      var btn = banner.querySelector('.mc-zoom-banner-btn');
+      if (btn) btn.style.display = 'none';
+    }
+  }
+  function dismissZoomBanner() {
+    var banner = document.getElementById('zoom-connect-banner');
+    if (banner) banner.style.display = 'none';
   }
 
   // ── Activity "+" dropdown ──
@@ -4248,34 +6091,610 @@
     document.getElementById('delete-note-modal').classList.add('hidden');
   }
 
-  /* ── Mobile sidenav toggle ── */
-  function toggleMobileNav() {
-    var container = document.querySelector('.sidenav-container');
-    var backdrop = document.getElementById('mobile-sidebar-backdrop');
-    var isOpen = container.classList.toggle('mobile-open');
-    backdrop.classList.toggle('active', isOpen);
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+/* ── Messages page ── */
+function showMessagesPage() {
+  var contactPage = document.querySelector('.contact-page-body');
+  var messagesPage = document.getElementById('messages-page');
+  if (contactPage) contactPage.style.display = 'none';
+  if (messagesPage) {
+    // Align left edge to the current sidebar width (collapsed = 60px, expanded = 275px)
+    var isCollapsed = document.querySelector('.sidenav-container--collapsed');
+    messagesPage.style.left = isCollapsed ? '60px' : '275px';
+    messagesPage.classList.add('active');
+    // Scroll chat to bottom after paint
+    setTimeout(function() {
+      var area = document.getElementById('msg-page-chat-area');
+      if (area) area.scrollTop = area.scrollHeight;
+    }, 30);
   }
-  function closeMobileNav() {
-    document.querySelector('.sidenav-container').classList.remove('mobile-open');
-    document.getElementById('mobile-sidebar-backdrop').classList.remove('active');
-    document.body.style.overflow = '';
+  document.querySelectorAll('.sidenav-features-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  document.getElementById('sidenav-messages-btn').classList.add('active');
+  // Update breadcrumb to "Messages"
+  var breadcrumb = document.querySelector('.navigation-breadcumb');
+  if (breadcrumb) {
+    breadcrumb.innerHTML = '<div class="navigation-breadcumb-item"><span class="overflow-ellipsis">Messages</span></div>';
   }
+}
 
-  /* ── Sidebar collapse/expand ── */
-  function toggleSidebar() {
-    const container = document.querySelector('.sidenav-container');
-    const outer = document.getElementById('outer-wrapper');
-    const btn = document.getElementById('sidebar-toggle');
-    const isCollapsed = container.classList.toggle('sidenav-container--collapsed');
-    if (isCollapsed) {
-      outer.classList.remove('with-sidebar-expanded');
-      btn.setAttribute('data-tooltip', 'Show sidebar');
+function showContactPage() {
+  var contactPage = document.querySelector('.contact-page-body');
+  var messagesPage = document.getElementById('messages-page');
+  if (messagesPage) messagesPage.classList.remove('active');
+  if (contactPage) contactPage.style.display = '';
+  document.querySelectorAll('.sidenav-features-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  document.querySelector('.sidenav-features-item-icon.contact').closest('.sidenav-features-item').classList.add('active');
+  // Restore breadcrumb
+  var breadcrumb = document.querySelector('.navigation-breadcumb');
+  if (breadcrumb) {
+    breadcrumb.innerHTML = '<a href="#" class="navigation-breadcumb-item navigation-breadcumb-item--link" onclick="showContactPage(); return false;"><span class="overflow-ellipsis">Contacts</span></a><div class="navigation-breadcumb-separator">/</div><div class="navigation-breadcumb-item"><span class="overflow-ellipsis">Michael Fawler</span></div>';
+  }
+}
+
+function toggleMsgSection(name) {
+  var section = document.getElementById('msg-section-' + name);
+  if (section) section.classList.toggle('msg-section--collapsed');
+}
+
+/* ── Per-channel member counts ── */
+var CONV_MEMBERS = {
+  'TechStart Labs': 8, 'Adobe': 12, 'Stripe': 5, 'Notion': 6, 'Linear': 4,
+  'Michael Fawler': 2, 'Sarah Chen': 2, 'James Wilson': 2, 'Emily Rodriguez': 2,
+  'Marketing Campaign': 7, 'API Integration': 5
+};
+
+/* ── Avatar colour map ── */
+var CONV_COLORS = {
+  'TechStart Labs': '#1a3f80', 'Adobe': '#eb1000', 'Stripe': '#6772e5',
+  'Notion': '#191919', 'Linear': '#5e6ad2',
+  'Michael Fawler': '#4c525a', 'Sarah Chen': '#2e7d32', 'James Wilson': '#6a1b9a',
+  'Emily Rodriguez': '#c62828', 'Marketing Campaign': '#ad1457', 'API Integration': '#455a64'
+};
+
+/* ── Chat content helpers ── */
+function _act(me) {
+  var react = '<button class="mc-action-btn" title="React">😊</button>';
+  var reply = '<button class="mc-action-btn" title="Reply"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3L2 6l3 3"/><path d="M2 6h6a3 3 0 0 1 3 3v2"/></svg></button>';
+  var more = '<button class="mc-action-btn" title="More">···</button>';
+  return '<div class="mc-hover-actions">' + react + (me ? '' : reply) + more + '</div>';
+}
+function _bub(text, me) {
+  return '<div class="mc-bubble-wrap"><div class="mc-bubble mc-bubble--' + (me ? 'me' : 'them') + '">' + text + '</div>' + _act(me) + '</div>';
+}
+function _grp(name, initials, color, time, texts, me) {
+  var av = me ? '<div class="mc-group-avatar--placeholder"></div>'
+              : '<div class="mc-group-avatar" style="background-color:' + color + ';color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">' + initials + '</div>';
+  return '<div class="mc-group' + (me ? ' mc-group--me' : '') + '">' + av +
+    '<div class="mc-group-body"><div class="mc-group-meta"><span class="mc-group-name">' + name + '</span><span class="mc-group-time">' + time + '</span></div>' +
+    '<div class="mc-bubbles">' + texts.map(function(t) { return _bub(t, me); }).join('') + '</div></div></div>';
+}
+function _sep(label) { return '<div class="mc-date-sep"><span class="mc-date-sep-label">' + label + '</span></div>'; }
+function _seen(t) { return '<div class="mc-seen">Seen · ' + t + '</div>'; }
+
+/* Thread bar helper — goes inside a .mc-group-body after .mc-bubbles */
+function _threadBar(threadId, count, lastTime, av1color, av2color) {
+  var av1 = '<div class="mc-thread-avatar-mini" style="background-color:' + av1color + ';color:white;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;"></div>';
+  var av2 = av2color ? '<div class="mc-thread-avatar-mini" style="background-color:' + av2color + ';color:white;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;margin-left:-6px;"></div>' : '';
+  return '<div class="mc-thread-bar" onclick="openThread(' + threadId + ')">' +
+    '<div class="mc-thread-avatar-stack">' + av1 + av2 + '</div>' +
+    '<span class="mc-thread-replies">' + count + ' repl' + (count === 1 ? 'y' : 'ies') + '</span>' +
+    '<span style="font-size:11px;color:var(--text-muted);">Last reply ' + lastTime + '</span>' +
+    '<button class="mc-summarize-btn" onclick="event.stopPropagation()"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M2 6h5M2 9h3"/></svg>Summarize</button>' +
+  '</div>';
+}
+/* Multi-action AI block (collapsed by default) */
+function _aiActions(id, items) {
+  var SVG_STAR = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6L11 6 7.2 7.4 6 11 4.8 7.4 1 6l3.8-1.4z" fill="#2e7d32"/></svg>';
+  var SVG_CHEV = '<svg class="mc-ai-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#2e7d32" stroke-width="1.8" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></svg>';
+  var SVG_ARR  = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg>';
+  var SVG_X    = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg>';
+  var ICONS = {
+    email:    '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="12" height="9" rx="1.5"/><path d="M1 5l6 4 6-4"/></svg>',
+    task:     '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="1.5"/><path d="M4 6h6M4 8.5h4"/></svg>',
+    cal:      '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="2"/><path d="M1 5h12"/><path d="M5 2v3M9 2v3"/></svg>',
+    note:     '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h8a1 1 0 0 1 1 1v8l-3 2H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M4 5h6M4 7.5h4"/></svg>',
+    invoice:  '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="1" width="10" height="12" rx="1.5"/><path d="M5 4h4M5 6.5h4M5 9h2"/><path d="M8.5 8.5l1.5 1.5"/></svg>',
+    contract: '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h6l3 3v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M9 2v3h3"/><path d="M5 7h4M5 9.5h2.5"/></svg>',
+    proposal: '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="1.5"/><path d="M4 5.5h6M4 8h4"/><circle cx="10.5" cy="8" r="0.5" fill="currentColor" stroke="none"/></svg>',
+    crm:      '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="4.5" r="2"/><path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>'
+  };
+  var html = '<div class="mc-ai-actions" id="' + id + '">' +
+    '<div class="mc-ai-actions-header" onclick="toggleAiActions(\'' + id + '\')">' +
+      '<div class="mc-ai-actions-label">' + SVG_STAR + 'AI Suggested Actions<span class="mc-ai-count-badge">' + items.length + '</span></div>' +
+      '<div class="mc-ai-header-right">' + SVG_CHEV +
+        '<button class="mc-ai-dismiss-all" onclick="document.getElementById(\'' + id + '\').style.display=\'none\';event.stopPropagation();">Dismiss</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="mc-ai-actions-items">';
+  items.forEach(function(item) {
+    html += '<div class="mc-ai-action-item">' +
+      '<div class="mc-ai-action-icon">' + (ICONS[item.icon] || ICONS.task) + '</div>' +
+      '<div class="mc-ai-action-body">' +
+        '<div class="mc-ai-action-title">' + item.title + '</div>' +
+        '<div class="mc-ai-action-subtitle">' + item.sub + '</div>' +
+      '</div>' +
+      '<div class="mc-ai-action-right">' +
+        '<div class="mc-ai-action-arrow">' + SVG_ARR + '</div>' +
+        '<button class="mc-ai-action-dismiss" onclick="this.closest(\'.mc-ai-action-item\').remove();event.stopPropagation();">' + SVG_X + '</button>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+/* Single-action compact AI block (shown right away) */
+function _aiSingle(id, iconKey, title, sub) {
+  var SVG_STAR = '<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6L11 6 7.2 7.4 6 11 4.8 7.4 1 6l3.8-1.4z" fill="#2e7d32"/></svg>';
+  var SVG_ARR  = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg>';
+  var SVG_X    = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l6 6M8 2l-6 6"/></svg>';
+  var ICONS = {
+    email:    '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="12" height="9" rx="1.5"/><path d="M1 5l6 4 6-4"/></svg>',
+    task:     '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="1.5"/><path d="M4 6h6M4 8.5h4"/></svg>',
+    cal:      '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="2"/><path d="M1 5h12"/><path d="M5 2v3M9 2v3"/></svg>',
+    note:     '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h8a1 1 0 0 1 1 1v8l-3 2H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M4 5h6M4 7.5h4"/></svg>',
+    invoice:  '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="1" width="10" height="12" rx="1.5"/><path d="M5 4h4M5 6.5h4M5 9h2"/><path d="M8.5 8.5l1.5 1.5"/></svg>',
+    contract: '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h6l3 3v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M9 2v3h3"/><path d="M5 7h4M5 9.5h2.5"/></svg>',
+    proposal: '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="10" rx="1.5"/><path d="M4 5.5h6M4 8h4"/><circle cx="10.5" cy="8" r="0.5" fill="currentColor" stroke="none"/></svg>',
+    crm:      '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="4.5" r="2"/><path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>'
+  };
+  return '<div class="mc-ai-actions mc-ai-actions--single" id="' + id + '">' +
+    '<div class="mc-ai-action-item">' +
+      '<div class="mc-ai-single-star">' + SVG_STAR + '</div>' +
+      '<div class="mc-ai-action-icon">' + (ICONS[iconKey] || ICONS.task) + '</div>' +
+      '<div class="mc-ai-action-body">' +
+        '<div class="mc-ai-action-title">' + title + '</div>' +
+        '<div class="mc-ai-action-subtitle">' + sub + '</div>' +
+      '</div>' +
+      '<div class="mc-ai-action-right">' +
+        '<div class="mc-ai-action-arrow">' + SVG_ARR + '</div>' +
+        '<button class="mc-ai-action-dismiss" onclick="document.getElementById(\'' + id + '\').style.display=\'none\';event.stopPropagation();">' + SVG_X + '</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ── Per-channel chat HTML ── */
+var CONV_HTML = {
+  'TechStart Labs':
+    _sep('Feb 24') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#4c525a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">MF</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Michael Fawler</span><span class="mc-group-time">Feb 24, 8:18 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Hey Tom! The proposal looks great overall. Before we can sign off, our legal team needs the MSA in place. Have you drafted that yet?',false) + '</div>' +
+        _threadBar(21, 2, 'Feb 24, 1:30 PM', '#4c525a', '#3b82f6') +
+        _aiActions('ts-ai-mf-feb24', [
+          { icon: 'contract', title: 'Draft MSA agreement',        sub: 'Pre-fill with TechStart Labs terms — send for e-sign' },
+          { icon: 'cal',      title: 'Schedule contract review call', sub: 'Book 30 min with Michael & legal team' },
+          { icon: 'task',     title: 'Create task: send MSA by Fri', sub: 'Assigned to Tom · Due Mar 1' },
+          { icon: 'crm',      title: 'Log contract stage in CRM',   sub: 'Update deal to "Contract Sent" stage' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Feb 24, 11:00 AM',['Yes — I\'ll have the MSA drafted by EOD and send it over for legal review. Should be simple given the retainer scope.'],true) +
+    _sep('Mar 5') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#1a3f80;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">JM</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Jessica Moore</span><span class="mc-group-time">Mar 5, 10:30 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom, legal came back with two redlines on the MSA — indemnification clause and payment terms. Nothing major. Can we hop on a quick call?',false) + '</div>' +
+        _threadBar(20, 2, 'Mar 5, 11:15 AM', '#1a3f80', '#3b82f6') +
+        _aiActions('ts-ai-jm-mar5', [
+          { icon: 'cal',      title: 'Schedule contract review call', sub: 'Book 30 min with Jessica — discuss redlines' },
+          { icon: 'contract', title: 'Open MSA in document editor',  sub: 'Review indemnification & payment clause' },
+          { icon: 'note',     title: 'Log redlines in contact notes', sub: 'Track legal feedback on MSA — TechStart Labs' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Mar 5, 10:45 AM',['Absolutely — I\'m free this afternoon. I\'ll send a Zoom link now.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#4c525a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">MF</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Michael Fawler</span><span class="mc-group-time">Today, 9:05 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Great call yesterday! Legal has signed off on both clauses. We\'re ready to execute. Can you send the final MSA for e-signature?',false) + '</div>' +
+        _aiActions('ts-ai-mf-today', [
+          { icon: 'contract', title: 'Send MSA for e-signature',     sub: 'Send to Michael via DocuSign — mark deal Won' },
+          { icon: 'invoice',  title: 'Create kick-off invoice',      sub: 'Invoice for first retainer month — $8,800' },
+          { icon: 'cal',      title: 'Schedule kick-off meeting',    sub: 'Onboarding call — TechStart Labs team' },
+          { icon: 'crm',      title: 'Update deal to "Won"',         sub: 'Move TechStart Labs to closed-won stage' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'Adobe':
+    _sep('Feb 3') +
+    _grp('Priya Sharma','PS','#eb1000','Feb 3, 3:14 PM',['Tom, Milestone 1 is wrapped up. The creative director approved the moodboard. Ready to move to the execution phase.'],false) +
+    _grp('Tom Bradley','TB','','Feb 3, 4:01 PM',['Fantastic — I\'ll get the team moving. I\'ll also send the Milestone 1 invoice shortly.'],true) +
+    _sep('Feb 14') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#eb1000;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">PS</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Priya Sharma</span><span class="mc-group-time">Feb 14, 11:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Hi Tom, we haven\'t received invoice #INV-2041 for Milestone 1 yet. Finance is following up. Can you resend?',false) + '</div>' +
+        _aiActions('adobe-ai-ps-inv', [
+          { icon: 'invoice',  title: 'Resend invoice #INV-2041',    sub: 'Milestone 1 — $14,500 · Due Feb 28' },
+          { icon: 'email',    title: 'Send payment reminder email',  sub: 'To Priya Sharma & Adobe Finance team' },
+          { icon: 'task',     title: 'Create overdue invoice task',  sub: 'Chase INV-2041 — follow up by Feb 17' },
+          { icon: 'crm',      title: 'Log invoice status in CRM',   sub: 'Flag INV-2041 as "Pending" on Adobe deal' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Feb 14, 11:30 AM',['Apologies for the delay! Resending now — you should have it in your inbox within the hour.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#9c2020;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">CD</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Carlos Diaz</span><span class="mc-group-time">Today, 11:30 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('INV-2041 has been approved and payment is processing. Also — we\'d like to renew the engagement for Q3. Can you put together a proposal?',false) + '</div>' +
+        _aiActions('adobe-ai-cd-today', [
+          { icon: 'proposal', title: 'Create Q3 renewal proposal',  sub: 'Adobe · Execution phase — 3 month extension' },
+          { icon: 'cal',      title: 'Schedule proposal review call', sub: 'Book 45 min with Carlos — present Q3 scope' },
+          { icon: 'invoice',  title: 'Mark INV-2041 as paid',       sub: 'Update payment status in billing system' },
+          { icon: 'crm',      title: 'Log renewal opportunity',     sub: 'Create Q3 renewal deal in CRM — $42,000 est.' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'Stripe':
+    _sep('Feb 5') +
+    _grp('Alex Kim','AK','#6772e5','Feb 5, 9:00 AM',['Tom — we\'re hitting a 422 error on the /charges endpoint for SEPA payments. Blocking our EU launch.'],false) +
+    _grp('Tom Bradley','TB','','Feb 5, 9:44 AM',['Confirmed — metadata field length issue on SEPA. Fix is deployed. Should be clear within the hour.'],true) +
+    _grp('Alex Kim','AK','#6772e5','Feb 5, 10:15 AM',['Fixed! EU launch is unblocked. Huge thanks.'],false) +
+    _sep('Feb 20') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#6772e5;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">AK</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Alex Kim</span><span class="mc-group-time">Feb 20, 3:30 PM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom, EU launch went great — 3x the volume we expected. We\'re ready to expand to APAC and LATAM. Can you put together a proposal for the extended integration scope?',false) + '</div>' +
+        _aiActions('stripe-ai-ak-proposal', [
+          { icon: 'proposal', title: 'Create expansion proposal',   sub: 'Stripe APAC + LATAM — extended integration scope' },
+          { icon: 'cal',      title: 'Schedule scoping call',       sub: 'Discovery call — Stripe expansion requirements' },
+          { icon: 'crm',      title: 'Log expansion opportunity',   sub: 'Create new deal: Stripe APAC/LATAM — $60k est.' },
+          { icon: 'note',     title: 'Add note to contact',         sub: 'EU launch success — 3x volume, expanding scope' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Feb 20, 4:00 PM',['Congrats on the launch! I\'ll have a proposal to you by end of next week — let me set up a scoping call first.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#6772e5;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">AK</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Alex Kim</span><span class="mc-group-time">Today, 10:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Proposal looks solid. Finance approved the budget. We\'re ready to sign — can you send the SOW for signature?',false) + '</div>' +
+        _aiActions('stripe-ai-ak-today', [
+          { icon: 'contract', title: 'Send SOW for e-signature',    sub: 'Stripe APAC/LATAM expansion — DocuSign' },
+          { icon: 'invoice',  title: 'Create kick-off invoice',     sub: 'Project deposit — 30% of $60,000' },
+          { icon: 'cal',      title: 'Schedule kick-off meeting',   sub: 'APAC/LATAM integration kickoff — Stripe team' },
+          { icon: 'crm',      title: 'Move deal to "Won"',          sub: 'Stripe expansion — update CRM stage' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'Notion':
+    _sep('Feb 10') +
+    _grp('Lin Zhao','LZ','#191919','Feb 10, 1:30 PM',['Tom, Phase 1 of the Notion migration is complete — workspace is live, team is onboarded. What does invoicing look like for this milestone?'],false) +
+    _grp('Tom Bradley','TB','','Feb 10, 2:05 PM',['Great milestone! Phase 1 invoice is $9,200. I\'ll send it over by end of day.'],true) +
+    _sep('Feb 22') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#191919;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">LZ</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Lin Zhao</span><span class="mc-group-time">Feb 22, 11:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom — we haven\'t received the Phase 1 invoice yet. Finance is asking. Also, we\'d like to discuss the Phase 2 scope. Can we book a call?',false) + '</div>' +
+        _aiActions('notion-ai-lz-inv', [
+          { icon: 'invoice',  title: 'Send Phase 1 invoice',        sub: 'INV-2055 · $9,200 · Notion workspace setup' },
+          { icon: 'cal',      title: 'Schedule Phase 2 scoping call', sub: 'Notion Phase 2 — permissions, databases, guests' },
+          { icon: 'proposal', title: 'Draft Phase 2 proposal',      sub: 'Guest workspace + database training — $6,500 est.' },
+          { icon: 'crm',      title: 'Log milestone in CRM',        sub: 'Phase 1 complete · Mark invoice as sent' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Feb 22, 11:45 AM',['My apologies! Invoice is on its way. And yes — let\'s do a Phase 2 scoping call. I\'ll send a calendar invite.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#191919;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">LZ</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Lin Zhao</span><span class="mc-group-time">Today, 9:15 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Invoice paid! The scoping call was really helpful. We\'re ready to move on Phase 2. Can you send the proposal so we can get sign-off from leadership?',false) + '</div>' +
+        _aiActions('notion-ai-lz-today', [
+          { icon: 'proposal', title: 'Send Phase 2 proposal',       sub: 'Notion Phase 2 · Guest workspace + training · $6,500' },
+          { icon: 'contract', title: 'Prepare Phase 2 SOW',         sub: 'Statement of work for Notion Phase 2 engagement' },
+          { icon: 'invoice',  title: 'Mark INV-2055 as paid',       sub: 'Update payment status — received today' },
+          { icon: 'crm',      title: 'Update deal stage',           sub: 'Notion — move to "Proposal Sent" stage' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'Linear':
+    _sep('Feb 22') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#5e6ad2;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">DP</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Dana Park</span><span class="mc-group-time">Feb 22, 4:00 PM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('LIN-204 is unblocked and merged. Sprint 12 is wrapping up — let\'s schedule the sprint review. Also, our contract renewal is due end of March. Worth discussing.', false) + '</div>' +
+        _threadBar(22, 2, 'Feb 22, 5:01 PM', '#5e6ad2', '#3b82f6') +
+        _aiActions('lin-ai-dp-feb22', [
+          { icon: 'cal',      title: 'Schedule sprint review meeting', sub: 'Sprint 12 retro + review — Linear team' },
+          { icon: 'contract', title: 'Prepare contract renewal',      sub: 'Linear annual contract — due Mar 31' },
+          { icon: 'task',     title: 'Create renewal follow-up task', sub: 'Send renewal terms to Dana by Mar 10' },
+          { icon: 'crm',      title: 'Log sprint completion in CRM',  sub: 'Sprint 12 done · LIN-204 resolved & deployed' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Feb 22, 4:45 PM',['Great work on sprint 12! I\'ll send a meeting invite for the review. And yes — let\'s block time to go over the renewal terms this week.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#5e6ad2;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">DP</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Dana Park</span><span class="mc-group-time">Today, 10:05 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Sprint review was great. One more thing — leadership wants to expand the engagement to include mobile. Can you send an updated proposal covering that scope?',false) + '</div>' +
+        _aiActions('lin-ai-dp-today', [
+          { icon: 'proposal', title: 'Create expanded scope proposal', sub: 'Linear — add mobile sprint support · $4,200/mo' },
+          { icon: 'cal',      title: 'Schedule scope review call',    sub: 'Present mobile expansion to Dana + leadership' },
+          { icon: 'contract', title: 'Update contract for expansion', sub: 'Amend Linear contract — add mobile retainer' },
+          { icon: 'crm',      title: 'Log expansion in CRM',         sub: 'Update deal value: +$4,200/mo mobile scope' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'Michael Fawler':
+    _sep('Mar 5') +
+    _grp('Michael Fawler','MF','#4c525a','Mar 5, 9:00 AM',['Tom — just checking in on the Market Entry Strategy proposal. Any updates on the timeline?'],false) +
+    _grp('Tom Bradley','TB','','Mar 5, 9:30 AM',['Hi Michael! The proposal is finalised — I\'ll send it over for review today. We\'re targeting a March 20 kickoff.'],true) +
+    _grp('Michael Fawler','MF','#4c525a','Mar 5, 9:35 AM',['Perfect, that works for us.'],false) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#4c525a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">MF</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Michael Fawler</span><span class="mc-group-time">Today, 8:55 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom, received the proposal — looks solid. One question on the retainer structure on page 4.', false) + '</div>' +
+        _threadBar(10, 3, 'Today, 9:18 AM', '#4c525a', '#3b82f6') +
+        _aiActions('mp-ai-mf', [
+          { icon: 'note', title: 'Add note to contact', sub: 'Log retainer discussion — page 4 question' },
+          { icon: 'cal',  title: 'Schedule call',       sub: 'Walk Michael through retainer structure' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Today, 9:10 AM',['Happy to walk you through it on a call. Are you free for 15 min this afternoon?'],true) +
+    _grp('Michael Fawler','MF','#4c525a','Today, 9:14 AM',['3pm works for me.'],false) +
+    _grp('Tom Bradley','TB','','Today, 9:15 AM',['Great — I\'ll send a calendar invite now.'],true) +
+    _seen('9:15 AM'),
+
+  'Sarah Chen':
+    _sep('Feb 28') +
+    _grp('Sarah Chen','SC','#2e7d32','Feb 28, 2:00 PM',['Tom, the pitch deck is done and looks strong. The client is excited — they want to present it to the board next week.'],false) +
+    _grp('Tom Bradley','TB','','Feb 28, 3:10 PM',['Fantastic! Let\'s schedule a rehearsal call before the board presentation so we\'re aligned on the narrative.'],true) +
+    _sep('Mar 8') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#2e7d32;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">SC</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Sarah Chen</span><span class="mc-group-time">Mar 8, 10:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Board loved the deck! They\'re moving forward. Legal flagged that they need a signed NDA before we share the full financial model with their CFO.',false) + '</div>' +
+        _aiActions('sc-ai-nda', [
+          { icon: 'contract', title: 'Prepare NDA agreement',       sub: 'Mutual NDA — Sarah Chen / Bonsai · Send for e-sign' },
+          { icon: 'cal',      title: 'Schedule CFO review meeting', sub: 'Present financial model — post NDA signature' },
+          { icon: 'note',     title: 'Log board outcome in CRM',    sub: 'Board approved pitch deck — deal progressing' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Mar 8, 10:30 AM',['Great news! I\'ll get the NDA drafted and over to you today. Shouldn\'t take long.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#2e7d32;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">SC</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Sarah Chen</span><span class="mc-group-time">Today, 9:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('NDA is signed on our end! CFO call is set for Thursday. Can you also send the proposal for the full engagement? They\'re ready to commit.',false) + '</div>' +
+        _aiActions('sc-ai-today', [
+          { icon: 'proposal', title: 'Send full engagement proposal', sub: 'Sarah Chen · Brand strategy + execution · $28,000' },
+          { icon: 'invoice',  title: 'Create deposit invoice',       sub: '30% deposit on $28,000 engagement' },
+          { icon: 'cal',      title: 'Add CFO call to calendar',    sub: 'Thursday — financial model review + next steps' },
+          { icon: 'crm',      title: 'Update deal stage',           sub: 'Sarah Chen — move to "Proposal Sent"' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'James Wilson':
+    _sep('Feb 28') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#6a1b9a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">JW</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">James Wilson</span><span class="mc-group-time">Feb 28, 2:00 PM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom — invoices #1042 and #1043 were both due Feb 15. Neither has been received. Finance is flagging this.',false) + '</div>' +
+        _aiActions('jw-ai-inv-feb28', [
+          { icon: 'invoice',  title: 'Resend invoice #1042',        sub: '$7,200 · Feb 15 due date · Phase 1 delivery' },
+          { icon: 'invoice',  title: 'Resend invoice #1043',        sub: '$4,800 · Feb 15 due date · Strategy sessions' },
+          { icon: 'email',    title: 'Send apology + both invoices', sub: 'To James Wilson + finance@jameswilson.co' },
+          { icon: 'task',     title: 'Create overdue invoice task',  sub: 'Track both invoices — chase by Mar 3' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Feb 28, 2:30 PM',['Apologies, James — both invoices are resent now. You should have them within the hour. Very sorry for the delay.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#6a1b9a;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">JW</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">James Wilson</span><span class="mc-group-time">Today, 9:05 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Both invoices paid. We\'re happy with the work so far. Ready to kick off Phase 2 — can you send the proposal and contract?',false) + '</div>' +
+        _aiActions('jw-ai-today', [
+          { icon: 'proposal', title: 'Send Phase 2 proposal',       sub: 'James Wilson · Phase 2 strategy — $18,500' },
+          { icon: 'contract', title: 'Send Phase 2 contract',       sub: 'SOW for Phase 2 — send via DocuSign' },
+          { icon: 'invoice',  title: 'Mark #1042 + #1043 as paid',  sub: 'Update both invoices to "Paid" status' },
+          { icon: 'cal',      title: 'Schedule Phase 2 kick-off',   sub: 'Onboarding call — James Wilson team' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'Emily Rodriguez':
+    _sep('Mar 8') +
+    _grp('Emily Rodriguez','ER','#c62828','Mar 8, 10:30 AM',['Hi Tom! Just wanted to confirm the kickoff call is still on for March 12 at 2pm?'],false) +
+    _grp('Tom Bradley','TB','','Mar 8, 10:45 AM',['Hi Emily! Yes, confirmed. I\'ve sent a calendar invite with the Zoom link.'],true) +
+    _grp('Emily Rodriguez','ER','#c62828','Mar 8, 10:48 AM',['Got it. Will the full team be on the call or just us?'],false) +
+    _grp('Tom Bradley','TB','','Mar 8, 10:52 AM',['It\'ll be you, me, and our project lead Amanda. Should be a tight group.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#c62828;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">ER</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Emily Rodriguez</span><span class="mc-group-time">Today, 8:50 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Looking forward to the call today! I\'ve prepped a few questions about the onboarding timeline.', false) + '</div>' +
+        _aiSingle('mp-ai-er', 'note', 'Create meeting agenda', 'Onboarding timeline — today\'s kickoff call with Emily') +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Today, 9:00 AM',['Great — see you at 2pm!'],true) +
+    _seen('9:01 AM'),
+
+  'Marketing Campaign':
+    _sep('Feb 20') +
+    _grp('Rachel Wong','RW','#ad1457','Feb 20, 9:00 AM',['Team — March campaign content is approved. Launch Monday. Can we confirm the final budget split before we go live?'],false) +
+    _grp('Tom Bradley','TB','','Feb 20, 9:30 AM',['Confirmed: 60% paid social, 25% content production, 15% influencer. I\'ll send the PO today.'],true) +
+    _sep('Mar 5') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#ad1457;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">RW</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Rachel Wong</span><span class="mc-group-time">Mar 5, 10:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Week 1 results are in — CTR is 4.2%, well above the 2.5% target. Leadership wants to double down. Can we schedule a performance review and discuss extending the campaign?',false) + '</div>' +
+        _aiActions('mc-ai-rw-mar5', [
+          { icon: 'cal',      title: 'Schedule performance review',  sub: 'Campaign Week 1 results — Rachel + leadership' },
+          { icon: 'proposal', title: 'Draft campaign extension proposal', sub: 'Extend March campaign through April — $22k add-on' },
+          { icon: 'note',     title: 'Log campaign results in CRM',  sub: 'CTR 4.2% — above target. Leadership wants to expand.' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Mar 5, 10:45 AM',['Those numbers are excellent! I\'ll put together an extension proposal and send a calendar invite for the review.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#ad5717;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">ML</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Marcus Lee</span><span class="mc-group-time">Today, 11:00 AM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom — leadership approved the April extension. We need the updated contract and invoice for the add-on scope. Can you send both today?',false) + '</div>' +
+        _aiActions('mc-ai-ml-today', [
+          { icon: 'contract', title: 'Send campaign extension contract', sub: 'April extension SOW — $22,000 add-on scope' },
+          { icon: 'invoice',  title: 'Create extension invoice',     sub: 'INV-2061 · $22,000 · April campaign extension' },
+          { icon: 'cal',      title: 'Schedule April kick-off call', sub: 'Campaign extension kick-off — Rachel + Marcus' },
+          { icon: 'crm',      title: 'Update deal value in CRM',     sub: 'Add $22k to Marketing Campaign deal' }
+        ]) +
+      '</div>' +
+    '</div>',
+
+  'API Integration':
+    _sep('Feb 12') +
+    _grp('Dev Patel','DP','#455a64','Feb 12, 10:00 AM',['Tom, Phase 1 API integration is complete. All endpoints passing tests. QA sign-off done.'],false) +
+    _grp('Tom Bradley','TB','','Feb 12, 10:30 AM',['Excellent! I\'ll send the Phase 1 invoice today and we can kick off Phase 2 planning.'],true) +
+    _sep('Mar 1') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#455a64;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">DP</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Dev Patel</span><span class="mc-group-time">Mar 1, 2:00 PM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Tom, the support contract expires at end of March. Our team wants to renew and also add a 24/7 SLA tier. Can you send a renewal proposal?',false) + '</div>' +
+        _aiActions('api-ai-dp-renew', [
+          { icon: 'proposal', title: 'Draft support contract renewal', sub: 'API Integration · 12-month renewal + 24/7 SLA tier' },
+          { icon: 'contract', title: 'Prepare renewal contract',      sub: 'Updated SOW with 24/7 SLA terms' },
+          { icon: 'cal',      title: 'Schedule renewal review call',  sub: 'Walk Dev through new SLA pricing tiers' },
+          { icon: 'crm',      title: 'Log renewal opportunity',       sub: 'API Integration — renewal due Mar 31 · flag urgent' }
+        ]) +
+      '</div>' +
+    '</div>' +
+    _grp('Tom Bradley','TB','','Mar 1, 2:45 PM',['Absolutely — I\'ll have a renewal proposal with the 24/7 SLA pricing by Thursday. Let\'s jump on a call to walk through it.'],true) +
+    _sep('Today') +
+    '<div class="mc-group">' +
+      '<div class="mc-group-avatar" style="background-color:#455a64;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">DP</div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta"><span class="mc-group-name">Dev Patel</span><span class="mc-group-time">Today, 2:30 PM</span></div>' +
+        '<div class="mc-bubbles">' + _bub('Proposal looks great. Leadership approved the 24/7 SLA tier. Can you send the contract for signature and the invoice for the renewal? We\'d like to lock this in before month end.',false) + '</div>' +
+        _aiActions('api-ai-dp-today', [
+          { icon: 'contract', title: 'Send renewal contract for signing', sub: '12-month API support + 24/7 SLA · DocuSign' },
+          { icon: 'invoice',  title: 'Create renewal invoice',       sub: 'INV-2068 · Annual support renewal · $36,000' },
+          { icon: 'cal',      title: 'Schedule onboarding for SLA',  sub: 'Introduce Dev to 24/7 on-call support team' },
+          { icon: 'crm',      title: 'Mark deal as Won',             sub: 'API Integration renewal — update CRM stage' }
+        ]) +
+      '</div>' +
+    '</div>'
+};
+
+function selectMsgConv(el, name, type) {
+  // Clear active state
+  document.querySelectorAll('#messages-page .msg-conv-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  el.classList.add('active');
+  // Update header
+  document.getElementById('msg-active-name').textContent = name;
+  var subtitleMap = { client: 'Client', contact: 'Contact', project: 'Project' };
+  document.getElementById('msg-active-subtitle').textContent = subtitleMap[type] || type;
+  // Update member count
+  var memberCount = document.getElementById('msg-member-count');
+  if (memberCount) memberCount.textContent = CONV_MEMBERS[name] || 2;
+  // Update composer placeholder
+  var composer = document.getElementById('msg-page-composer');
+  if (composer) composer.dataset.placeholder = 'Message ' + name + '...';
+  // Update avatar
+  var avatar = document.getElementById('msg-active-avatar');
+  if (avatar) {
+    avatar.textContent = name.split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2);
+    avatar.className = 'msg-conv-avatar' + (type !== 'contact' ? ' square' : '');
+    avatar.style.width = '32px';
+    avatar.style.height = '32px';
+    avatar.style.backgroundColor = CONV_COLORS[name] || '#4c525a';
+  }
+  // Render chat content
+  var chatArea = document.getElementById('msg-page-chat-area');
+  if (chatArea && CONV_HTML[name]) {
+    chatArea.innerHTML = CONV_HTML[name];
+    setTimeout(function() { chatArea.scrollTop = chatArea.scrollHeight; }, 20);
+  }
+  // Show/hide AI suggested replies in composer
+  var suggestionsEl = document.getElementById('msg-page-suggestions');
+  if (suggestionsEl) {
+    var cfg = CONV_SUGGESTIONS[name];
+    if (cfg && cfg.show && cfg.chips.length) {
+      suggestionsEl.style.display = '';
+      var chipEls = [document.getElementById('msg-page-chip-1'), document.getElementById('msg-page-chip-2'), document.getElementById('msg-page-chip-3')];
+      chipEls.forEach(function(c, i) {
+        if (!c) return;
+        if (cfg.chips[i]) { c.textContent = cfg.chips[i]; c.style.display = ''; }
+        else { c.style.display = 'none'; }
+      });
     } else {
-      outer.classList.add('with-sidebar-expanded');
-      btn.setAttribute('data-tooltip', 'Hide sidebar');
+      suggestionsEl.style.display = 'none';
     }
   }
+  // Reset composer content
+  var comp = document.getElementById('msg-page-composer');
+  if (comp) comp.innerHTML = '';
+}
+
+function sendMsgPageMessage() {
+  var composer = document.getElementById('msg-page-composer');
+  if (!composer || !composer.textContent.trim()) return;
+  var text = composer.textContent.trim().replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  composer.textContent = '';
+  var area = document.getElementById('msg-page-chat-area');
+  var now = new Date();
+  var timeStr = 'Today, ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  var html =
+    '<div class="mc-group mc-group--me">' +
+      '<div class="mc-group-avatar--placeholder"></div>' +
+      '<div class="mc-group-body">' +
+        '<div class="mc-group-meta">' +
+          '<span class="mc-group-name">Tom Bradley</span>' +
+          '<span class="mc-group-time">' + timeStr + '</span>' +
+        '</div>' +
+        '<div class="mc-bubbles">' +
+          '<div class="mc-bubble-wrap">' +
+            '<div class="mc-bubble mc-bubble--me">' + text + '</div>' +
+            '<div class="mc-hover-actions">' +
+              '<button class="mc-action-btn" title="React">😊</button>' +
+              '<button class="mc-action-btn" title="More">···</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  area.insertAdjacentHTML('beforeend', html);
+  area.scrollTop = area.scrollHeight;
+}
 </script>
 </body>
 </html>
