@@ -1386,42 +1386,6 @@
     .edp-thread-msg.collapsed .edp-thread-msg-snip { display: block; }
     .edp-thread-msg:not(.collapsed) .edp-thread-msg-snip { display: none; }
 
-    /* ── Internal comments in drawer ── */
-    .edp-comments-section { border-top: 1px solid var(--border-content); flex-shrink: 0; }
-    .edp-comments-toggle {
-      display: flex; align-items: center; gap: 8px; padding: 11px 24px;
-      cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-muted);
-      user-select: none; transition: background 0.12s;
-    }
-    .edp-comments-toggle:hover { background: var(--bg-grey-fa); }
-    .edp-comments-toggle-count {
-      font-size: 11px; font-weight: 500; background: var(--bg-grey-f1);
-      border-radius: 3px; padding: 1px 5px; color: var(--text-muted);
-    }
-    .edp-comments-toggle-chevron { margin-left: auto; transition: transform 0.15s; }
-    .edp-comments-section.open .edp-comments-toggle-chevron { transform: rotate(180deg); }
-    .edp-comments-body { display: none; padding: 0 24px 14px; }
-    .edp-comments-section.open .edp-comments-body { display: block; }
-    .edp-comment-item { display: flex; gap: 8px; margin-bottom: 10px; }
-    .edp-comment-bubble { flex: 1; background: var(--bg-grey-f5); border-radius: 8px; padding: 8px 12px; }
-    .edp-comment-author { font-size: 12px; font-weight: 600; color: var(--text-default); }
-    .edp-comment-text { font-size: 13px; color: var(--text-default); line-height: 1.5; margin-top: 1px; }
-    .edp-comment-time { font-size: 11px; color: var(--text-lighter); margin-top: 3px; }
-    .edp-comment-input-row { display: flex; gap: 8px; align-items: flex-end; margin-top: 12px; }
-    .edp-comment-input {
-      flex: 1; border: 1px solid var(--border-content); border-radius: 6px;
-      padding: 7px 10px; font-size: 13px; font-family: inherit; color: var(--text-default);
-      background: var(--bg-content); outline: none; resize: none; line-height: 1.5; min-height: 34px;
-    }
-    .edp-comment-input::placeholder { color: var(--text-lighter); }
-    .edp-comment-input:focus { border-color: var(--border-content-alt); }
-    .edp-comment-submit {
-      height: 32px; padding: 0 12px; background: var(--color-primary); color: white;
-      border: none; border-radius: 6px; font-size: 12px; font-weight: 500;
-      cursor: pointer; white-space: nowrap; transition: background 0.12s; flex-shrink: 0;
-    }
-    .edp-comment-submit:hover { background: #1c9701; }
-
     /* ── Tabbed compose area (always-visible panel bottom) ── */
     .edp-tabbed-compose {
       flex-shrink: 0;
@@ -1451,9 +1415,6 @@
       justify-content: space-between;
       padding: 8px 0 10px;
     }
-    /* Comments display inside scrollable thread area */
-    .edp-comments-display { border-top: 1px solid var(--border-content); padding: 14px 24px 4px; }
-    .edp-comments-display:empty { display: none; }
   </style>
 </head>
 <body>
@@ -2500,8 +2461,6 @@
       <!-- Thread messages (populated by JS) -->
       <div id="edp-body" class="edp-thread-list"></div>
 
-      <!-- Internal comments (rendered inline below thread) -->
-      <div id="edp-comments-display" class="edp-comments-display"></div>
     </div>
 
     <!-- COMPOSE MODE: To + Subject fields + compose body -->
@@ -2885,10 +2844,7 @@
           body: '<p>Hi both,</p><p>I\'ve pushed the mood board review to Thursday to keep us on track for the Feb 14 deliverable. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now?</p><p>Also flagging that the photography team needs a final answer on the location by end of week — Jess, can you confirm if we\'re using the Canary Wharf studio or moving to the East London space?</p><p>Thanks,<br>Tom</p>'
         }
       ],
-      comments: [
-        { author: 'Tom Bradley', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', text: 'Should we loop in the photography team on this thread or create a separate one for the studio booking?', time: 'Jan 22, 3:30 PM' },
-        { author: 'You', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', text: 'Good call — let\'s keep them separate. I\'ll create a dedicated thread for the studio booking so it doesn\'t get buried here.', time: 'Jan 22, 4:01 PM' }
-      ]
+      comments: []
     },
     {
       subject: 'Q1 Retainer hours update',
@@ -2948,9 +2904,7 @@
           body: '<p>Tom,</p><p>The updated deck looks great. Priya had one note — can we swap the customer logos on slide 8? Two of them churned last quarter and it\'ll be awkward if prospects recognise them. Otherwise the narrative flow is exactly right and the case study on slide 11 lands really well.</p><p>Happy to jump on a quick call tomorrow if it\'s easier to run through the remaining tweaks together.</p><p>Michael</p>'
         }
       ],
-      comments: [
-        { author: 'Priya Sharma', avatar: 'https://randomuser.me/api/portraits/women/22.jpg', text: 'Those two logos are Acme Corp and Dynamo — both churned in October. Michael is right to flag this before it goes to a prospect.', time: 'Jan 18, 12:45 PM' }
-      ]
+      comments: []
     },
     {
       subject: 'Workshop prep – stakeholder list',
@@ -3030,25 +2984,6 @@
     document.getElementById('edp-body').innerHTML = html;
   }
 
-  function renderEmailComments(idx) {
-    var d = emailData[idx];
-    var comments = d.comments || [];
-    var displayEl = document.getElementById('edp-comments-display');
-    if (!displayEl) return;
-    var html = '';
-    for (var i = 0; i < comments.length; i++) {
-      var c = comments[i];
-      html += '<div class="edp-comment-item">';
-      html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + c.avatar + '\');flex-shrink:0;margin-top:2px;"></div>';
-      html += '<div class="edp-comment-bubble">';
-      html += '<div class="edp-comment-author">' + c.author + '</div>';
-      html += '<div class="edp-comment-text">' + c.text + '</div>';
-      html += '<div class="edp-comment-time">' + c.time + '</div>';
-      html += '</div></div>';
-    }
-    displayEl.innerHTML = html;
-  }
-
   function openEmailPanel(idx) {
     var d = emailData[idx];
     currentEmailIdx = idx;
@@ -3058,9 +2993,8 @@
     document.querySelector('.edp-top-bar-label').textContent = 'View email';
     // Populate subject
     document.getElementById('edp-subject').textContent = d.subject;
-    // Render thread messages and comments
+    // Render thread messages
     renderEmailThread(idx);
-    renderEmailComments(idx);
     // Clear compose area
     clearReply();
     edpSharePopoverOpen = false;
