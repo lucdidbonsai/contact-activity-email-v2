@@ -1429,33 +1429,7 @@
       background: var(--bg-content);
     }
     .email-detail-panel.compose-mode .edp-tabbed-compose { display: none; }
-    .edp-tc-tabs {
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      border-bottom: 1px solid var(--border-content);
-      gap: 0;
-    }
-    .edp-tc-tab {
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 9px 10px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      cursor: pointer;
-      margin-bottom: -1px;
-      transition: color 0.12s;
-      line-height: 1;
-    }
-    .edp-tc-tab:hover { color: var(--text-default); }
-    .edp-tc-tab--active {
-      color: var(--text-default);
-      border-bottom-color: #22AD01;
-    }
-    .edp-tc-panel { padding: 12px 16px 0; display: none; }
-    .edp-tc-panel--active { display: block; }
+    .edp-tc-panel { padding: 12px 16px 0; display: block; }
     .edp-tc-compose {
       min-height: 72px;
       max-height: 150px;
@@ -1471,79 +1445,15 @@
       color: var(--text-lighter);
       pointer-events: none;
     }
-    .edp-tc-panel--note { background: #fffcf0; }
-    .edp-tc-panel--note .edp-tc-compose { background: #fffcf0; }
     .edp-tc-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 8px 0 10px;
     }
-    .edp-tc-note-send {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 14px;
-      height: 32px;
-      background: var(--bg-grey-f1);
-      color: var(--text-default);
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.12s;
-      white-space: nowrap;
-    }
-    .edp-tc-note-send:hover { background: #e8e8e8; }
     /* Comments display inside scrollable thread area */
     .edp-comments-display { border-top: 1px solid var(--border-content); padding: 14px 24px 4px; }
     .edp-comments-display:empty { display: none; }
-    /* Help icon in tab bar */
-    .edp-tc-help {
-      margin-left: auto;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      border: none;
-      background: none;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-lighter);
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .edp-tc-help:hover { color: var(--text-muted); background: var(--bg-grey-f5); }
-
-    /* ── AI compose button ── */
-    .edp-rt-ai-btn {
-      display: inline-flex; align-items: center; gap: 5px; position: relative;
-      padding: 0 12px; height: 32px; background: #22AD01; color: white;
-      border: none; border-radius: 6px; font-size: 13px; font-weight: 500;
-      cursor: pointer; transition: background 0.12s; white-space: nowrap;
-    }
-    .edp-rt-ai-btn:hover { background: #1c9701; }
-    .edp-rt-ai-tooltip {
-      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-      background: #1a1a1a; color: #fff; padding: 5px 10px; border-radius: 5px;
-      font-size: 12px; line-height: 1.4; pointer-events: none; opacity: 0;
-      transition: opacity 0.15s; z-index: 20; width: max-content; max-width: 260px; text-align: center;
-    }
-    .edp-rt-ai-btn:hover .edp-rt-ai-tooltip { opacity: 1; }
-    /* AI generating overlay */
-    .edp-ai-overlay {
-      display: none; align-items: center; gap: 8px; padding: 8px 16px;
-      background: rgba(34,173,1,0.06); border-top: 1px solid rgba(34,173,1,0.18);
-      font-size: 13px; color: #22AD01; flex-shrink: 0;
-    }
-    .edp-ai-overlay.visible { display: flex; }
-    .edp-ai-spinner {
-      width: 14px; height: 14px; border: 2px solid rgba(34,173,1,0.25);
-      border-top-color: #22AD01; border-radius: 50%;
-      animation: edp-spin 0.7s linear infinite; flex-shrink: 0;
-    }
-    @keyframes edp-spin { to { transform: rotate(360deg); } }
-    .edp-ai-cancel-link { margin-left: auto; font-size: 12px; color: var(--text-muted); cursor: pointer; }
-    .edp-ai-cancel-link:hover { color: var(--text-default); text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -2615,22 +2525,8 @@
 
   </div>
 
-  <!-- AI generating overlay (shown while AI drafts the email) -->
-  <div id="edp-ai-overlay" class="edp-ai-overlay">
-    <div class="edp-ai-spinner"></div>
-    <span>Generating follow-up email with AI...</span>
-    <a class="edp-ai-cancel-link" onclick="cancelAI()">Cancel</a>
-  </div>
-
-  <!-- Tabbed compose area (always visible in view mode) -->
+  <!-- Compose area (always visible in view mode) -->
   <div class="edp-tabbed-compose" id="edp-tabbed-compose">
-    <!-- Tab headers -->
-    <div class="edp-tc-tabs">
-      <button class="edp-tc-tab edp-tc-tab--active" id="edp-tc-tab-reply" onclick="switchComposeTab('reply')">Reply</button>
-      <button class="edp-tc-tab" id="edp-tc-tab-note" onclick="switchComposeTab('note')">Note</button>
-      <button class="edp-tc-help" title="Learn more">?</button>
-    </div>
-
     <!-- Reply panel -->
     <div id="edp-tc-panel-reply" class="edp-tc-panel edp-tc-panel--active">
       <div class="edp-tc-compose" id="edp-reply-compose"
@@ -2655,13 +2551,6 @@
           <button class="edp-rt-btn edp-rt-discard" data-tooltip="Discard draft" onclick="clearReply()">
             <svg width="13" height="14" viewBox="0 0 13 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3.5h11"/><path d="M4.5 3.5V2h4v1.5"/><rect x="2" y="3.5" width="9" height="9" rx="1"/><path d="M5 6.5v3.5"/><path d="M8 6.5v3.5"/></svg>
           </button>
-          <button class="edp-rt-ai-btn" id="edp-tc-ai-btn" onclick="generateWithAI()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C12 2 12.8 6.5 14.5 8.5C16.2 10.5 21 11 21 11C21 11 16.2 11.8 14.5 13.5C12.8 15.2 12 20 12 20C12 20 11.2 15.2 9.5 13.5C7.8 11.8 3 11 3 11C3 11 7.8 10.5 9.5 8.5C11.2 6.5 12 2 12 2Z" fill="white" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M19 2C19 2 19.4 4 20 4.5C20.6 5 22 5 22 5C22 5 20.6 5.2 20 5.8C19.4 6.4 19 8 19 8C19 8 18.6 6.4 18 5.8C17.4 5.2 16 5 16 5C16 5 17.4 5 18 4.5C18.6 4 19 2 19 2Z" fill="white" stroke="white" stroke-width="0.3"/>
-            </svg>
-            <span class="edp-rt-ai-tooltip">Generate a follow-up email with AI</span>
-          </button>
           <button class="edp-rt-send" style="background:#22AD01;">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1L1 5l4.5 2L8 12l4-11z"/><path d="M5.5 7L12 1"/></svg>
             Send email
@@ -2670,22 +2559,6 @@
       </div>
     </div>
 
-    <!-- Note panel -->
-    <div id="edp-tc-panel-note" class="edp-tc-panel edp-tc-panel--note">
-      <div class="edp-tc-compose" id="edp-note-compose"
-           contenteditable="true"
-           data-placeholder="Add an internal note (@mention a teammate)..."></div>
-      <div class="edp-tc-toolbar">
-        <div class="edp-rt-left">
-          <button class="edp-rt-btn" data-tooltip="Bold" style="font-weight:700;font-size:13px;">B</button>
-          <button class="edp-rt-btn" data-tooltip="Italic" style="font-style:italic;font-size:13px;">i</button>
-          <button class="edp-rt-btn" data-tooltip="Mention teammate" style="font-size:13px;font-weight:500;">@</button>
-        </div>
-        <div class="edp-rt-right">
-          <button class="edp-tc-note-send" onclick="submitNoteFromTab()">Add note</button>
-        </div>
-      </div>
-    </div>
   </div>
 
 </div>
@@ -3176,77 +3049,6 @@
     displayEl.innerHTML = html;
   }
 
-  function submitNoteFromTab() {
-    var compose = document.getElementById('edp-note-compose');
-    var text = compose ? compose.innerText.trim() : '';
-    if (!text) return;
-    var d = emailData[currentEmailIdx];
-    d.comments.push({
-      author: 'You',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-      text: text,
-      time: 'Just now'
-    });
-    compose.innerHTML = '';
-    renderEmailComments(currentEmailIdx);
-    // Scroll thread area to show the new comment
-    var viewMode = document.querySelector('.edp-view-mode');
-    if (viewMode) viewMode.scrollTop = viewMode.scrollHeight;
-  }
-
-  function switchComposeTab(tab) {
-    var replyTab = document.getElementById('edp-tc-tab-reply');
-    var noteTab = document.getElementById('edp-tc-tab-note');
-    var replyPanel = document.getElementById('edp-tc-panel-reply');
-    var notePanel = document.getElementById('edp-tc-panel-note');
-    var tabCompose = document.getElementById('edp-tabbed-compose');
-    if (tab === 'reply') {
-      replyTab.classList.add('edp-tc-tab--active');
-      noteTab.classList.remove('edp-tc-tab--active');
-      replyPanel.classList.add('edp-tc-panel--active');
-      notePanel.classList.remove('edp-tc-panel--active');
-      tabCompose.style.background = '';
-      document.getElementById('edp-reply-compose').focus();
-    } else {
-      noteTab.classList.add('edp-tc-tab--active');
-      replyTab.classList.remove('edp-tc-tab--active');
-      notePanel.classList.add('edp-tc-panel--active');
-      replyPanel.classList.remove('edp-tc-panel--active');
-      tabCompose.style.background = '#fffcf0';
-      document.getElementById('edp-note-compose').focus();
-    }
-  }
-
-  var aiTimer = null;
-  function generateWithAI() {
-    // Switch to Reply tab
-    switchComposeTab('reply');
-    // Show AI overlay
-    var overlay = document.getElementById('edp-ai-overlay');
-    overlay.classList.add('visible');
-    // Simulate AI generation (1.8s delay)
-    aiTimer = setTimeout(function() {
-      overlay.classList.remove('visible');
-      var d = emailData[currentEmailIdx];
-      var lastMsg = d.threads[d.threads.length - 1];
-      var suggestions = [
-        'Hi ' + lastMsg.senderName.split(' ')[0] + ',\n\nThanks for the update — this all sounds good. Happy to proceed with the approach you\'ve outlined.\n\nOne quick note: could you send over the latest version once you\'ve made those changes? I\'d like to review before it goes out.\n\nThanks,\nMichael',
-        'Hi ' + lastMsg.senderName.split(' ')[0] + ',\n\nGreat, thanks for looping me in. I\'ll take a look and come back to you by end of day tomorrow.\n\nBest,\nMichael',
-        lastMsg.senderName.split(' ')[0] + ' — thanks for this. A few thoughts:\n\n1. The approach looks solid overall.\n2. I\'d suggest we schedule a short sync to align on next steps before moving forward.\n3. Happy to make the final call once we\'ve spoken.\n\nDoes Thursday work for a 20-min call?\n\nMichael'
-      ];
-      var compose = document.getElementById('edp-reply-compose');
-      if (compose) {
-        compose.innerText = suggestions[Math.floor(Math.random() * suggestions.length)];
-        compose.focus();
-      }
-    }, 1800);
-  }
-
-  function cancelAI() {
-    if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
-    document.getElementById('edp-ai-overlay').classList.remove('visible');
-  }
-
   function openEmailPanel(idx) {
     var d = emailData[idx];
     currentEmailIdx = idx;
@@ -3259,10 +3061,8 @@
     // Render thread messages and comments
     renderEmailThread(idx);
     renderEmailComments(idx);
-    // Reset to Reply tab, clear compose areas
-    switchComposeTab('reply');
+    // Clear compose area
     clearReply();
-    cancelAI();
     edpSharePopoverOpen = false;
     document.getElementById('edp-share-popover').style.display = 'none';
     panel.classList.add('open');
@@ -3279,9 +3079,8 @@
     document.getElementById('edp-share-popover').style.display = 'none';
   }
 
-  // ── Reply compose ── (now just focuses the always-visible Reply tab)
+  // ── Reply compose ──
   function openReply() {
-    switchComposeTab('reply');
     document.getElementById('edp-reply-compose').focus();
   }
 
