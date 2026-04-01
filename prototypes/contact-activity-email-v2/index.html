@@ -237,44 +237,40 @@
       line-height: 1.6;
     }
 
-    /* ── Note action button ── */
-    .note-actions {
-      flex-shrink: 0;
-      position: relative;
-      align-self: flex-start;
-      padding-top: 2px;
-    }
-    .note-menu-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text-lighter);
-      font-size: 16px;
-      line-height: 1;
-      padding: 4px 6px;
-      border-radius: 4px;
-      letter-spacing: 1px;
+    /* ── Note inline action buttons (Edit · Delete on hover) ── */
+    .note-inline-actions {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 5px;
+      flex-shrink: 0;
+      align-self: flex-start;
+      padding-top: 3px;
       opacity: 0;
-      transition: opacity 0.12s, background 0.12s;
+      transition: opacity 0.15s;
     }
-    .note-item:hover .note-menu-btn,
-    .activity-item:hover .note-menu-btn {
+    .activity-item:hover .note-inline-actions,
+    .note-item:hover .note-inline-actions {
       opacity: 1;
     }
-    .note-menu-btn:hover {
-      background: var(--bg-grey-f5);
-      color: var(--text-muted);
+    .note-inline-action,
+    .note-inline-action:hover,
+    .note-inline-action:visited,
+    .note-inline-action:active {
+      font-size: 13px;
+      color: var(--text-muted) !important;
+      cursor: pointer;
+      text-decoration: none !important;
+      transition: color 0.12s;
     }
-    .note-dropdown {
-      position: absolute;
-      top: calc(100% + 2px);
-      right: 0;
-      z-index: 100;
+    .note-inline-action:hover { color: var(--text-default) !important; }
+    .note-inline-delete:hover { color: #eb5757 !important; }
+    .note-inline-sep { font-size: 13px; color: var(--border-content-alt); line-height: 1; }
+
+    /* ── Note action button (legacy, kept for toggle logic) ── */
+    .note-menu-btn {
+      display: none;
     }
-    .note-dropdown.open { display: block !important; }
+    .note-dropdown { display: none; }
 
     /* ── Note text: remove left border ── */
     .note-text {
@@ -1824,6 +1820,36 @@
 
             <div class="activity-feed">
 
+              <!-- Client portal message: Michael Fawler (Jan 24) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent a message in client portal &middot; Jan 24, 2:10 PM</div>
+                  <div class="email-activity-card" style="cursor:default; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" href="#">View Message</a>
+                    <div class="email-activity-card-body">Hi Tom, just a heads up — we've reviewed the brand guidelines doc you shared and everything looks good on our end. One small thing: the footer on the proposal still has the old logo. Can you swap that before we send it to the board?</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Client portal message: Michael Fawler (Jan 17) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent a message in client portal &middot; Jan 17, 10:45 AM</div>
+                  <div class="email-activity-card" style="cursor:default; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" href="#">View Message</a>
+                    <div class="email-activity-card-body">Quick note — the board presentation got moved to Feb 3rd, so we have a bit more runway. That said, I'd still like to lock in the primary palette this week if possible. Can we do a quick 20-minute call Thursday or Friday?</div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Email: Tom Bradley → Michael Fawler (Brand refresh) -->
               <div class="activity-item">
                 <div class="activity-item-left">
@@ -1909,14 +1935,10 @@
                   <div class="activity-meta"><strong>Tom Bradley</strong> added a note &middot; Jan 22, 6:15 PM</div>
                   <div class="activity-text" style="background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">Michael shared confidentially that TechStart Labs is exploring a <strong>seed fundraise in Q3</strong>. Wants us to complete the market positioning analysis before they start investor conversations.</div>
                 </div>
-                <div class="note-actions" style="flex-shrink:0; position: relative;">
-                  <button class="note-menu-btn" onclick="toggleNoteMenu(this)">···</button>
-                  <div class="note-dropdown" style="display:none;">
-                    <div class="field-popup-menu popup-menu-120" style="position:relative; box-shadow: var(--box-shadow-medium);">
-                      <a class="field-popup-menu-list-item" onclick="editNote(this)">Edit</a>
-                      <a class="field-popup-menu-list-item field-popup-menu-list-item--danger" onclick="deleteNote(this)">Delete</a>
-                    </div>
-                  </div>
+                <div class="note-inline-actions">
+                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                  <span class="note-inline-sep">·</span>
+                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
                 </div>
               </div>
 
@@ -1964,14 +1986,10 @@
                   <div class="activity-meta"><strong>Tom Bradley</strong> added a note &middot; Jan 14, 2:45 PM</div>
                   <div class="activity-text" style="background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">Competitive landscape draft reviewed. Michael thinks our TAM estimates for enterprise are conservative — wants us to push <strong>15–20% higher</strong> based on their internal data.</div>
                 </div>
-                <div class="note-actions" style="flex-shrink:0; position: relative;">
-                  <button class="note-menu-btn" onclick="toggleNoteMenu(this)">···</button>
-                  <div class="note-dropdown" style="display:none;">
-                    <div class="field-popup-menu popup-menu-120" style="position:relative; box-shadow: var(--box-shadow-medium);">
-                      <a class="field-popup-menu-list-item" onclick="editNote(this)">Edit</a>
-                      <a class="field-popup-menu-list-item field-popup-menu-list-item--danger" onclick="deleteNote(this)">Delete</a>
-                    </div>
-                  </div>
+                <div class="note-inline-actions">
+                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                  <span class="note-inline-sep">·</span>
+                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
                 </div>
               </div>
 
@@ -2019,14 +2037,10 @@
                   <div class="activity-meta"><strong>Chris Taylor</strong> added a note &middot; Jan 03, 11:00 AM</div>
                   <div class="activity-text" style="background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">Board deck and strategic priorities shared under NDA. Market positioning analysis scope confirmed. Target completion: <strong>mid-February</strong>.</div>
                 </div>
-                <div class="note-actions" style="flex-shrink:0; position: relative;">
-                  <button class="note-menu-btn" onclick="toggleNoteMenu(this)">···</button>
-                  <div class="note-dropdown" style="display:none;">
-                    <div class="field-popup-menu popup-menu-120" style="position:relative; box-shadow: var(--box-shadow-medium);">
-                      <a class="field-popup-menu-list-item" onclick="editNote(this)">Edit</a>
-                      <a class="field-popup-menu-list-item field-popup-menu-list-item--danger" onclick="deleteNote(this)">Delete</a>
-                    </div>
-                  </div>
+                <div class="note-inline-actions">
+                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                  <span class="note-inline-sep">·</span>
+                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
                 </div>
               </div>
 
@@ -2066,14 +2080,10 @@
                   <div class="note-meta" style="margin-bottom: 4px;"><strong>Lucas Did</strong> · <span>Today 8:15:19 AM</span></div>
                   <div class="note-text">Michael confirmed budget approval for Q1 marketing strategy. Moving forward with the $85K proposal. He mentioned the legal team will need until next week to review the contract terms. I'll schedule a follow-up call to align on timeline.</div>
                 </div>
-                <div class="note-actions" style="flex-shrink:0; position: relative;">
-                  <button class="note-menu-btn" onclick="toggleNoteMenu(this)">···</button>
-                  <div class="note-dropdown" style="display:none;">
-                    <div class="field-popup-menu popup-menu-120" style="position:relative; box-shadow: var(--box-shadow-medium);">
-                      <a class="field-popup-menu-list-item" onclick="editNote(this)">Edit</a>
-                      <a class="field-popup-menu-list-item field-popup-menu-list-item--danger" onclick="deleteNote(this)">Delete</a>
-                    </div>
-                  </div>
+                <div class="note-inline-actions">
+                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                  <span class="note-inline-sep">·</span>
+                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
                 </div>
               </div>
 
@@ -2086,14 +2096,10 @@
                   <div class="note-meta" style="margin-bottom: 4px;"><strong>Laura Albany</strong> · <span>Jan 18, 2026 2:30:00 PM</span></div>
                   <div class="note-text">Follow-up with legal on contract review. They have a few amendments around the termination clause. Will send revised version by EOD Thursday.</div>
                 </div>
-                <div class="note-actions" style="flex-shrink:0; position: relative;">
-                  <button class="note-menu-btn" onclick="toggleNoteMenu(this)">···</button>
-                  <div class="note-dropdown" style="display:none;">
-                    <div class="field-popup-menu popup-menu-120" style="position:relative; box-shadow: var(--box-shadow-medium);">
-                      <a class="field-popup-menu-list-item" onclick="editNote(this)">Edit</a>
-                      <a class="field-popup-menu-list-item field-popup-menu-list-item--danger" onclick="deleteNote(this)">Delete</a>
-                    </div>
-                  </div>
+                <div class="note-inline-actions">
+                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                  <span class="note-inline-sep">·</span>
+                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
                 </div>
               </div>
 
@@ -2106,14 +2112,10 @@
                   <div class="note-meta" style="margin-bottom: 4px;"><strong>Lucas Did</strong> · <span>Jan 14, 2026 10:00:00 AM</span></div>
                   <div class="note-text">Kickoff call went well. Michael wants to prioritize the brand refresh deliverables before the campaign launch. Agreed on bi-weekly syncs.</div>
                 </div>
-                <div class="note-actions" style="flex-shrink:0; position: relative;">
-                  <button class="note-menu-btn" onclick="toggleNoteMenu(this)">···</button>
-                  <div class="note-dropdown" style="display:none;">
-                    <div class="field-popup-menu popup-menu-120" style="position:relative; box-shadow: var(--box-shadow-medium);">
-                      <a class="field-popup-menu-list-item" onclick="editNote(this)">Edit</a>
-                      <a class="field-popup-menu-list-item field-popup-menu-list-item--danger" onclick="deleteNote(this)">Delete</a>
-                    </div>
-                  </div>
+                <div class="note-inline-actions">
+                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                  <span class="note-inline-sep">·</span>
+                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
                 </div>
               </div>
 
