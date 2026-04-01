@@ -241,15 +241,13 @@
     .note-inline-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
       position: absolute;
       top: 50%;
-      right: 14px;
+      right: 12px;
       transform: translateY(-50%);
       opacity: 0;
       transition: opacity 0.15s;
-      background: rgba(247,248,247,0.95);
-      padding: 0 2px;
     }
     .activity-item:hover .note-inline-actions,
     .note-item:hover .note-inline-actions {
@@ -264,9 +262,14 @@
       cursor: pointer;
       text-decoration: none !important;
       color: #22AD01 !important;
-      transition: opacity 0.12s;
+      background: #ffffff;
+      border: 1px solid #e0e3e7;
+      border-radius: 6px;
+      padding: 4px 10px;
+      white-space: nowrap;
+      transition: background 0.12s, border-color 0.12s;
     }
-    .note-inline-action:hover { opacity: 0.75; }
+    .note-inline-action:hover { background: #f7f8f7 !important; border-color: #d0d3d8 !important; }
     .note-inline-delete,
     .note-inline-delete:hover,
     .note-inline-delete:visited,
@@ -1311,7 +1314,7 @@
     .email-view-hover-link:active {
       position: absolute;
       top: 50%;
-      right: 14px;
+      right: 12px;
       transform: translateY(-50%);
       font-size: 13px;
       font-weight: 500;
@@ -1319,8 +1322,15 @@
       text-decoration: none !important;
       opacity: 0;
       transition: opacity 0.15s;
-      background: #f7f8f7;
-      padding: 0 2px;
+      background: #ffffff;
+      border: 1px solid #e0e3e7;
+      border-radius: 6px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+    .email-view-hover-link:hover {
+      background: #f7f8f7 !important;
+      border-color: #d0d3d8 !important;
     }
     .email-activity-card:hover .email-view-hover-link {
       opacity: 1;
