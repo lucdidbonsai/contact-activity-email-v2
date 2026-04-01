@@ -1291,8 +1291,35 @@
       font-size: 14px;
       color: var(--text-default);
       line-height: 1.6;
-      max-height: 110px;
       overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+    .email-activity-card {
+      position: relative;
+    }
+    .email-activity-card:hover {
+      background: #f7f8f7 !important;
+    }
+    .email-view-hover-link,
+    .email-view-hover-link:hover,
+    .email-view-hover-link:visited,
+    .email-view-hover-link:active {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-primary) !important;
+      text-decoration: none !important;
+      opacity: 0;
+      transition: opacity 0.15s;
+      background: #f7f8f7;
+      padding: 0 2px;
+    }
+    .email-activity-card:hover .email-view-hover-link {
+      opacity: 1;
     }
 
     /* ── Email panel: compose mode ── */
@@ -1804,12 +1831,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta-row">
-                    <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand refresh timeline&rdquo; &middot; Jan 22, 3:15 PM</div>
-                    <a class="email-view-link-meta" onclick="showEmailConnected(true); openEmailPanel(0);">View Email</a>
-                  </div>
-                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div class="email-activity-card-body">Hi both,<br><br>I've pushed the mood board review to <strong>Thursday</strong> to keep us on track for the <strong>Feb 14 deliverable</strong>. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now?<br><br>Also flagging that the photography team needs a final answer on the location by end of week.</div>
+                  <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand refresh timeline&rdquo; &middot; Jan 22, 3:15 PM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(0);">View Email</a>
+                    <div class="email-activity-card-body">Hi both, I've pushed the mood board review to <strong>Thursday</strong> to keep us on track for the <strong>Feb 14 deliverable</strong>. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now? Also flagging that the photography team needs a final answer on the location by end of week.</div>
                   </div>
                 </div>
               </div>
@@ -1821,12 +1846,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta-row">
-                    <div class="activity-meta"><strong>Amanda Chen</strong> sent an email to michael.fawler@techstart.co: &ldquo;Q1 Retainer hours update&rdquo; &middot; Jan 20, 9:31 AM</div>
-                    <a class="email-view-link-meta" onclick="showEmailConnected(true); openEmailPanel(1);">View Email</a>
-                  </div>
-                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(1);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div class="email-activity-card-body">Michael,<br><br>Quick heads up — we're at <strong>34 of 40 hours</strong> for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable?<br><br>If you'd prefer we hold, I can scope a small add-on and send it over for sign-off before we continue.</div>
+                  <div class="activity-meta"><strong>Amanda Chen</strong> sent an email to michael.fawler@techstart.co: &ldquo;Q1 Retainer hours update&rdquo; &middot; Jan 20, 9:31 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(1);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(1);">View Email</a>
+                    <div class="email-activity-card-body">Michael, quick heads up — we're at <strong>34 of 40 hours</strong> for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable? If you'd prefer we hold, I can scope a small add-on and send it over for sign-off before we continue.</div>
                   </div>
                 </div>
               </div>
@@ -1838,12 +1861,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta-row">
-                    <div class="activity-meta"><strong>Michael Fawler</strong> sent an email to tom.bradley@catalystconsulting.io: &ldquo;Re: Brand refresh timeline&rdquo; &middot; Jan 19, 10:22 AM</div>
-                    <a class="email-view-link-meta" onclick="showEmailConnected(true); openEmailPanel(0);">View Email</a>
-                  </div>
-                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div class="email-activity-card-body">Tom,<br><br>Just wanted to check in on the mood board timeline before we sync Thursday. Are we still planning to present all three directions or have you narrowed it down? Also — should we include the secondary colour palette in this first round or keep it to the primary system?<br><br>Michael</div>
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent an email to tom.bradley@catalystconsulting.io: &ldquo;Re: Brand refresh timeline&rdquo; &middot; Jan 19, 10:22 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(0);">View Email</a>
+                    <div class="email-activity-card-body">Tom, just wanted to check in on the mood board timeline before we sync Thursday. Are we still planning to present all three directions or have you narrowed it down? Also — should we include the secondary colour palette in this first round or keep it to the primary system?</div>
                   </div>
                 </div>
               </div>
@@ -1855,12 +1876,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta-row">
-                    <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand Retainer Wrapping Up - Shall We Continue?&rdquo; &middot; Jan 12, 11:40 AM</div>
-                    <a class="email-view-link-meta" onclick="showEmailConnected(true); openEmailPanel(5);">View Email</a>
-                  </div>
-                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(5);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div class="email-activity-card-body">Michael,<br><br>The current brand retainer wraps up at the end of this month. We've loved working on the TechStart rebrand and wanted to check in — would you like to roll into a new retainer for Q2, or is there a specific project scope you'd prefer to move to?<br><br>Happy to put together a couple of options if it's helpful. Let me know what works.</div>
+                  <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand Retainer Wrapping Up - Shall We Continue?&rdquo; &middot; Jan 12, 11:40 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(5);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(5);">View Email</a>
+                    <div class="email-activity-card-body">Michael, the current brand retainer wraps up at the end of this month. We've loved working on the TechStart rebrand and wanted to check in — would you like to roll into a new retainer for Q2, or is there a specific project scope you'd prefer to move to? Happy to put together a couple of options if it's helpful.</div>
                   </div>
                 </div>
               </div>
@@ -1872,12 +1891,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta-row">
-                    <div class="activity-meta"><strong>Michael Fawler</strong> sent an email to tom.bradley@catalystconsulting.io: &ldquo;Re: Brand Retainer Wrapping Up - Shall We Continue?&rdquo; &middot; Jan 13, 9:15 AM</div>
-                    <a class="email-view-link-meta" onclick="showEmailConnected(true); openEmailPanel(5);">View Email</a>
-                  </div>
-                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(5);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div class="email-activity-card-body">Tom,<br><br>Great timing on this — I was going to reach out this week. Let's definitely continue. A rolling retainer makes more sense than project-by-project at this stage. Can you send over what a Q2 continuation would look like scope-wise? We may want to shift some of the hours toward the investor materials we discussed.<br><br>Michael</div>
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent an email to tom.bradley@catalystconsulting.io: &ldquo;Re: Brand Retainer Wrapping Up - Shall We Continue?&rdquo; &middot; Jan 13, 9:15 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(5);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(5);">View Email</a>
+                    <div class="email-activity-card-body">Tom, great timing on this — I was going to reach out this week. Let's definitely continue. A rolling retainer makes more sense than project-by-project at this stage. Can you send over what a Q2 continuation would look like scope-wise? We may want to shift some of the hours toward the investor materials we discussed.</div>
                   </div>
                 </div>
               </div>
@@ -2649,49 +2666,21 @@
     </div>
   </div>
 
-  <!-- Scrollable area: email body + reply compose -->
+  <!-- Scrollable area: email thread only -->
   <div class="edp-body">
 
-    <!-- VIEW MODE: thread messages + comments + reply compose -->
+    <!-- VIEW MODE: thread messages -->
     <div class="edp-view-mode" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
 
       <!-- Thread messages (populated by JS) -->
       <div id="edp-body" class="edp-thread-list"></div>
 
-      <!-- Internal comments (rendered inline below thread) -->
-      <div id="edp-comments-display" class="edp-comments-display"></div>
-    </div>
-
-    <!-- COMPOSE MODE: To + Subject fields + compose body -->
-    <div class="edp-compose-mode">
-      <div style="padding:0 24px;flex-shrink:0;">
-        <div class="edp-compose-field-row">
-          <span class="edp-compose-field-label">To</span>
-          <input class="edp-compose-input" id="edp-compose-to" placeholder="Add a recipient..." autocomplete="off">
-        </div>
-        <div class="edp-compose-field-row">
-          <span class="edp-compose-field-label">Subject</span>
-          <input class="edp-compose-input" id="edp-compose-subject" placeholder="Subject" autocomplete="off">
-        </div>
-      </div>
-      <div class="edp-compose-body-area" style="padding:16px 24px 8px;">
-        <div class="edp-compose-body-text" id="edp-compose-body"
-             contenteditable="true"
-             data-placeholder="Start typing your email, or create a template"></div>
-      </div>
     </div>
 
   </div>
 
-  <!-- AI generating overlay (shown while AI drafts the email) -->
-  <div id="edp-ai-overlay" class="edp-ai-overlay">
-    <div class="edp-ai-spinner"></div>
-    <span>Generating follow-up email with AI...</span>
-    <a class="edp-ai-cancel-link" onclick="cancelAI()">Cancel</a>
-  </div>
-
-  <!-- Tabbed compose area (always visible in view mode) -->
-  <div class="edp-tabbed-compose" id="edp-tabbed-compose">
+  <!-- [REMOVED] Tabbed compose area (reply/note) -->
+  <div class="edp-tabbed-compose" id="edp-tabbed-compose" style="display:none !important;">
     <!-- Tab headers -->
     <div class="edp-tc-tabs">
       <button class="edp-tc-tab edp-tc-tab--active" id="edp-tc-tab-reply" onclick="switchComposeTab('reply')">Reply</button>
