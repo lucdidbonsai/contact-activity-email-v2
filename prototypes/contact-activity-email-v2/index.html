@@ -3323,7 +3323,8 @@
 
   function cancelAI() {
     if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
-    document.getElementById('edp-ai-overlay').classList.remove('visible');
+    var overlay = document.getElementById('edp-ai-overlay');
+    if (overlay) overlay.classList.remove('visible');
   }
 
   function openEmailPanel(idx) {
