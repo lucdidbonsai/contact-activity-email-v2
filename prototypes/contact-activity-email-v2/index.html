@@ -242,11 +242,17 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      flex-shrink: 0;
-      align-self: flex-start;
-      padding-top: 3px;
+      position: absolute;
+      top: 0;
+      right: 0;
       opacity: 0;
       transition: opacity 0.15s;
+    }
+    .activity-text .note-inline-actions {
+      top: 10px;
+      right: 12px;
+      background: rgba(255,255,255,0.95);
+      padding: 0 2px;
     }
     .activity-item:hover .note-inline-actions,
     .note-item:hover .note-inline-actions {
@@ -1933,12 +1939,14 @@
                 </div>
                 <div class="activity-item-body">
                   <div class="activity-meta"><strong>Tom Bradley</strong> added a note &middot; Jan 22, 6:15 PM</div>
-                  <div class="activity-text" style="background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">Michael shared confidentially that TechStart Labs is exploring a <strong>seed fundraise in Q3</strong>. Wants us to complete the market positioning analysis before they start investor conversations.</div>
-                </div>
-                <div class="note-inline-actions">
-                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
-                  <span class="note-inline-sep">·</span>
-                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                  <div class="activity-text" style="position:relative; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <span class="note-inline-sep">·</span>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Michael shared confidentially that TechStart Labs is exploring a <strong>seed fundraise in Q3</strong>. Wants us to complete the market positioning analysis before they start investor conversations.
+                  </div>
                 </div>
               </div>
 
@@ -1984,12 +1992,14 @@
                 </div>
                 <div class="activity-item-body">
                   <div class="activity-meta"><strong>Tom Bradley</strong> added a note &middot; Jan 14, 2:45 PM</div>
-                  <div class="activity-text" style="background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">Competitive landscape draft reviewed. Michael thinks our TAM estimates for enterprise are conservative — wants us to push <strong>15–20% higher</strong> based on their internal data.</div>
-                </div>
-                <div class="note-inline-actions">
-                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
-                  <span class="note-inline-sep">·</span>
-                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                  <div class="activity-text" style="position:relative; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <span class="note-inline-sep">·</span>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Competitive landscape draft reviewed. Michael thinks our TAM estimates for enterprise are conservative — wants us to push <strong>15–20% higher</strong> based on their internal data.
+                  </div>
                 </div>
               </div>
 
@@ -2035,12 +2045,14 @@
                 </div>
                 <div class="activity-item-body">
                   <div class="activity-meta"><strong>Chris Taylor</strong> added a note &middot; Jan 03, 11:00 AM</div>
-                  <div class="activity-text" style="background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">Board deck and strategic priorities shared under NDA. Market positioning analysis scope confirmed. Target completion: <strong>mid-February</strong>.</div>
-                </div>
-                <div class="note-inline-actions">
-                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
-                  <span class="note-inline-sep">·</span>
-                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                  <div class="activity-text" style="position:relative; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <span class="note-inline-sep">·</span>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Board deck and strategic priorities shared under NDA. Market positioning analysis scope confirmed. Target completion: <strong>mid-February</strong>.
+                  </div>
                 </div>
               </div>
 
@@ -2078,12 +2090,14 @@
                 </div>
                 <div class="note-item-body">
                   <div class="note-meta" style="margin-bottom: 4px;"><strong>Lucas Did</strong> · <span>Today 8:15:19 AM</span></div>
-                  <div class="note-text">Michael confirmed budget approval for Q1 marketing strategy. Moving forward with the $85K proposal. He mentioned the legal team will need until next week to review the contract terms. I'll schedule a follow-up call to align on timeline.</div>
-                </div>
-                <div class="note-inline-actions">
-                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
-                  <span class="note-inline-sep">·</span>
-                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                  <div class="note-text" style="position:relative;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <span class="note-inline-sep">·</span>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Michael confirmed budget approval for Q1 marketing strategy. Moving forward with the $85K proposal. He mentioned the legal team will need until next week to review the contract terms. I'll schedule a follow-up call to align on timeline.
+                  </div>
                 </div>
               </div>
 
@@ -2094,12 +2108,14 @@
                 </div>
                 <div class="note-item-body">
                   <div class="note-meta" style="margin-bottom: 4px;"><strong>Laura Albany</strong> · <span>Jan 18, 2026 2:30:00 PM</span></div>
-                  <div class="note-text">Follow-up with legal on contract review. They have a few amendments around the termination clause. Will send revised version by EOD Thursday.</div>
-                </div>
-                <div class="note-inline-actions">
-                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
-                  <span class="note-inline-sep">·</span>
-                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                  <div class="note-text" style="position:relative;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <span class="note-inline-sep">·</span>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Follow-up with legal on contract review. They have a few amendments around the termination clause. Will send revised version by EOD Thursday.
+                  </div>
                 </div>
               </div>
 
@@ -2110,12 +2126,14 @@
                 </div>
                 <div class="note-item-body">
                   <div class="note-meta" style="margin-bottom: 4px;"><strong>Lucas Did</strong> · <span>Jan 14, 2026 10:00:00 AM</span></div>
-                  <div class="note-text">Kickoff call went well. Michael wants to prioritize the brand refresh deliverables before the campaign launch. Agreed on bi-weekly syncs.</div>
-                </div>
-                <div class="note-inline-actions">
-                  <a class="note-inline-action" onclick="editNote(this)">Edit</a>
-                  <span class="note-inline-sep">·</span>
-                  <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                  <div class="note-text" style="position:relative;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <span class="note-inline-sep">·</span>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Kickoff call went well. Michael wants to prioritize the brand refresh deliverables before the campaign launch. Agreed on bi-weekly syncs.
+                  </div>
                 </div>
               </div>
 
