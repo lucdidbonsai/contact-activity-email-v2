@@ -1,0 +1,152 @@
+          <div id="tab-emails" class="tab-panel">
+
+            <!-- === DISCONNECTED STATE === -->
+            <div id="email-disconnected-state">
+              <div class="email-disconnected-centered">
+                <!-- Large Gmail M logo -->
+                <svg width="64" height="48" viewBox="0 0 46 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:22px;">
+                  <path d="M0 4v26a4 4 0 004 4h8V15.5L0 4z" fill="#EA4335"/>
+                  <path d="M46 4v26a4 4 0 01-4 4h-8V15.5L46 4z" fill="#4285F4"/>
+                  <path d="M12 34V15.5L23 24l11-8.5V34H12z" fill="#FBBC05"/>
+                  <path d="M0 4C0 1.8 1.8 0 4 0h38c2.2 0 4 1.8 4 4L23 18.5 0 4z" fill="#34A853"/>
+                </svg>
+                <p class="email-disconnected-desc">Connect Gmail to view emails, link messages to contacts, and keep your communication history in one place.</p>
+                <button class="btn btn-primary btn-smd" style="padding-left:24px;padding-right:24px;" onclick="openConnectGmailModal()">Connect Gmail</button>
+              </div>
+            </div>
+
+            <!-- === CONNECTED STATE (hidden until after setup) === -->
+            <div id="email-connected-state" style="display: none;">
+
+              <!-- Title row -->
+              <div class="tab-section-title-row">
+                <span class="tab-section-title">Emails</span>
+              </div>
+
+              <!-- Toolbar: search + filters left | ··· right -->
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0 14px 0;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="position:relative;display:flex;align-items:center;">
+                    <svg style="position:absolute;left:9px;color:var(--text-lighter);pointer-events:none;" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4"/><path d="M9.5 9.5l2 2" stroke-linecap="round"/></svg>
+                    <input type="text" class="form-field input-smd" placeholder="Search emails..." style="padding-left:30px;width:220px;">
+                  </div>
+                  <button class="btn btn-default btn-smd">
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-right:4px;"><line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+                    Filters
+                  </button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <!-- Three-dot menu -->
+                  <div class="email-dots-wrap">
+                    <a class="btn btn-default btn-smd btn-dropdown-dots" onclick="toggleEmailDotsMenu(event)" style="cursor:pointer;">
+                      <svg class="top-action-btn-dots" width="16" height="4" viewBox="0 0 16 4" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.07086 4.00001C0.925013 4.00001 0 3.10843 0 2.00021C0 0.896154 0.925013 0.000411987 2.07086 0.000411987C3.22088 0.000411987 4.14589 0.896154 4.14589 2.00021C4.14589 3.10843 3.22088 4.00001 2.07086 4.00001Z" fill="#0f1010"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M8.00002 3.99959C6.85417 3.99959 5.92499 3.10802 5.92499 1.9998C5.92499 0.895742 6.85417 0 8.00002 0C9.14587 0 10.0709 0.895742 10.0709 1.9998C10.0709 3.10802 9.14587 3.99959 8.00002 3.99959Z" fill="#0f1010"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9249 3.99959C12.7791 3.99959 11.8499 3.10802 11.8499 1.9998C11.8499 0.895742 12.7749 0 13.9249 0C15.0708 0 16 0.895742 16 1.9998C16 3.10802 15.075 3.99959 13.9249 3.99959Z" fill="#0f1010"></path></svg>
+                    </a>
+                    <!-- Three-dot dropdown -->
+                    <div class="email-dots-dropdown" id="email-dots-menu" style="display:none;">
+                      <ul style="margin:0;padding:0;">
+                        <li>
+                          <a onclick="disconnectGmail()">
+                            Disconnect Gmail
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- === EMPTY STATE (connected but no threads) === -->
+              <div id="email-empty-state" style="display:none;">
+                <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:80px 40px 60px;">
+                  <div style="width:48px;height:48px;background:var(--bg-grey-f5);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-lighter)" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div style="font-size:15px;font-weight:600;color:var(--text-default);margin-bottom:8px;">No emails yet</div>
+                  <div style="font-size:13px;color:var(--text-muted);line-height:1.6;max-width:340px;">Once your emails are synced, emails from Michael Fawler will appear here.</div>
+                </div>
+              </div>
+
+              <!-- === THREAD LIST === -->
+              <div id="email-thread-list">
+              <div class="email-inbox-list">
+
+                <!-- Message 1: unread — Brand refresh timeline -->
+                <div class="email-thread-row email-thread-unread" onclick="openEmailPanel(0)" style="cursor:pointer;">
+                  <div class="email-thread-avatar-col">
+                    <div class="user-avatar avatar-xs" style="background-image:url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  </div>
+                  <div class="email-thread-content">
+                    <div class="email-thread-top">
+                      <span class="email-thread-subject">Brand refresh timeline</span>
+                      <span class="email-thread-date">Jan 22</span>
+                    </div>
+                    <div class="email-thread-participants">From Tom Bradley</div>
+                    <div class="email-thread-preview">I've pushed the mood board review to Thursday to keep us on track for the Feb 14 deliverable. One question: do you want...</div>
+                  </div>
+                </div>
+
+                <!-- Message 2: read — Q1 Retainer hours update -->
+                <div class="email-thread-row" onclick="openEmailPanel(1)" style="cursor:pointer;">
+                  <div class="email-thread-avatar-col">
+                    <div class="user-avatar avatar-xs" style="background-image:url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                  </div>
+                  <div class="email-thread-content">
+                    <div class="email-thread-top">
+                      <span class="email-thread-subject">Q1 Retainer hours update</span>
+                      <span class="email-thread-date">Jan 20</span>
+                    </div>
+                    <div class="email-thread-participants">From Amanda Chen</div>
+                    <div class="email-thread-preview">Quick heads up — we're at 34 of 40 hours for the month. The market positioning analysis took longer than scoped...</div>
+                  </div>
+                </div>
+
+                <!-- Message 3: read — Sales deck feedback -->
+                <div class="email-thread-row" onclick="openEmailPanel(2)" style="cursor:pointer;">
+                  <div class="email-thread-avatar-col">
+                    <div class="user-avatar avatar-xs" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  </div>
+                  <div class="email-thread-content">
+                    <div class="email-thread-top">
+                      <span class="email-thread-subject">Sales deck feedback</span>
+                      <span class="email-thread-date">Jan 18</span>
+                    </div>
+                    <div class="email-thread-participants">From Michael Fawler</div>
+                    <div class="email-thread-preview">The updated deck looks great. Priya had one note — can we swap the customer logos on slide 8? Two of them churned...</div>
+                  </div>
+                </div>
+
+                <!-- Message 4: unread — Workshop prep -->
+                <div class="email-thread-row email-thread-unread" onclick="openEmailPanel(3)" style="cursor:pointer;">
+                  <div class="email-thread-avatar-col">
+                    <div class="user-avatar avatar-xs" style="background-image:url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                  </div>
+                  <div class="email-thread-content">
+                    <div class="email-thread-top">
+                      <span class="email-thread-subject">Workshop prep – stakeholder list</span>
+                      <span class="email-thread-date">Jan 15</span>
+                    </div>
+                    <div class="email-thread-participants">From Amanda Chen</div>
+                    <div class="email-thread-preview">Attached is the pre-read for next week's positioning workshop. Michael, can you confirm who from the exec team...</div>
+                  </div>
+                </div>
+
+                <!-- Message 5: read — Case study draft -->
+                <div class="email-thread-row" onclick="openEmailPanel(4)" style="cursor:pointer;">
+                  <div class="email-thread-avatar-col">
+                    <div class="user-avatar avatar-xs" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  </div>
+                  <div class="email-thread-content">
+                    <div class="email-thread-top">
+                      <span class="email-thread-subject">Case study draft – Northvolt</span>
+                      <span class="email-thread-date">Jan 12</span>
+                    </div>
+                    <div class="email-thread-participants">From Michael Fawler</div>
+                    <div class="email-thread-preview">Legal flagged one issue — we can't disclose the actual revenue numbers in section 3. Can you rework it to use...</div>
+                  </div>
+                </div>
+
+              </div><!-- /email-inbox-list -->
+              </div><!-- /email-thread-list -->
+            </div><!-- /email-connected-state -->
+
+          </div><!-- /tab-emails -->

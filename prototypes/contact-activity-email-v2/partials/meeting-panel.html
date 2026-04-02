@@ -1,0 +1,75 @@
+        <div id="meeting-detail-panel" class="meeting-detail-panel">
+
+          <!-- Top bar -->
+          <div class="mdp-top-bar">
+            <div class="mdp-top-bar-title" id="mdp-title"></div>
+            <div class="mdp-top-bar-right">
+              <div class="mdp-top-bar-meta">
+                <svg width="13" height="14" viewBox="0 0 20 22" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.00004 1.52433C7.00004 0.958562 6.55239 0.500004 6.00008 0.500004C5.44777 0.500004 4.99995 0.958562 4.99995 1.52433V2.04277C4.50409 2.05066 4.06343 2.06884 3.67522 2.11034C2.95585 2.18751 2.3036 2.35369 1.72352 2.76492C1.32776 3.04548 0.984741 3.39689 0.710837 3.80228C0.30938 4.39632 0.147173 5.06447 0.0720001 5.80137C0.0060378 6.44857 0.000513331 7.23846 1.18955e-05 8.18288V14.4017C-0.00015555 15.7888 -0.000155517 16.9326 0.118706 17.838C0.243431 18.7884 0.515475 19.6279 1.17155 20.2999C1.82762 20.972 2.64714 21.2507 3.57492 21.3784C4.45869 21.5002 5.57535 21.5 6.9294 21.5H13.0705C14.4247 21.5 15.5413 21.5002 16.4251 21.3784C17.3529 21.2506 18.1724 20.972 18.8285 20.2999C19.4845 19.6279 19.7566 18.7884 19.8813 17.838C20.0002 16.9327 20 15.7888 20 14.4017V8.18288C19.9995 7.23846 19.994 6.44857 19.928 5.80136C19.8528 5.06447 19.6906 4.39632 19.2892 3.80228C19.0153 3.39687 18.6721 3.04549 18.2765 2.76492C17.6964 2.35368 17.0442 2.18751 16.3248 2.11033C15.9366 2.06883 15.4959 2.05065 15.0001 2.04277V1.52432C15.0001 0.958558 14.5522 0.5 13.9999 0.5C13.4476 0.5 13 0.958558 13 1.52432V2.03657H6.99989L7.00004 1.52433ZM17.9999 8.18297H1.99991C2.00058 7.22362 2.00694 6.54502 2.06102 6.01442C2.11911 5.44457 2.22358 5.1633 2.35533 4.96814C2.49225 4.76563 2.66368 4.58985 2.86157 4.44957C3.0519 4.31461 3.32666 4.20777 3.88295 4.14809C4.19384 4.11482 4.5568 4.09921 4.99978 4.09184V4.59759C4.99978 5.16336 5.4476 5.62209 5.99991 5.62209C6.55222 5.62209 6.99987 5.16336 6.99987 4.59759V4.08552H12.9999V4.59759C12.9999 5.16336 13.4476 5.62209 13.9999 5.62209C14.5522 5.62209 15 5.16336 15 4.59759V4.09184C15.443 4.09921 15.806 4.11482 16.1169 4.14809C16.6732 4.20777 16.9479 4.31461 17.1382 4.44957C17.3361 4.58983 17.5075 4.76561 17.6445 4.96814C17.7762 5.16329 17.8805 5.44457 17.9388 6.01442C17.9929 6.54502 17.9992 7.22362 17.9999 8.18297ZM1.99983 10.2318H18.0001V14.3293C18.0001 15.807 17.9979 16.8121 17.8992 17.5648C17.8043 18.2882 17.6368 18.6231 17.4142 18.851C17.1917 19.0791 16.8647 19.2506 16.1586 19.3478C15.4238 19.449 14.4426 19.4512 13 19.4512H6.99993C5.55751 19.4512 4.57615 19.449 3.84136 19.3478C3.13519 19.2506 2.80824 19.0791 2.58558 18.851C2.36311 18.6231 2.1957 18.2882 2.10078 17.5648C2.002 16.8122 1.99983 15.807 1.99983 14.3293V10.2318Z" fill="#22AD01"/></svg>
+                <span id="mdp-date"></span>
+                <span class="mdp-top-bar-meta-sep">•</span>
+                <span id="mdp-duration"></span>
+              </div>
+              <div class="mdp-dots-wrap">
+                <button class="mdp-dots-btn" onclick="toggleMdpMenu(event)">
+                  <svg width="14" height="4" viewBox="0 0 16 4" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.07086 4C0.925013 4 0 3.10843 0 2.00021C0 0.896154 0.925013 0.000411987 2.07086 0.000411987C3.22088 0.000411987 4.14589 0.896154 4.14589 2.00021C4.14589 3.10843 3.22088 4 2.07086 4Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8 3.99959C6.85417 3.99959 5.92499 3.10802 5.92499 1.9998C5.92499 0.895742 6.85417 0 8 0C9.14587 0 10.0709 0.895742 10.0709 1.9998C10.0709 3.10802 9.14587 3.99959 8 3.99959Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9249 3.99959C12.7791 3.99959 11.8499 3.10802 11.8499 1.9998C11.8499 0.895742 12.7749 0 13.9249 0C15.0708 0 16 0.895742 16 1.9998C16 3.10802 15.075 3.99959 13.9249 3.99959Z" fill="currentColor"/></svg>
+                </button>
+                <ul class="mdp-top-dropdown" id="mdp-top-dropdown">
+                  <li><a>Copy Link</a></li>
+                  <li><a>Delete</a></li>
+                </ul>
+              </div>
+              <button class="mdp-close-btn" onclick="closeMeetingPanel()">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Video player (shown only when recording exists) -->
+          <div id="mdp-video-wrap" class="mdp-video-wrap" style="display:none;">
+            <video controls preload="metadata" class="mdp-video" id="mdp-video">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          <!-- Metadata bar: owner · invitees · visibility -->
+          <div class="mdp-metadata-bar">
+            <div class="mdp-meta-owner" id="mdp-owner-row"><!-- filled by JS --></div>
+            <div class="mdp-invitees-stack" id="mdp-invitees-stack"><!-- filled by JS --></div>
+            <button class="mdp-visibility-btn">
+              <svg width="12" height="10" viewBox="0 0 18 13" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 0C5.14 0 1.84 2.37 0 5.83c0 .1.01.19.01.28C1.86 9.63 5.14 12 9 12s7.14-2.37 8.99-5.89c0-.09.01-.18.01-.28C16.16 2.37 12.86 0 9 0Zm0 10a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-6.4a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8Z" fill="currentColor"/></svg>
+              All Team Members
+              <svg width="8" height="5" viewBox="0 0 8 5" fill="none"><path d="M1 1l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <!-- Summary / Transcript tabs -->
+          <div class="mdp-subnavigation">
+            <div class="mdp-subnavigation-items">
+              <a class="mdp-subnav-item active" onclick="switchMdpTab('summary', this)">Summary</a>
+              <a class="mdp-subnav-item" onclick="switchMdpTab('transcript', this)">Transcript</a>
+            </div>
+          </div>
+
+          <!-- Summary tab -->
+          <div class="mdp-tab-panel" id="mdp-tab-summary">
+            <div class="mdp-summary-section">
+              <h3 class="mdp-summary-section-title">Quick Recap</h3>
+              <p class="mdp-recap-text" id="mdp-recap"></p>
+            </div>
+            <div class="mdp-summary-section" id="mdp-chapters-section">
+              <h3 class="mdp-summary-section-title">Chapters</h3>
+              <div class="mdp-chapters-list" id="mdp-chapters"></div>
+            </div>
+            <div class="mdp-summary-section" id="mdp-nextsteps-section">
+              <h3 class="mdp-summary-section-title">Next Steps</h3>
+              <div class="mdp-next-steps-list" id="mdp-nextsteps"></div>
+            </div>
+          </div>
+
+          <!-- Transcript tab -->
+          <div class="mdp-tab-panel" id="mdp-tab-transcript" hidden>
+            <div id="mdp-transcript"></div>
+          </div>
+
+        </div>

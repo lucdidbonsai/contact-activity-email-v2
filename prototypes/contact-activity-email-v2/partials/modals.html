@@ -1,0 +1,191 @@
+<div class="modal-overlay hidden" id="modal-integration">
+  <div class="modal-wrap">
+    <div class="modal-dialog">
+
+      <!-- Header: provider icon + name + connected status -->
+      <div class="integ-modal-header">
+        <div id="integ-modal-icon" style="flex-shrink:0;"></div>
+        <div class="integ-modal-provider-info">
+          <div class="integ-modal-provider-name">
+            <span id="integ-modal-name"></span>
+            <span class="integ-modal-connected-badge">
+              <span class="integ-modal-connected-dot"></span> Connected
+            </span>
+          </div>
+          <div class="integ-modal-email-addr">tom.bradley@catalystconsulting.io</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="integ-modal-tabs">
+        <div class="integ-modal-tab active" onclick="switchIntegTab('general')">General</div>
+        <div class="integ-modal-tab" onclick="switchIntegTab('blocklist')">Blocklist</div>
+      </div>
+
+      <!-- Tab body -->
+      <div class="integ-modal-body">
+
+        <!-- General tab -->
+        <div class="integ-tab-panel active" id="integ-tab-general">
+          <!-- Default sharing -->
+          <div class="sharing-section">
+            <div class="sharing-section-title">Default sharing</div>
+            <div class="sharing-section-desc">Control what information is visible to others in your workspace.</div>
+            <div class="sharing-option" onclick="selectSharingOption(this)">
+              <div class="sharing-option-icon">
+                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="16" height="11" rx="1.5"/><path d="M1 6l8 5 8-5"/></svg>
+              </div>
+              <div class="sharing-option-body">
+                <div class="sharing-option-title">Metadata only</div>
+                <div class="sharing-option-desc">The email participants and timestamp will be visible to anyone in your workspace</div>
+              </div>
+              <div class="sharing-option-radio"></div>
+            </div>
+            <div class="sharing-option selected" onclick="selectSharingOption(this)">
+              <div class="sharing-option-icon">
+                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="16" height="11" rx="1.5"/><path d="M1 6l8 5 8-5"/></svg>
+              </div>
+              <div class="sharing-option-body">
+                <div class="sharing-option-title">Subject line and metadata</div>
+                <div class="sharing-option-desc">We'll share the subject, participants and timestamp with anyone in your workspace</div>
+              </div>
+              <div class="sharing-option-radio"></div>
+            </div>
+            <div class="sharing-option" onclick="selectSharingOption(this)">
+              <div class="sharing-option-icon">
+                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="16" height="11" rx="1.5"/><path d="M1 6l8 5 8-5"/></svg>
+              </div>
+              <div class="sharing-option-body">
+                <div class="sharing-option-title">Full access</div>
+                <div class="sharing-option-desc">Everything is shared with your workspace (including the body, subject line, attachments)</div>
+              </div>
+              <div class="sharing-option-radio"></div>
+            </div>
+          </div>
+
+          <!-- Individual sharing -->
+          <div class="sharing-section">
+            <div class="individual-sharing-row">
+              <div class="individual-sharing-info">
+                <div class="sharing-section-title">Individual sharing</div>
+                <div class="sharing-section-desc" style="margin-bottom:0;">Share full access to your emails with specific individuals</div>
+              </div>
+              <button class="btn btn-default btn-smd" style="flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-right:5px;"><circle cx="7" cy="5" r="3"/><path d="M1 13c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg>
+                Share access
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blocklist tab -->
+        <div class="integ-tab-panel" id="integ-tab-blocklist">
+          <div class="blocklist-empty">
+            <div class="blocklist-empty-icon">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="17" cy="14" r="7" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 38c0-7.732 6.268-14 14-14h1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="32" cy="32" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M26 38l12-12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="blocklist-empty-title">No emails or domains yet</div>
+            <div class="blocklist-empty-desc">Emails from blocklisted domains and addresses won't appear in Bonsai</div>
+            <button class="btn btn-primary btn-smd">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2" style="margin-right:5px;"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+              Add to blocklist
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /integ-modal-body -->
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-default btn-smd" onclick="closeIntegModal()">Cancel</button>
+        <button class="btn btn-primary btn-smd" onclick="saveIntegrationSettings()">Save &amp; Continue</button>
+      </div>
+
+    </div><!-- /modal-dialog -->
+    <button class="modal-close-btn" onclick="closeIntegModal()">&#x2715;</button>
+  </div>
+</div>
+
+<!-- ===== MODAL: Connect Gmail (POC — replaces complex integration modal) ===== -->
+<div class="modal-overlay hidden" id="modal-connect-gmail">
+  <div class="modal-wrap">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="import-modal-inner">
+        <div class="import-modal-logo">
+          <!-- Gmail M icon -->
+          <svg width="38" height="28" viewBox="0 0 46 34" fill="none">
+            <path d="M0 4v26a4 4 0 004 4h8V15.5L0 4z" fill="#EA4335"/>
+            <path d="M46 4v26a4 4 0 01-4 4h-8V15.5L46 4z" fill="#4285F4"/>
+            <path d="M12 34V15.5L23 24l11-8.5V34H12z" fill="#FBBC05"/>
+            <path d="M0 4C0 1.8 1.8 0 4 0h38c2.2 0 4 1.8 4 4L23 18.5 0 4z" fill="#34A853"/>
+          </svg>
+        </div>
+        <div class="import-modal-title">Gmail</div>
+        <div class="import-modal-subtitle">Bring the emails you send and receive into your individual Gmail account into Bonsai.</div>
+        <div style="margin-bottom:22px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-default);margin-bottom:10px;line-height:1.45;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22AD01" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            Sync past email threads to your contacts in Bonsai
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-default);margin-bottom:10px;line-height:1.45;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22AD01" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            View full email conversations directly on the contact profile
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-default);line-height:1.45;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22AD01" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            Keep your client communication history in one place
+          </div>
+        </div>
+        <button class="btn btn-primary btn-smd import-modal-cta" onclick="proceedToOAuth()">Continue</button>
+      </div>
+    </div>
+    <button class="modal-close-btn" onclick="closeConnectGmailModal()">&#x2715;</button>
+  </div>
+</div>
+
+<!-- ===== MODAL: Import Past Emails ===== -->
+<div class="modal-overlay hidden" id="modal-import">
+  <div class="modal-wrap">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="import-modal-inner">
+        <div class="import-modal-logo" id="import-modal-logo"></div>
+        <div class="import-modal-title">Do you want to import past emails?</div>
+        <div class="import-modal-subtitle">Import emails from the following dates:</div>
+        <div class="import-date-row">
+          <div class="import-date-field">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#22AD01" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><line x1="1" y1="5" x2="13" y2="5"/><line x1="4" y1="1" x2="4" y2="3"/><line x1="10" y1="1" x2="10" y2="3"/></svg>
+            <span>24/12/2025</span>
+          </div>
+          <span class="import-date-arrow">&#8594;</span>
+          <div class="import-date-field">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#22AD01" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><line x1="1" y1="5" x2="13" y2="5"/><line x1="4" y1="1" x2="4" y2="3"/><line x1="10" y1="1" x2="10" y2="3"/></svg>
+            <span>24/01/2026</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-smd import-modal-cta" onclick="finishImport()">Import Emails</button>
+        <div class="import-modal-skip" onclick="skipImport()">Maybe Later</div>
+      </div>
+    </div>
+    <button class="modal-close-btn" onclick="skipImport()">&#x2715;</button>
+  </div>
+</div>
+
+<!-- ── Delete Note Modal ── -->
+<div id="delete-note-modal" class="modal-overlay hidden delete-note-modal">
+  <div class="modal-wrap">
+    <div class="modal-dialog">
+      <div class="delete-note-modal-title">Delete Note</div>
+      <div class="delete-note-modal-desc">Confirm that you would like to permanently delete this note.</div>
+      <button class="btn-danger" onclick="confirmDeleteNote()">Delete</button>
+    </div>
+    <button class="modal-close-btn" onclick="closeDeleteModal()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l12 12M13 1L1 13"/></svg>
+    </button>
+  </div>
+</div>
+

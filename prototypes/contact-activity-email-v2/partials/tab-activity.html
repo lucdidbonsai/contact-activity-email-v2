@@ -1,0 +1,263 @@
+          <div id="tab-activity" class="tab-panel active">
+            <div class="tab-section-title-row">
+              <span class="tab-section-title">Activity</span>
+              <div class="add-btn-wrap">
+                <div class="dashboard-chart-options showing-xs" style="position: relative;">
+                  <a class="dashboard-chart-option-add-icon" onclick="toggleAddMenu()" title="Add" style="cursor:pointer;">
+                    <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.4062 8.83333H11.6667V2.09375C11.6667 1.21354 10.9219 0.5 10 0.5C9.07812 0.5 8.33333 1.21354 8.33333 2.09375V8.83333H1.59375C0.713542 8.83333 0 9.57812 0 10.5C0 11.4219 0.713542 12.1667 1.59375 12.1667H8.33333V18.9062C8.33333 19.7865 9.07812 20.5 10 20.5C10.9219 20.5 11.6667 19.7865 11.6667 18.9062V12.1667H18.4062C19.2865 12.1667 20 11.4219 20 10.5C20 9.57812 19.2865 8.83333 18.4062 8.83333Z" fill="#22AD01"></path></svg>
+                  </a>
+                  <div class="add-dropdown" id="add-activity-menu">
+                    <div class="field-popup-menu popup-menu-160" style="position: relative; box-shadow: var(--box-shadow-medium);">
+                      <a class="field-popup-menu-list-item" onclick="showActivityNoteComposer()">
+                        Add Note
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="activity-note-composer-wrap" style="display:none; margin-bottom: 20px;"></div>
+
+            <div class="activity-feed">
+
+              <!-- Client portal message: Michael Fawler (Jan 24) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent a message in client portal &middot; Jan 24, 2:10 PM</div>
+                  <div class="email-activity-card" style="cursor:default; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" href="#">View Message</a>
+                    <div class="email-activity-card-body">Hi Tom, just a heads up — we've reviewed the brand guidelines doc you shared and everything looks good on our end. One small thing: the footer on the proposal still has the old logo. Can you swap that before we send it to the board?</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Client portal message: Michael Fawler (Jan 17) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent a message in client portal &middot; Jan 17, 10:45 AM</div>
+                  <div class="email-activity-card" style="cursor:default; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" href="#">View Message</a>
+                    <div class="email-activity-card-body">Quick note — the board presentation got moved to Feb 3rd, so we have a bit more runway. That said, I'd still like to lock in the primary palette this week if possible. Can we do a quick 20-minute call Thursday or Friday?</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email: Tom Bradley → Michael Fawler (Brand refresh) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand refresh timeline&rdquo; &middot; Jan 22, 3:15 PM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(0);">View Email</a>
+                    <div class="email-activity-card-body">Hi both, I've pushed the mood board review to <strong>Thursday</strong> to keep us on track for the <strong>Feb 14 deliverable</strong>. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now? Also flagging that the photography team needs a final answer on the location by end of week.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email: Amanda Chen → Michael Fawler (Q1 Retainer) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Amanda Chen</strong> sent an email to michael.fawler@techstart.co: &ldquo;Q1 Retainer hours update&rdquo; &middot; Jan 20, 9:31 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(1);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(1);">View Email</a>
+                    <div class="email-activity-card-body">Michael, quick heads up — we're at <strong>34 of 40 hours</strong> for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable? If you'd prefer we hold, I can scope a small add-on and send it over for sign-off before we continue.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email: Michael Fawler → Tom Bradley (Re: Brand refresh timeline) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent an email to tom.bradley@catalystconsulting.io: &ldquo;Re: Brand refresh timeline&rdquo; &middot; Jan 19, 10:22 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(0);">View Email</a>
+                    <div class="email-activity-card-body">Tom, just wanted to check in on the mood board timeline before we sync Thursday. Are we still planning to present all three directions or have you narrowed it down? Also — should we include the secondary colour palette in this first round or keep it to the primary system?</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email: Tom Bradley → Michael Fawler (Brand Retainer Wrapping Up) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand Retainer Wrapping Up - Shall We Continue?&rdquo; &middot; Jan 12, 11:40 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(5);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(5);">View Email</a>
+                    <div class="email-activity-card-body">Michael, the current brand retainer wraps up at the end of this month. We've loved working on the TechStart rebrand and wanted to check in — would you like to roll into a new retainer for Q2, or is there a specific project scope you'd prefer to move to? Happy to put together a couple of options if it's helpful.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email: Michael Fawler → Tom Bradley (Re: Brand Retainer) -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> sent an email to tom.bradley@catalystconsulting.io: &ldquo;Re: Brand Retainer Wrapping Up - Shall We Continue?&rdquo; &middot; Jan 13, 9:15 AM</div>
+                  <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(5);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:0; transition: background 0.1s;">
+                    <a class="email-view-hover-link" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(5);">View Email</a>
+                    <div class="email-activity-card-body">Tom, great timing on this — I was going to reach out this week. Let's definitely continue. A rolling retainer makes more sense than project-by-project at this stage. Can you send over what a Q2 continuation would look like scope-wise? We may want to shift some of the hours toward the investor materials we discussed.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note: Tom Bradley -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Tom Bradley</strong> added a note &middot; Jan 22, 6:15 PM</div>
+                  <div class="activity-text" style="position:relative; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Michael shared confidentially that TechStart Labs is exploring a <strong>seed fundraise in Q3</strong>. Wants us to complete the market positioning analysis before they start investor conversations.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deal assigned: Tom Bradley -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Tom Bradley</strong> assigned deal <strong>Market Entry Strategy</strong> ($15,000) to Michael Fawler &middot; Jan 21, 11:13 AM</div>
+                  <div class="doc-card">
+                    <div class="doc-card-icon">
+                      <svg width="18" height="15" viewBox="0 0 23 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.40835 0H16.5053C18.0256 0 19.4085 0.880056 20.0523 2.25729L22.0028 6.42995C22.9123 8.3756 22.9123 10.6244 22.0028 12.57L20.0523 16.7427C19.4085 18.1199 18.0256 19 16.5053 19H4.40835C2.74724 19 0.782501 18.1324 0.151362 16.219C-0.159865 15.2755 0.0914611 14.4203 0.177522 14.1274L1.29587 10.3166C1.45232 9.78342 1.45232 9.21656 1.29587 8.68342L0.177522 4.87256C0.0914605 4.5797 -0.159866 3.72447 0.151365 2.78095C0.782515 0.867566 2.74728 0 4.40835 0ZM4.40835 2.1749H5.64136L7.48734 8.36091C7.70934 9.10482 7.70934 9.89736 7.48734 10.6413L5.64201 16.8251H4.40835C3.34937 16.8251 2.46068 16.2771 2.2168 15.5377C2.13019 15.2752 2.19006 14.9932 2.26791 14.7279L3.38276 10.929C3.65656 9.99599 3.65656 9.00399 3.38276 8.071L2.26791 4.27203C2.19006 4.00674 2.13019 3.72481 2.2168 3.46225C2.46068 2.72292 3.34937 2.1749 4.40835 2.1749ZM9.57143 7.73899L7.91103 2.1749H11.6284L13.5363 8.56821C13.7179 9.17687 13.7179 9.82531 13.5363 10.434L11.6291 16.8251H7.91168L9.57143 11.2632C9.91451 10.1135 9.91451 8.88867 9.57143 7.73899ZM13.8987 16.8251H16.5053C17.1811 16.8251 17.7958 16.4339 18.082 15.8217L20.0326 11.649C20.6692 10.2871 20.6692 8.71292 20.0325 7.35096L18.082 3.1783C17.7958 2.5661 17.1811 2.1749 16.5053 2.1749H13.8981L15.6203 7.94629C15.9231 8.96072 15.9231 10.0415 15.6203 11.0559L13.8987 16.8251Z" fill="#22AD01"/></svg>
+                    </div>
+                    <div class="doc-card-title">Market Entry Strategy</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Meeting completed: Strategic Planning Offsite -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=CT&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Chris Taylor</strong> completed a meeting with Michael Fawler &middot; Jan 20, 9:00 AM</div>
+                  <div class="meeting-card">
+                    <div class="meeting-card-icon">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5"><rect x="1" y="3" width="10" height="10" rx="1.5"/><path d="M11 7l4-2v6l-4-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="meeting-card-title">Strategic Planning Offsite</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note: Tom Bradley Jan 14 -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Tom Bradley</strong> added a note &middot; Jan 14, 2:45 PM</div>
+                  <div class="activity-text" style="position:relative; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Competitive landscape draft reviewed. Michael thinks our TAM estimates for enterprise are conservative — wants us to push <strong>15–20% higher</strong> based on their internal data.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Meeting completed: Product Demo -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=CT&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Chris Taylor</strong> completed a meeting with Michael Fawler &middot; Jan 13, 2026 4:00 PM</div>
+                  <div class="meeting-card">
+                    <div class="meeting-card-icon">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#22AD01" stroke-width="1.5"><rect x="1" y="3" width="10" height="10" rx="1.5"/><path d="M11 7l4-2v6l-4-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="meeting-card-title">Product Demo – Enterprise Plan</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Proposal sent: Tom Bradley -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Tom Bradley</strong> sent the <a>proposal</a> to michael.fawler@techstart.co &middot; Jan 24, 5:30 PM</div>
+                  <div class="doc-card">
+                    <div class="doc-card-icon">
+                      <svg width="16" height="16" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M20.7278 2.70149C20.8079 2.43098 20.5585 2.19961 20.3116 2.27197L2.49928 7.48831C2.22156 7.56953 2.16281 7.95246 2.41618 8.11111C2.41622 8.11114 2.41626 8.11117 2.4163 8.11119L9.15335 12.325L15.1148 6.29982C15.5528 5.85721 16.2666 5.85342 16.7092 6.29135C17.1518 6.72928 17.1556 7.44309 16.7177 7.8857L10.7425 13.9246L14.8482 20.5843C14.8483 20.5844 14.8483 20.5845 14.8484 20.5846C14.8484 20.5846 14.8484 20.5847 14.8485 20.5847C15.0012 20.8315 15.3734 20.787 15.4584 20.5003L20.7278 2.70155L20.7278 2.70149ZM8.49211 14.5709L12.9294 21.7684C14.1091 23.6802 16.9832 23.2895 17.6202 21.1413L22.8898 3.34168C22.8898 3.34166 22.8898 3.34165 22.8898 3.34163C23.4711 1.37842 21.6572 -0.471877 19.6776 0.108136C19.6775 0.10816 19.6775 0.108184 19.6774 0.108207L1.8664 5.32417M8.49211 14.5709L1.22051 10.0228L1.22038 10.0227C-0.67572 8.83641 -0.287437 5.95438 1.86599 5.32429" fill="#22AD01"/></svg>
+                    </div>
+                    <div class="doc-card-title">Market Entry Strategy – Enterprise Segment</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note: Chris Taylor -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=CT&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Chris Taylor</strong> added a note &middot; Jan 03, 11:00 AM</div>
+                  <div class="activity-text" style="position:relative; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px;">
+                    <div class="note-inline-actions">
+                      <a class="note-inline-action" onclick="editNote(this)">Edit</a>
+                      <a class="note-inline-action note-inline-delete" onclick="deleteNote(this)">Delete</a>
+                    </div>
+                    Board deck and strategic priorities shared under NDA. Market positioning analysis scope confirmed. Target completion: <strong>mid-February</strong>.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contract signed: Michael Fawler -->
+              <div class="activity-item">
+                <div class="activity-item-left">
+                  <div class="user-avatar avatar-xs" style="background-image: url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                  <div class="activity-item-line"></div>
+                </div>
+                <div class="activity-item-body">
+                  <div class="activity-meta"><strong>Michael Fawler</strong> signed the <a>contract</a> &middot; Jan 15, 1:20 PM</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
