@@ -183,7 +183,6 @@
       <!-- Header -->
       <div class="sem-header">
         <div class="sem-title">Send Email</div>
-        <div class="sem-subtitle">Send an email to any contact.</div>
       </div>
 
       <!-- Scrollable body -->
@@ -191,11 +190,7 @@
         <!-- To field -->
         <div class="sem-field-box" id="sem-to-row" onclick="openContactDropdown()">
           <span class="sem-field-label">To:</span>
-          <div class="sem-to-input-area">
-            <span class="sem-chip" id="sem-to-chip" style="display:none;">
-              <span class="sem-chip-name" id="sem-chip-name"></span>
-              <span class="sem-chip-remove" onclick="event.stopPropagation(); removeRecipient()">&times;</span>
-            </span>
+          <div class="sem-to-input-area" id="sem-to-chips-area">
             <input type="text" class="sem-to-search" id="sem-to-search" placeholder="Select a contact…" autocomplete="off" oninput="filterContactDropdown()" onfocus="openContactDropdown()">
           </div>
           <svg class="sem-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>
@@ -209,7 +204,7 @@
 
         <!-- Subject field -->
         <div class="sem-field-box sem-subject-box">
-          <input type="text" class="sem-subject-input" id="sem-subject-input" placeholder="Subject: Enter subject...">
+          <input type="text" class="sem-subject-input" id="sem-subject-input" placeholder="Subject">
         </div>
 
         <!-- Composer area (body + attachments + attach button + preview link) -->

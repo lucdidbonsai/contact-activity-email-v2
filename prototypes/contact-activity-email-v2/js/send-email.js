@@ -1,12 +1,14 @@
-  // ── Send Email Modal ──
-  var semSelectedContact = null;
+  // ── Send Email Modal (multi-select To) ──
+  var semSelectedContacts = [];
 
   function openSendEmailModal(prefilledContact) {
     var modal = document.getElementById('modal-send-email');
     modal.classList.remove('hidden');
+    semSelectedContacts = [];
+    renderToChips();
     // Pre-fill with current contact page contact
     var contact = prefilledContact || contactsList[0]; // Michael Fawler
-    selectRecipient(contact);
+    addRecipient(contact);
     document.getElementById('sem-subject-input').value = '';
     document.getElementById('sem-editor').innerHTML = '';
     document.getElementById('sem-attachments').innerHTML = '';
@@ -19,49 +21,71 @@
 
   function closeSendEmailModal() {
     var editor = document.getElementById('sem-editor');
-    var hasContent = editor && editor.innerText.trim().length > 0;
+    var subject = document.getElementById('sem-subject-input');
+    var hasContent = (editor && editor.innerText.trim().length > 0) || (subject && subject.value.trim().length > 0);
     if (hasContent) {
-      if (!confirm('Discard this draft?')) return;
+      if (!confirm('Discard this draft? Your changes will be lost.')) return;
     }
     document.getElementById('modal-send-email').classList.add('hidden');
-    semSelectedContact = null;
+    semSelectedContacts = [];
   }
 
-  function selectRecipient(contact) {
-    semSelectedContact = contact;
-    var chip = document.getElementById('sem-to-chip');
-    var chipName = document.getElementById('sem-chip-name');
-    var search = document.getElementById('sem-to-search');
-    chipName.textContent = contact.name;
-    chip.style.display = 'inline-flex';
-    search.value = '';
-    search.placeholder = '';
-    closeContactDropdown();
-    // Show warning if no email
-    var warning = document.getElementById('sem-warning');
-    if (!contact.email) {
-      warning.style.display = 'block';
-    } else {
-      warning.style.display = 'none';
+  function addRecipient(contact) {
+    // Don't add duplicates
+    for (var i = 0; i < semSelectedContacts.length; i++) {
+      if (semSelectedContacts[i].name === contact.name) return;
     }
+    semSelectedContacts.push(contact);
+    renderToChips();
+    closeContactDropdown();
+    document.getElementById('sem-to-search').value = '';
+    // Show warning if any selected contact has no email
+    checkNoEmailWarning();
     updateSendEmailBtn();
   }
 
-  function removeRecipient() {
-    semSelectedContact = null;
-    var chip = document.getElementById('sem-to-chip');
-    chip.style.display = 'none';
-    document.getElementById('sem-to-search').placeholder = 'Select a contact…';
-    document.getElementById('sem-warning').style.display = 'none';
+  function removeRecipientAt(index) {
+    semSelectedContacts.splice(index, 1);
+    renderToChips();
+    checkNoEmailWarning();
     updateSendEmailBtn();
+  }
+
+  function renderToChips() {
+    var area = document.getElementById('sem-to-chips-area');
+    var search = document.getElementById('sem-to-search');
+    // Remove existing chips
+    var existing = area.querySelectorAll('.sem-chip');
+    for (var i = existing.length - 1; i >= 0; i--) existing[i].remove();
+    // Add chips before the search input
+    for (var j = 0; j < semSelectedContacts.length; j++) {
+      var chip = document.createElement('span');
+      chip.className = 'sem-chip';
+      chip.innerHTML = '<span class="sem-chip-name">' + semSelectedContacts[j].name + '</span>'
+        + '<span class="sem-chip-remove" onclick="event.stopPropagation(); removeRecipientAt(' + j + ')">&times;</span>';
+      area.insertBefore(chip, search);
+    }
+    search.placeholder = semSelectedContacts.length === 0 ? 'Select a contact…' : '';
+  }
+
+  function checkNoEmailWarning() {
+    var warning = document.getElementById('sem-warning');
+    var hasNoEmail = false;
+    for (var i = 0; i < semSelectedContacts.length; i++) {
+      if (!semSelectedContacts[i].email) { hasNoEmail = true; break; }
+    }
+    warning.style.display = hasNoEmail ? 'block' : 'none';
   }
 
   function updateSendEmailBtn() {
     var btn = document.getElementById('sem-send-btn');
     var subject = document.getElementById('sem-subject-input').value.trim();
-    var hasRecipient = semSelectedContact && semSelectedContact.email;
-    var hasSubject = subject.length > 0;
-    btn.disabled = !(hasRecipient && hasSubject);
+    var hasRecipients = semSelectedContacts.length > 0;
+    var allHaveEmail = true;
+    for (var i = 0; i < semSelectedContacts.length; i++) {
+      if (!semSelectedContacts[i].email) { allHaveEmail = false; break; }
+    }
+    btn.disabled = !(hasRecipients && allHaveEmail && subject.length > 0);
   }
 
   // Listen for subject input changes
@@ -71,7 +95,6 @@
 
   // ── Contact Dropdown ──
   function openContactDropdown() {
-    if (semSelectedContact) return; // Already has a chip
     var dropdown = document.getElementById('sem-contact-dropdown');
     renderContactDropdown('');
     dropdown.style.display = 'block';
@@ -104,7 +127,7 @@
     var html = '';
     for (var i = 0; i < filtered.length; i++) {
       var c = filtered[i];
-      html += '<div class="sem-dd-row" onclick="selectRecipient(contactsList[' + contactsList.indexOf(c) + '])">';
+      html += '<div class="sem-dd-row" onclick="addRecipient(contactsList[' + contactsList.indexOf(c) + '])">';
       html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + c.avatar + '\'); flex-shrink:0;"></div>';
       html += '<div class="sem-dd-info">';
       html += '<div class="sem-dd-top"><span class="sem-dd-name">' + c.name + '</span><span class="sem-dd-company">' + c.company + '</span></div>';
@@ -163,10 +186,11 @@
 
   // ── Send ──
   function sendEmailFromModal() {
-    if (!semSelectedContact || !semSelectedContact.email) return;
+    if (semSelectedContacts.length === 0) return;
+    var names = semSelectedContacts.map(function(c) { return c.name; }).join(', ');
     document.getElementById('modal-send-email').classList.add('hidden');
-    showToast('Email sent to ' + semSelectedContact.name + '.');
-    semSelectedContact = null;
+    showToast('Email sent to ' + names + '.');
+    semSelectedContacts = [];
   }
 
   // Close dropdown on click outside
