@@ -26,6 +26,12 @@
       height: calc(100vh - 60px);
       overflow: hidden;
     }
+    /* Nested contact-page-body (inner from index.html inside outer from topbar partial) */
+    .contact-page-body .contact-page-body {
+      height: auto;
+      flex: 1;
+      overflow: hidden;
+    }
     /* ── Two-column content area ── */
     .contact-content-area {
       display: flex;
