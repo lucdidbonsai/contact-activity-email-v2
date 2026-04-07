@@ -1327,6 +1327,19 @@
     .email-activity-card:hover .email-view-hover-link {
       opacity: 1;
     }
+    .email-show-more {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin-top: 6px;
+      text-decoration: none !important;
+    }
+    .email-show-more:hover {
+      color: var(--text-default) !important;
+      text-decoration: none !important;
+    }
 
     /* ── Email panel: compose mode ── */
     .edp-subject-bar { position: relative; }
