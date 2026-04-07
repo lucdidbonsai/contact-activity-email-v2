@@ -11,6 +11,9 @@
     document.getElementById('sem-editor').innerHTML = '';
     document.getElementById('sem-attachments').innerHTML = '';
     document.getElementById('sem-warning').style.display = 'none';
+    // Reset preview state
+    document.getElementById('sem-composer-area').style.display = 'block';
+    document.getElementById('sem-preview-area').style.display = 'none';
     updateSendEmailBtn();
   }
 
@@ -116,17 +119,46 @@
   }
 
   // ── Attachments ──
+  var FILE_ICON_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+
   function handleSemAttachment(input) {
     var container = document.getElementById('sem-attachments');
     for (var i = 0; i < input.files.length; i++) {
       var file = input.files[i];
       var pill = document.createElement('div');
       pill.className = 'sem-attachment-pill';
-      var name = file.name.length > 32 ? file.name.substring(0, 32) + '…' : file.name;
-      pill.innerHTML = '<span>' + name + '</span><span class="sem-attachment-remove" onclick="this.parentElement.remove()">&times;</span>';
+      var name = file.name.length > 48 ? file.name.substring(0, 48) + '…' : file.name;
+      pill.innerHTML = '<span class="sem-attachment-icon">' + FILE_ICON_SVG + '</span>'
+        + '<span class="sem-attachment-name">' + name + '</span>'
+        + '<span class="sem-attachment-remove" onclick="this.parentElement.remove()">&times;</span>';
       container.appendChild(pill);
     }
     input.value = '';
+  }
+
+  // ── Email Preview Toggle ──
+  function toggleEmailPreview() {
+    var composerArea = document.getElementById('sem-composer-area');
+    var previewArea = document.getElementById('sem-preview-area');
+    if (previewArea.style.display === 'none') {
+      // Build preview content
+      var editor = document.getElementById('sem-editor');
+      var bodyHtml = editor.innerHTML || '<span style="color:#9ca3af;">No content</span>';
+      var attachments = document.querySelectorAll('#sem-attachments .sem-attachment-pill');
+      var previewHtml = '<div style="margin-bottom:8px;">' + bodyHtml + '</div>';
+      if (attachments.length > 0) {
+        for (var i = 0; i < attachments.length; i++) {
+          var fname = attachments[i].querySelector('.sem-attachment-name');
+          previewHtml += '<div class="sem-preview-attachment-row">' + (fname ? fname.textContent : '') + '</div>';
+        }
+      }
+      document.getElementById('sem-preview-content').innerHTML = previewHtml;
+      composerArea.style.display = 'none';
+      previewArea.style.display = 'block';
+    } else {
+      composerArea.style.display = 'block';
+      previewArea.style.display = 'none';
+    }
   }
 
   // ── Send ──

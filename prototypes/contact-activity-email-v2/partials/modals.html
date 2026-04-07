@@ -177,22 +177,19 @@
 
 <!-- ===== MODAL: Send Email Composer ===== -->
 <div class="modal-overlay hidden" id="modal-send-email">
-  <div class="modal-wrap" style="align-items:flex-start; padding-top:8vh; padding-bottom:8vh; overflow-y:auto;">
-    <div class="modal-dialog" style="width:620px; max-width:620px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.16); overflow:hidden; max-height:80vh; display:flex; flex-direction:column;">
+  <div class="modal-wrap sem-wrap">
+    <div class="modal-dialog sem-dialog">
 
       <!-- Header -->
       <div class="sem-header">
-        <div>
-          <div class="sem-title">Send Email</div>
-          <div class="sem-subtitle">Write a personal email to any contact.</div>
-        </div>
-        <button class="sem-close" onclick="closeSendEmailModal()">&times;</button>
+        <div class="sem-title">Send Email</div>
+        <div class="sem-subtitle">Send an email to any contact.</div>
       </div>
 
-      <!-- Body (scrollable) -->
+      <!-- Scrollable body -->
       <div class="sem-body">
         <!-- To field -->
-        <div class="sem-field-row" id="sem-to-row" onclick="openContactDropdown()">
+        <div class="sem-field-box" id="sem-to-row" onclick="openContactDropdown()">
           <span class="sem-field-label">To:</span>
           <div class="sem-to-input-area">
             <span class="sem-chip" id="sem-to-chip" style="display:none;">
@@ -201,43 +198,71 @@
             </span>
             <input type="text" class="sem-to-search" id="sem-to-search" placeholder="Select a contact…" autocomplete="off" oninput="filterContactDropdown()" onfocus="openContactDropdown()">
           </div>
+          <svg class="sem-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>
         </div>
         <!-- Contact dropdown -->
         <div class="sem-contact-dropdown" id="sem-contact-dropdown" style="display:none;"></div>
-
-        <!-- Subject field -->
-        <div class="sem-field-row">
-          <input type="text" class="sem-subject-input" id="sem-subject-input" placeholder="Subject:">
-        </div>
-
-        <!-- Body editor -->
-        <div class="sem-editor-wrap">
-          <div class="sem-editor" id="sem-editor" contenteditable="true" data-placeholder="Type something…"></div>
-        </div>
-
-        <!-- Inline warning -->
+        <!-- Inline warning (no email) -->
         <div class="sem-warning" id="sem-warning" style="display:none;">
           This contact doesn't have an email address. Add one to their profile before sending.
         </div>
 
-        <!-- Attachments area -->
-        <div class="sem-attachments" id="sem-attachments"></div>
+        <!-- Subject field -->
+        <div class="sem-field-box sem-subject-box">
+          <input type="text" class="sem-subject-input" id="sem-subject-input" placeholder="Subject: Enter subject...">
+        </div>
+
+        <!-- Composer area (body + attachments + attach button + preview link) -->
+        <div id="sem-composer-area">
+          <!-- Body editor -->
+          <div class="sem-editor-box">
+            <div class="sem-editor" id="sem-editor" contenteditable="true" data-placeholder="Type something…"></div>
+          </div>
+
+          <!-- Attachments list -->
+          <div class="sem-attachments" id="sem-attachments"></div>
+
+          <!-- Add an attachment button (full-width, inside body scroll) -->
+          <button class="sem-attach-btn" onclick="document.getElementById('sem-file-input').click()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22AD01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+            Add an attachment
+          </button>
+          <input type="file" id="sem-file-input" style="display:none;" onchange="handleSemAttachment(this)" multiple>
+
+          <!-- Show Email Preview link -->
+          <div class="sem-preview-link" id="sem-preview-link" onclick="toggleEmailPreview()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="12" height="9" rx="1.5"/><path d="M1 5l6 4 6-4"/></svg>
+            Show Email Preview
+          </div>
+        </div>
+
+        <!-- Preview area (hidden by default) -->
+        <div id="sem-preview-area" style="display:none;">
+          <div class="sem-preview-divider"><span>EMAIL PREVIEW</span></div>
+          <div class="sem-preview-logo">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="40" height="40" rx="8" fill="#f0fdf4"/><path d="M11 14h18v12a2 2 0 01-2 2H13a2 2 0 01-2-2V14z" stroke="#22AD01" stroke-width="1.5"/><path d="M11 16l9 6 9-6" stroke="#22AD01" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="sem-preview-box" id="sem-preview-content"></div>
+          <div class="sem-preview-footer-row">
+            <a class="sem-preview-hide" onclick="toggleEmailPreview()">Hide Preview</a>
+            <span class="sem-preview-brand">Update your logo and button color in <a class="sem-preview-brand-link">brand settings</a></span>
+          </div>
+        </div>
+
       </div>
 
       <!-- Footer -->
       <div class="sem-footer">
-        <button class="sem-attach-btn" onclick="document.getElementById('sem-file-input').click()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-          Add an attachment
-        </button>
-        <input type="file" id="sem-file-input" style="display:none;" onchange="handleSemAttachment(this)" multiple>
+        <div></div>
         <button class="sem-send-btn" id="sem-send-btn" disabled onclick="sendEmailFromModal()">
           Send Email
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
 
     </div>
+    <!-- Close button (circle, outside dialog) -->
+    <button class="sem-close-circle" onclick="closeSendEmailModal()">&times;</button>
   </div>
 </div>
 
