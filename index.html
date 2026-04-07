@@ -74,6 +74,7 @@
       return chain.then(function () { return loadScript(src); });
     }, Promise.resolve());
   }
+  // Load partials, then fix DOM structure, then load scripts
   Promise.all(
     partials.map(function (p) {
       return fetch(p.src)
@@ -84,6 +85,18 @@
         });
     })
   ).then(function () {
+    // The topbar partial opens a <div class="contact-page-body"> that creates
+    // a duplicate. Merge: move the content-area into the first (topbar's) body
+    // and remove the empty second one.
+    var bodies = document.querySelectorAll('.contact-page-body');
+    if (bodies.length === 2) {
+      var outer = bodies[0];
+      var inner = bodies[1];
+      while (inner.firstChild) {
+        outer.appendChild(inner.firstChild);
+      }
+      inner.remove();
+    }
     return loadScriptsSequentially(appScripts);
   });
 })();
