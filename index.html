@@ -565,7 +565,8 @@
     .email-item-date { font-size: 12px; color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
     .email-item-recipients { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
     .email-item-preview { font-size: 13px; color: var(--text-default); line-height: 1.5; }
-    .email-show-more { font-size: 12px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 4px; display: inline-block; }
+    .email-show-more { display: inline-block; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; margin-top: 6px; text-decoration: none; }
+    .email-show-more:hover { color: var(--text-default); }
     .email-view-link { font-size: 12px; color: var(--color-primary); font-weight: 500; cursor: pointer; flex-shrink: 0; }
 
     /* ── Email access popover ── */
@@ -1660,11 +1661,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta"><strong>Tom Bradley</strong> sent an email to Michael Fawler &middot; Jan 22, 3:15 PM</div>
+                  <div class="activity-meta" style="display:flex; align-items:baseline; gap:6px;"><span style="flex:1;"><strong>Tom Bradley</strong> sent an email to michael.fawler@techstart.co: &ldquo;Brand refresh timeline&rdquo; &middot; Jan 22, 3:15 PM</span><a style="flex-shrink:0; font-size:13px; font-weight:500; color:var(--color-primary); cursor:pointer; text-decoration:none; white-space:nowrap;" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(0);">View Email</a></div>
                   <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(0);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div style="font-size:15px; font-weight:600; color:var(--text-default); margin-bottom:6px;">Brand refresh timeline</div>
-                    <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">From: tom.bradley@catalystconsulting.io &nbsp;&middot;&nbsp; To: michael.fawler@techstart.co</div>
-                    <div style="font-size:14px; color:var(--text-default); line-height:1.6;">Hi both,<br><br>I've pushed the mood board review to <strong>Thursday</strong> to keep us on track for the <strong>Feb 14 deliverable</strong>. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now?<br><br>Also flagging that the photography team needs a final answer on the location by end of week.</div>
+                    <div style="font-size:14px; color:var(--text-default); line-height:1.6; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical;">Hi both, I've pushed the mood board review to <strong>Thursday</strong> to keep us on track for the <strong>Feb 14 deliverable</strong>. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now? Also flagging that the photography team needs a final answer on the location by end of week.</div>
+                    <a class="email-show-more" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(0);">Show More</a>
                   </div>
                 </div>
               </div>
@@ -1676,11 +1676,10 @@
                   <div class="activity-item-line"></div>
                 </div>
                 <div class="activity-item-body">
-                  <div class="activity-meta"><strong>Amanda Chen</strong> sent an email to Michael Fawler &middot; Jan 20, 9:31 AM</div>
+                  <div class="activity-meta" style="display:flex; align-items:baseline; gap:6px;"><span style="flex:1;"><strong>Amanda Chen</strong> sent an email to michael.fawler@techstart.co: &ldquo;Q1 Retainer hours update&rdquo; &middot; Jan 20, 9:31 AM</span><a style="flex-shrink:0; font-size:13px; font-weight:500; color:var(--color-primary); cursor:pointer; text-decoration:none; white-space:nowrap;" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(1);">View Email</a></div>
                   <div class="email-activity-card" onclick="showEmailConnected(true); openEmailPanel(1);" style="cursor:pointer; background:#ffffff; border:1px solid var(--border-content); border-radius:6px; padding:14px 16px; margin-top:6px; transition: background 0.1s;" onmouseenter="this.style.background='var(--bg-grey-fa)'" onmouseleave="this.style.background='#ffffff'">
-                    <div style="font-size:15px; font-weight:600; color:var(--text-default); margin-bottom:6px;">Q1 Retainer hours update</div>
-                    <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">From: amanda.chen@catalystconsulting.io &nbsp;&middot;&nbsp; To: michael.fawler@techstart.co</div>
-                    <div style="font-size:14px; color:var(--text-default); line-height:1.6;">Michael,<br><br>Quick heads up — we're at <strong>34 of 40 hours</strong> for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable?<br><br>If you'd prefer we hold, I can scope a small add-on and send it over for sign-off before we continue.</div>
+                    <div style="font-size:14px; color:var(--text-default); line-height:1.6; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical;">Michael, quick heads up — we're at <strong>34 of 40 hours</strong> for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable? If you'd prefer we hold, I can scope a small add-on and send it over for sign-off before we continue.</div>
+                    <a class="email-show-more" onclick="event.stopPropagation(); showEmailConnected(true); openEmailPanel(1);">Show More</a>
                   </div>
                 </div>
               </div>
