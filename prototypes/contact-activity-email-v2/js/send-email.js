@@ -1,0 +1,268 @@
+  // ── Send Email Modal ──
+  var semSelectedContact = null;
+
+  function openSendEmailModal(prefilledContact) {
+    var modal = document.getElementById('modal-send-email');
+    modal.classList.remove('hidden');
+    // Pre-fill with current contact page contact
+    var contact = prefilledContact || contactsList[0]; // Michael Fawler
+    selectRecipient(contact);
+    document.getElementById('sem-subject-input').value = '';
+    document.getElementById('sem-editor').innerHTML = '';
+    document.getElementById('sem-attachments').innerHTML = '';
+    document.getElementById('sem-warning').style.display = 'none';
+    updateSendEmailBtn();
+  }
+
+  function closeSendEmailModal() {
+    var editor = document.getElementById('sem-editor');
+    var hasContent = editor && editor.innerText.trim().length > 0;
+    if (hasContent) {
+      if (!confirm('Discard this draft?')) return;
+    }
+    document.getElementById('modal-send-email').classList.add('hidden');
+    semSelectedContact = null;
+  }
+
+  function selectRecipient(contact) {
+    semSelectedContact = contact;
+    var chip = document.getElementById('sem-to-chip');
+    var chipName = document.getElementById('sem-chip-name');
+    var search = document.getElementById('sem-to-search');
+    chipName.textContent = contact.name;
+    chip.style.display = 'inline-flex';
+    search.value = '';
+    search.placeholder = '';
+    closeContactDropdown();
+    // Show warning if no email
+    var warning = document.getElementById('sem-warning');
+    if (!contact.email) {
+      warning.style.display = 'block';
+    } else {
+      warning.style.display = 'none';
+    }
+    updateSendEmailBtn();
+  }
+
+  function removeRecipient() {
+    semSelectedContact = null;
+    var chip = document.getElementById('sem-to-chip');
+    chip.style.display = 'none';
+    document.getElementById('sem-to-search').placeholder = 'Select a contact…';
+    document.getElementById('sem-warning').style.display = 'none';
+    updateSendEmailBtn();
+  }
+
+  function updateSendEmailBtn() {
+    var btn = document.getElementById('sem-send-btn');
+    var subject = document.getElementById('sem-subject-input').value.trim();
+    var hasRecipient = semSelectedContact && semSelectedContact.email;
+    var hasSubject = subject.length > 0;
+    btn.disabled = !(hasRecipient && hasSubject);
+  }
+
+  // Listen for subject input changes
+  document.addEventListener('input', function(e) {
+    if (e.target.id === 'sem-subject-input') updateSendEmailBtn();
+  });
+
+  // ── Contact Dropdown ──
+  function openContactDropdown() {
+    if (semSelectedContact) return; // Already has a chip
+    var dropdown = document.getElementById('sem-contact-dropdown');
+    renderContactDropdown('');
+    dropdown.style.display = 'block';
+  }
+
+  function closeContactDropdown() {
+    document.getElementById('sem-contact-dropdown').style.display = 'none';
+  }
+
+  function filterContactDropdown() {
+    var query = document.getElementById('sem-to-search').value;
+    renderContactDropdown(query);
+    if (!document.getElementById('sem-contact-dropdown').style.display || document.getElementById('sem-contact-dropdown').style.display === 'none') {
+      document.getElementById('sem-contact-dropdown').style.display = 'block';
+    }
+  }
+
+  function renderContactDropdown(query) {
+    var dropdown = document.getElementById('sem-contact-dropdown');
+    var q = (query || '').toLowerCase();
+    var filtered = contactsList.filter(function(c) {
+      return c.name.toLowerCase().indexOf(q) !== -1 ||
+             c.company.toLowerCase().indexOf(q) !== -1 ||
+             c.email.toLowerCase().indexOf(q) !== -1;
+    });
+    if (filtered.length === 0) {
+      dropdown.innerHTML = '<div class="sem-dd-empty">No contacts found.</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < filtered.length; i++) {
+      var c = filtered[i];
+      html += '<div class="sem-dd-row" onclick="selectRecipient(contactsList[' + contactsList.indexOf(c) + '])">';
+      html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + c.avatar + '\'); flex-shrink:0;"></div>';
+      html += '<div class="sem-dd-info">';
+      html += '<div class="sem-dd-top"><span class="sem-dd-name">' + c.name + '</span><span class="sem-dd-company">' + c.company + '</span></div>';
+      if (c.email) {
+        html += '<div class="sem-dd-email">' + c.email + '</div>';
+      } else {
+        html += '<div class="sem-dd-no-email">No email on file</div>';
+      }
+      html += '</div></div>';
+    }
+    dropdown.innerHTML = html;
+  }
+
+  // ── Attachments ──
+  function handleSemAttachment(input) {
+    var container = document.getElementById('sem-attachments');
+    for (var i = 0; i < input.files.length; i++) {
+      var file = input.files[i];
+      var pill = document.createElement('div');
+      pill.className = 'sem-attachment-pill';
+      var name = file.name.length > 32 ? file.name.substring(0, 32) + '…' : file.name;
+      pill.innerHTML = '<span>' + name + '</span><span class="sem-attachment-remove" onclick="this.parentElement.remove()">&times;</span>';
+      container.appendChild(pill);
+    }
+    input.value = '';
+  }
+
+  // ── Send ──
+  function sendEmailFromModal() {
+    if (!semSelectedContact || !semSelectedContact.email) return;
+    document.getElementById('modal-send-email').classList.add('hidden');
+    showToast('Email sent to ' + semSelectedContact.name + '.');
+    semSelectedContact = null;
+  }
+
+  // Close dropdown on click outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#sem-to-row') && !e.target.closest('#sem-contact-dropdown')) {
+      closeContactDropdown();
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeContactDropdown();
+    }
+  });
+
+  // ── Inline Composer (Email Side Panel) ──
+  var inlineComposerMode = null; // 'reply' | 'replyall' | 'forward'
+
+  function openInlineComposer(mode) {
+    var composer = document.getElementById('edp-inline-composer');
+    var body = document.getElementById('edp-ic-body');
+
+    // Toggle: clicking the same action again hides the composer
+    if (inlineComposerMode === mode && composer.style.display !== 'none') {
+      hideInlineComposer();
+      return;
+    }
+
+    inlineComposerMode = mode;
+    composer.style.display = 'block';
+    body.innerHTML = '';
+
+    // Update action button active states
+    updateActionBtnStates(mode);
+
+    // Pre-fill To chips
+    var d = emailData[currentEmailIdx];
+    var lastMsg = d.threads[d.threads.length - 1];
+    var chipsEl = document.getElementById('edp-ic-to-chips');
+    var chips = [];
+
+    if (mode === 'reply') {
+      chips.push(lastMsg.senderName);
+    } else if (mode === 'replyall') {
+      chips.push(lastMsg.senderName);
+      // Add other recipients, excluding "You"
+      if (lastMsg.to) {
+        var recipients = lastMsg.to.split(',');
+        for (var i = 0; i < recipients.length; i++) {
+          var r = recipients[i].trim();
+          if (r && r !== 'You' && r !== lastMsg.senderName) {
+            chips.push(r);
+          }
+        }
+      }
+    }
+    // Forward: no pre-fill
+
+    var chipsHtml = '';
+    for (var j = 0; j < chips.length; j++) {
+      chipsHtml += '<span class="edp-ic-chip">' + chips[j] + '</span>';
+    }
+    chipsEl.innerHTML = chipsHtml;
+
+    // Hide Cc/Bcc
+    document.getElementById('edp-ic-cc-row').style.display = 'none';
+    document.getElementById('edp-ic-bcc-row').style.display = 'none';
+
+    // Scroll panel to bottom
+    var viewMode = document.querySelector('.edp-view-mode');
+    if (viewMode) {
+      setTimeout(function() { viewMode.scrollTop = viewMode.scrollHeight; }, 50);
+    }
+
+    body.focus();
+  }
+
+  function hideInlineComposer() {
+    var composer = document.getElementById('edp-inline-composer');
+    composer.style.display = 'none';
+    inlineComposerMode = null;
+    updateActionBtnStates(null);
+  }
+
+  function updateActionBtnStates(activeMode) {
+    var btns = document.querySelectorAll('.edp-action-btn');
+    btns.forEach(function(btn) {
+      var tooltip = btn.getAttribute('data-tooltip');
+      if (!tooltip) return;
+      var btnMode = tooltip === 'Reply' ? 'reply' : tooltip === 'Reply all' ? 'replyall' : tooltip === 'Forward' ? 'forward' : null;
+      if (btnMode === activeMode) {
+        btn.classList.add('edp-action-btn--active');
+      } else {
+        btn.classList.remove('edp-action-btn--active');
+      }
+    });
+  }
+
+  function discardInlineComposer() {
+    var body = document.getElementById('edp-ic-body');
+    var hasContent = body && body.innerText.trim().length > 0;
+    if (hasContent) {
+      if (!confirm('Discard this draft?')) return;
+    }
+    hideInlineComposer();
+  }
+
+  function toggleCcBcc() {
+    var cc = document.getElementById('edp-ic-cc-row');
+    var bcc = document.getElementById('edp-ic-bcc-row');
+    var show = cc.style.display === 'none';
+    cc.style.display = show ? 'flex' : 'none';
+    bcc.style.display = show ? 'flex' : 'none';
+  }
+
+  function handleIcAttachment(input) {
+    var container = document.getElementById('edp-ic-attachments');
+    for (var i = 0; i < input.files.length; i++) {
+      var file = input.files[i];
+      var pill = document.createElement('div');
+      pill.className = 'sem-attachment-pill';
+      var name = file.name.length > 32 ? file.name.substring(0, 32) + '…' : file.name;
+      pill.innerHTML = '<span>' + name + '</span><span class="sem-attachment-remove" onclick="this.parentElement.remove()">&times;</span>';
+      container.appendChild(pill);
+    }
+    input.value = '';
+  }
+
+  function sendInlineReply() {
+    hideInlineComposer();
+    showToast('Reply sent.');
+  }

@@ -16,9 +16,9 @@
     html += '</div>';
     html += '<span class="edp-thread-msg-date">' + msg.date + '</span>';
     html += '<div class="edp-thread-msg-actions">';
-    html += '<button class="edp-action-btn" data-tooltip="Reply" onclick="openReply()">' + SVG_REPLY + '</button>';
-    html += '<button class="edp-action-btn" data-tooltip="Reply all" onclick="openReply()">' + SVG_REPLY_ALL + '</button>';
-    html += '<button class="edp-action-btn" data-tooltip="Forward">' + SVG_FORWARD + '</button>';
+    html += '<button class="edp-action-btn" data-tooltip="Reply" onclick="openInlineComposer(\'reply\')">' + SVG_REPLY + '</button>';
+    html += '<button class="edp-action-btn" data-tooltip="Reply all" onclick="openInlineComposer(\'replyall\')">' + SVG_REPLY_ALL + '</button>';
+    html += '<button class="edp-action-btn" data-tooltip="Forward" onclick="openInlineComposer(\'forward\')">' + SVG_FORWARD + '</button>';
     html += '</div>';
     html += '</div>'; // end header
     html += '<div class="edp-thread-msg-body">' + msg.body + '</div>';
@@ -129,9 +129,8 @@
     // Render thread messages and comments
     renderEmailThread(idx);
     renderEmailComments(idx);
-    // Reset to Reply tab, clear compose areas
-    switchComposeTab('reply');
-    clearReply();
+    // Hide inline composer
+    if (typeof hideInlineComposer === 'function') hideInlineComposer();
     cancelAI();
     edpSharePopoverOpen = false;
     document.getElementById('edp-share-popover').style.display = 'none';
@@ -140,39 +139,25 @@
   }
 
   function closeEmailPanel() {
+    // Check if inline composer has content
+    var icBody = document.getElementById('edp-ic-body');
+    var composer = document.getElementById('edp-inline-composer');
+    if (composer && composer.style.display !== 'none' && icBody && icBody.innerText.trim().length > 0) {
+      if (!confirm('Discard this draft?')) return;
+    }
     var panel = document.getElementById('email-detail-panel');
     panel.classList.remove('open');
     panel.classList.remove('compose-mode');
     document.querySelector('.edp-top-bar-label').textContent = 'View email';
-    clearReply();
+    if (typeof hideInlineComposer === 'function') hideInlineComposer();
     edpSharePopoverOpen = false;
     document.getElementById('edp-share-popover').style.display = 'none';
   }
 
-  // ── Reply compose ── (now just focuses the always-visible Reply tab)
-  function openReply() {
-    switchComposeTab('reply');
-    document.getElementById('edp-reply-compose').focus();
-  }
-
-  function closeReply() {
-    clearReply();
-  }
-
-  function clearReply() {
-    var el = document.getElementById('edp-reply-compose');
-    if (el) el.innerHTML = '';
-  }
-
-  // Discard button: clear reply if in view mode, close panel if in compose mode
-  function discardDraft() {
-    var panel = document.getElementById('email-detail-panel');
-    if (panel.classList.contains('compose-mode')) {
-      closeEmailPanel();
-    } else {
-      clearReply();
-    }
-  }
+  // Legacy stubs (kept for backwards compatibility)
+  function openReply() { if (typeof openInlineComposer === 'function') openInlineComposer('reply'); }
+  function clearReply() {}
+  function discardDraft() { closeEmailPanel(); }
 
   // ── Share popover (inside email detail panel) ──
   var edpSharePopoverOpen = false;

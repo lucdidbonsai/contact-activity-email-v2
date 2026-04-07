@@ -15,11 +15,13 @@
   var appScripts = [
     'data/emails.js',
     'data/meetings.js',
+    'data/contacts.js',
     'js/helpers.js',
     'js/tabs.js',
     'js/notes.js',
     'js/email-integration.js',
     'js/email-panel.js',
+    'js/send-email.js',
     'js/meeting-panel.js',
   ];
 

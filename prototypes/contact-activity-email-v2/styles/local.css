@@ -1605,3 +1605,203 @@
     @keyframes edp-spin { to { transform: rotate(360deg); } }
     .edp-ai-cancel-link { margin-left: auto; font-size: 12px; color: var(--text-muted); cursor: pointer; }
     .edp-ai-cancel-link:hover { color: var(--text-default); text-decoration: underline; }
+
+    /* ── Send Email Header Button ── */
+    .send-email-header-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 16px; height: 34px;
+      background: #22AD01; color: #ffffff;
+      border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; white-space: nowrap;
+      transition: background 0.12s;
+    }
+    .send-email-header-btn svg { stroke: #ffffff; flex-shrink: 0; }
+    .send-email-header-btn:hover { background: #1c9701; }
+
+    /* ── Send Email Modal ── */
+    .sem-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px; border-bottom: 1px solid #e5e7eb;
+    }
+    .sem-title { font-size: 18px; font-weight: 500; color: #1a1a1a; }
+    .sem-subtitle { font-size: 13px; color: #6b7280; margin-top: 4px; }
+    .sem-close {
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      background: none; border: none; cursor: pointer;
+      font-size: 20px; color: #9ca3af; line-height: 1; border-radius: 4px;
+      transition: color 0.12s;
+    }
+    .sem-close:hover { color: #1a1a1a; }
+    .sem-body { flex: 1; overflow-y: auto; }
+    .sem-field-row {
+      display: flex; align-items: center;
+      padding: 0 20px; height: 44px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .sem-field-label { font-size: 13px; color: #6b7280; margin-right: 8px; flex-shrink: 0; }
+    .sem-to-input-area { flex: 1; display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .sem-to-search {
+      flex: 1; border: none; outline: none; font-size: 13px; color: #1a1a1a;
+      background: transparent; font-family: inherit; min-width: 80px;
+    }
+    .sem-to-search::placeholder { color: #9ca3af; }
+    .sem-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 999px;
+      padding: 3px 8px 3px 10px; font-size: 13px; color: #1a1a1a;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .sem-chip-remove {
+      font-size: 14px; color: #9ca3af; cursor: pointer; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px;
+    }
+    .sem-chip-remove:hover { color: #1a1a1a; }
+    .sem-subject-input {
+      flex: 1; border: none; outline: none; font-size: 13px; color: #1a1a1a;
+      background: transparent; font-family: inherit;
+    }
+    .sem-subject-input::placeholder { color: #9ca3af; }
+
+    /* Editor */
+    .sem-editor-wrap { padding: 16px 20px; }
+    .sem-editor {
+      min-height: 180px; font-size: 13px; color: #1a1a1a; line-height: 1.65;
+      outline: none;
+    }
+    .sem-editor:empty::before {
+      content: attr(data-placeholder); color: #9ca3af; pointer-events: none;
+    }
+
+    /* Warning */
+    .sem-warning {
+      margin: 0 20px 12px; padding: 10px 12px;
+      font-size: 13px; color: #ef4444;
+      background: #fef2f2; border-radius: 6px;
+    }
+
+    /* Attachments */
+    .sem-attachments { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 8px; }
+    .sem-attachment-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px;
+      padding: 4px 8px; font-size: 12px; color: #1a1a1a;
+    }
+    .sem-attachment-remove {
+      font-size: 14px; color: #9ca3af; cursor: pointer; line-height: 1;
+    }
+    .sem-attachment-remove:hover { color: #1a1a1a; }
+
+    /* Footer */
+    .sem-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid #e5e7eb;
+    }
+    .sem-attach-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 14px; height: 36px;
+      background: transparent; color: #22AD01;
+      border: 1px solid #22AD01; border-radius: 6px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: background 0.12s;
+    }
+    .sem-attach-btn svg { stroke: #22AD01; }
+    .sem-attach-btn:hover { background: #f0fdf4; }
+    .sem-send-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 14px; height: 36px;
+      background: #22AD01; color: #ffffff;
+      border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: background 0.12s;
+    }
+    .sem-send-btn svg { stroke: #ffffff; }
+    .sem-send-btn:hover:not(:disabled) { background: #1c9701; }
+    .sem-send-btn:disabled {
+      background: #d1d5db; color: #ffffff; cursor: not-allowed;
+    }
+    .sem-send-btn:disabled svg { stroke: #ffffff; }
+
+    /* Contact dropdown */
+    .sem-contact-dropdown {
+      position: relative; z-index: 10;
+      margin: 0 20px; max-height: 280px; overflow-y: auto;
+      background: #ffffff; border: 1px solid #e5e7eb;
+      border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    }
+    .sem-dd-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; cursor: pointer; transition: background 0.1s;
+    }
+    .sem-dd-row:hover { background: #f9fafb; }
+    .sem-dd-info { flex: 1; min-width: 0; }
+    .sem-dd-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .sem-dd-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+    .sem-dd-company { font-size: 13px; color: #6b7280; flex-shrink: 0; }
+    .sem-dd-email { font-size: 12px; color: #9ca3af; margin-top: 1px; }
+    .sem-dd-no-email { font-size: 12px; color: #ef4444; font-style: italic; margin-top: 1px; }
+    .sem-dd-empty { padding: 16px; text-align: center; font-size: 13px; color: #9ca3af; }
+
+    /* ── Inline Composer (Email Side Panel) ── */
+    .edp-inline-composer {
+      flex-shrink: 0; border-top: 1px solid var(--border-content);
+    }
+    .edp-ic-divider {
+      height: 1px; background: #e5e7eb;
+    }
+    .edp-ic-label {
+      padding: 10px 24px 8px;
+      font-size: 13px; font-weight: 500; color: #22AD01;
+    }
+    .edp-ic-to-row {
+      display: flex; align-items: center;
+      padding: 0 24px; height: 44px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .edp-ic-to-label { font-size: 13px; color: #6b7280; margin-right: 8px; flex-shrink: 0; }
+    .edp-ic-to-chips { flex: 1; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; min-width: 0; }
+    .edp-ic-chip {
+      display: inline-flex; align-items: center;
+      background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 999px;
+      padding: 2px 10px; font-size: 13px; color: #1a1a1a;
+      white-space: nowrap;
+    }
+    .edp-ic-ccbcc {
+      font-size: 13px; color: #6b7280; cursor: pointer; flex-shrink: 0; margin-left: auto;
+    }
+    .edp-ic-ccbcc:hover { color: #1a1a1a; }
+    .edp-ic-cc-input, .edp-ic-bcc-input {
+      flex: 1; border: none; outline: none; font-size: 13px; color: #1a1a1a;
+      background: transparent; font-family: inherit;
+    }
+    .edp-ic-cc-input::placeholder, .edp-ic-bcc-input::placeholder { color: #9ca3af; }
+    .edp-ic-body-wrap { padding: 12px 24px; }
+    .edp-ic-body {
+      min-height: 120px; font-size: 14px; color: var(--text-default);
+      line-height: 1.65; outline: none;
+    }
+    .edp-ic-body:empty::before {
+      content: attr(data-placeholder); color: var(--text-lighter); pointer-events: none;
+    }
+    .edp-ic-attachments { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 24px 8px; }
+    .edp-ic-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 12px; border-top: 1px solid #e5e7eb;
+    }
+    .edp-ic-attach-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 12px; height: 32px;
+      background: transparent; color: #22AD01;
+      border: 1px solid #22AD01; border-radius: 6px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: background 0.12s;
+    }
+    .edp-ic-attach-btn svg { stroke: #22AD01; }
+    .edp-ic-attach-btn:hover { background: #f0fdf4; }
+
+    /* Active state for Reply/Reply All/Forward buttons */
+    .edp-action-btn--active {
+      background: var(--bg-grey-f1) !important;
+      color: var(--text-default) !important;
+    }

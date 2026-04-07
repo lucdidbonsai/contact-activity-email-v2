@@ -59,68 +59,56 @@
 
   </div>
 
-  <!-- [REMOVED] Tabbed compose area (reply/note) -->
-  <div class="edp-tabbed-compose" id="edp-tabbed-compose" style="display:none !important;">
-    <!-- Tab headers -->
-    <div class="edp-tc-tabs">
-      <button class="edp-tc-tab edp-tc-tab--active" id="edp-tc-tab-reply" onclick="switchComposeTab('reply')">Reply</button>
-      <button class="edp-tc-tab" id="edp-tc-tab-note" onclick="switchComposeTab('note')">Note</button>
-      <button class="edp-tc-help" title="Learn more">?</button>
+  <!-- Inline reply composer (hidden by default, shown on Reply/Reply All/Forward) -->
+  <div class="edp-inline-composer" id="edp-inline-composer" style="display:none;">
+    <div class="edp-ic-divider"></div>
+    <div class="edp-ic-label">Draft</div>
+    <div class="edp-ic-divider"></div>
+
+    <!-- To row -->
+    <div class="edp-ic-to-row">
+      <span class="edp-ic-to-label">To</span>
+      <div class="edp-ic-to-chips" id="edp-ic-to-chips"></div>
+      <span class="edp-ic-ccbcc" onclick="toggleCcBcc()">Cc / Bcc</span>
     </div>
 
-    <!-- Reply panel -->
-    <div id="edp-tc-panel-reply" class="edp-tc-panel edp-tc-panel--active">
-      <div class="edp-tc-compose" id="edp-reply-compose"
-           contenteditable="true"
-           data-placeholder="Reply to this email..."></div>
-      <div class="edp-tc-toolbar">
-        <div class="edp-rt-left">
-          <button class="edp-rt-btn" data-tooltip="Attach file" style="position:relative;">
-            <svg width="16" height="15" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.08008 23.5H17.0801C19.5654 23.5 21.5801 21.4853 21.5801 19V6.01462C21.5801 4.88429 21.0342 3.82354 20.1144 3.16655L17.2939 1.15193C16.7003 0.727931 15.9891 0.5 15.2596 0.5H7.08008C4.5948 0.5 2.58008 2.51472 2.58008 5V19C2.58008 21.4853 4.5948 23.5 7.08008 23.5ZM5.08008 5C5.08008 3.89543 5.97551 3 7.08008 3H12.8301V5C12.8301 6.79493 14.2852 8.25 16.0801 8.25H19.0801V19C19.0801 20.1046 18.1846 21 17.0801 21H7.08008C5.97551 21 5.08008 20.1046 5.08008 19V5ZM19.0444 5.75C18.9843 5.53093 18.8505 5.33601 18.6613 5.20088L15.8409 3.18627C15.6904 3.07882 15.5136 3.01544 15.3301 3.00249V5C15.3301 5.41421 15.6659 5.75 16.0801 5.75H19.0444Z" fill="currentColor"/></svg>
-          </button>
-          <button class="edp-rt-btn" data-tooltip="Insert variable">
-            <svg width="15" height="15" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.26688 0.000488281C5.67014 0.000488281 5.09785 0.237541 4.67589 0.659498C4.25393 1.08145 4.01688 1.65375 4.01688 2.25049V5.81192C4.01688 6.35963 3.73788 6.86877 3.27759 7.16449L2.24388 7.82663C2.10771 7.91387 1.99568 8.03396 1.91808 8.17584C1.84048 8.31772 1.7998 8.47684 1.7998 8.63856C1.7998 8.80028 1.84048 8.9594 1.91808 9.10128C1.99568 9.24316 2.10771 9.36325 2.24388 9.45049L3.27759 10.1126C3.73788 10.4083 4.01688 10.9188 4.01688 11.4665V15.0279C4.01688 16.2699 5.02488 17.2779 6.26688 17.2779H6.76317C7.01891 17.2779 7.26418 17.1763 7.44502 16.9955C7.62586 16.8146 7.72745 16.5694 7.72745 16.3136C7.72745 16.0579 7.62586 15.8126 7.44502 15.6318C7.26418 15.4509 7.01891 15.3493 6.76317 15.3493H6.26559C6.18035 15.3493 6.09859 15.3155 6.03831 15.2552C5.97803 15.1949 5.94417 15.1132 5.94417 15.0279V11.4665C5.94432 10.9177 5.81671 10.3764 5.57147 9.88545C5.32622 9.39451 4.97005 8.96739 4.53117 8.63792C4.9697 8.3087 5.32566 7.882 5.57089 7.39153C5.81612 6.90106 5.94392 6.36028 5.94417 5.81192V2.25049C5.94417 2.16524 5.97803 2.08348 6.03831 2.0232C6.09859 1.96292 6.18035 1.92906 6.26559 1.92906H6.76188C6.88851 1.92906 7.0139 1.90412 7.1309 1.85566C7.24789 1.8072 7.35419 1.73617 7.44373 1.64663C7.53328 1.55708 7.6043 1.45078 7.65276 1.33379C7.70122 1.2168 7.72617 1.09141 7.72617 0.964774C7.72617 0.838142 7.70122 0.71275 7.65276 0.595758C7.6043 0.478765 7.53328 0.372463 7.44373 0.282921C7.35419 0.193379 7.24789 0.12235 7.1309 0.0738901C7.0139 0.0254303 6.88851 0.000488279 6.76188 0.000488281H6.26688ZM11.2297 0.000488281C12.473 0.000488281 13.4797 1.00849 13.4797 2.25049V5.81192C13.4797 6.35963 13.76 6.86877 14.2203 7.16449L15.254 7.82663C15.3902 7.91387 15.5022 8.03396 15.5798 8.17584C15.6574 8.31772 15.6981 8.47684 15.6981 8.63856C15.6981 8.80028 15.6574 8.9594 15.5798 9.10128C15.5022 9.24316 15.3902 9.36325 15.254 9.45049L14.2203 10.1126C13.9934 10.2582 13.8068 10.4585 13.6776 10.6951C13.5484 10.9317 13.4808 11.1969 13.481 11.4665V15.0279C13.481 15.6247 13.244 16.1969 12.822 16.6189C12.4001 17.0409 11.8278 17.2779 11.231 17.2779H10.7347C10.479 17.2779 10.2337 17.1763 10.0529 16.9955C9.87205 16.8146 9.77045 16.5694 9.77045 16.3136C9.77045 16.0579 9.87205 15.8126 10.0529 15.6318C10.2337 15.4509 10.479 15.3493 10.7347 15.3493H11.231C11.3163 15.3493 11.398 15.3155 11.4583 15.2552C11.5186 15.1949 11.5525 15.1132 11.5525 15.0279V11.4665C11.5525 10.3479 12.0796 9.30392 12.9642 8.63792C12.5259 8.30857 12.1702 7.8818 11.9252 7.39134C11.6801 6.90088 11.5526 6.36017 11.5525 5.81192V2.25049C11.5525 2.16524 11.5186 2.08348 11.4583 2.0232C11.398 1.96292 11.3163 1.92906 11.231 1.92906H10.7347C10.479 1.92906 10.2337 1.82747 10.0529 1.64663C9.87205 1.46579 9.77045 1.22052 9.77045 0.964774C9.77045 0.70903 9.87205 0.46376 10.0529 0.282921C10.2337 0.102082 10.479 0.000488285 10.7347 0.000488281H11.2297Z" fill="currentColor"/></svg>
-          </button>
-          <button class="edp-rt-btn" data-tooltip="Email signature">
-            <svg width="17" height="10" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.4809 4.00029C17.8616 4.10966 15.5515 5.7096 14.3823 6.23459C13.4726 6.64395 12.688 6.99706 12.0033 6.99706C11.2968 6.99706 11.1906 6.49083 11.3375 5.37524C11.3719 5.12525 11.7032 2.90033 10.0026 2.9972C9.21799 3.04408 7.99257 3.77217 4.70392 6.93456L6.00125 3.69405C6.95158 1.32226 4.33817 -1.04015 1.94671 0.48167L0.230482 1.63475C-0.000848232 1.78162 -0.0696222 2.09099 0.077304 2.32535L0.614992 3.16907C0.761918 3.40344 1.0714 3.47219 1.30586 3.32219L3.11899 2.10661C3.69419 1.741 4.39131 2.3316 4.14122 2.95345L1.0714 10.6282C0.858827 11.1563 1.15581 12 1.99985 12C2.25932 12 2.51565 11.9 2.70635 11.7063C4.02556 10.3876 7.54241 6.99706 9.30865 5.58773C9.23988 6.47833 9.243 7.42829 9.95262 8.20639C10.4309 8.73137 11.1187 8.99698 12.0002 8.99698C13.1131 8.99698 14.126 8.54075 15.1982 8.05952C16.2298 7.59703 18.293 6.10334 19.5247 6.00334C19.7904 5.98147 19.9999 5.77523 19.9999 5.50961V4.50652C20.0061 4.22216 19.7654 3.98154 19.4809 4.00029Z" fill="currentColor"/></svg>
-          </button>
-          <button class="edp-rt-btn" data-tooltip="Email templates">
-            <svg width="16" height="18" viewBox="0 0 28 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.6917 0.75C21.9979 0.75 23.9818 1.51185 25.3877 2.96294C26.789 4.40919 27.5 6.41967 27.5 8.70385V22.0854C27.5 24.3589 26.7941 26.3603 25.4044 27.8042C24.0101 29.2529 22.042 30.0207 19.7532 30.0348L19.7455 30.0349L8.55788 30.0392C6.25159 30.0392 4.26702 29.2774 2.8614 27.8261C1.46052 26.3798 0.75 24.3694 0.75 22.0854V8.70385C0.75 6.43056 1.45539 4.4294 2.84482 2.98577C4.23889 1.53732 6.20672 0.769941 8.49535 0.755844L8.50305 0.755797L19.6917 0.75ZM19.6917 3.25C21.4363 3.25007 22.7319 3.81457 23.5923 4.70257C24.4574 5.59547 25 6.93692 25 8.70385V22.0854C25 23.8426 24.4617 25.1786 23.6032 26.0706C22.7499 26.9572 21.4668 27.5235 19.7411 27.5349H8.55691C6.81208 27.5392 5.51718 26.9747 4.65715 26.0868C3.79236 25.194 3.25 23.8525 3.25 22.0854V8.70385C3.25 6.9464 3.78804 5.61091 4.64608 4.7194C5.49892 3.83328 6.7815 3.26717 8.50737 3.25582L19.6917 3.25ZM7.65625 9.43656C7.65625 8.7462 8.21589 8.18656 8.90625 8.18656H12.9152C13.6055 8.18656 14.1652 8.7462 14.1652 9.43656C14.1652 10.1269 13.6055 10.6866 12.9152 10.6866H8.90625C8.21589 10.6866 7.65625 10.1269 7.65625 9.43656ZM7.65625 15.5137C7.65625 14.8233 8.21589 14.2637 8.90625 14.2637H19.4124C20.1028 14.2637 20.6624 14.8233 20.6624 15.5137C20.6624 16.204 20.1028 16.7637 19.4124 16.7637H8.90625C8.21589 16.7637 7.65625 16.204 7.65625 15.5137ZM7.65625 21.6065C7.65625 20.9161 8.21589 20.3565 8.90625 20.3565H19.4124C20.1028 20.3565 20.6624 20.9161 20.6624 21.6065C20.6624 22.2968 20.1028 22.8565 19.4124 22.8565H8.90625C8.21589 22.8565 7.65625 22.2968 7.65625 21.6065Z" fill="currentColor"/></svg>
-          </button>
-        </div>
-        <div class="edp-rt-right">
-          <button class="edp-rt-btn edp-rt-discard" data-tooltip="Discard draft" onclick="clearReply()">
-            <svg width="13" height="14" viewBox="0 0 13 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3.5h11"/><path d="M4.5 3.5V2h4v1.5"/><rect x="2" y="3.5" width="9" height="9" rx="1"/><path d="M5 6.5v3.5"/><path d="M8 6.5v3.5"/></svg>
-          </button>
-          <button class="edp-rt-ai-btn" id="edp-tc-ai-btn" onclick="generateWithAI()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C12 2 12.8 6.5 14.5 8.5C16.2 10.5 21 11 21 11C21 11 16.2 11.8 14.5 13.5C12.8 15.2 12 20 12 20C12 20 11.2 15.2 9.5 13.5C7.8 11.8 3 11 3 11C3 11 7.8 10.5 9.5 8.5C11.2 6.5 12 2 12 2Z" fill="white" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M19 2C19 2 19.4 4 20 4.5C20.6 5 22 5 22 5C22 5 20.6 5.2 20 5.8C19.4 6.4 19 8 19 8C19 8 18.6 6.4 18 5.8C17.4 5.2 16 5 16 5C16 5 17.4 5 18 4.5C18.6 4 19 2 19 2Z" fill="white" stroke="white" stroke-width="0.3"/>
-            </svg>
-            <span class="edp-rt-ai-tooltip">Generate a follow-up email with AI</span>
-          </button>
-          <button class="edp-rt-send" style="background:#22AD01;">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1L1 5l4.5 2L8 12l4-11z"/><path d="M5.5 7L12 1"/></svg>
-            Send email
-          </button>
-        </div>
+    <!-- Cc row (hidden by default) -->
+    <div class="edp-ic-to-row edp-ic-cc-row" id="edp-ic-cc-row" style="display:none;">
+      <span class="edp-ic-to-label">Cc</span>
+      <input type="text" class="edp-ic-cc-input" placeholder="Add recipients…">
+    </div>
+    <!-- Bcc row (hidden by default) -->
+    <div class="edp-ic-to-row edp-ic-bcc-row" id="edp-ic-bcc-row" style="display:none;">
+      <span class="edp-ic-to-label">Bcc</span>
+      <input type="text" class="edp-ic-bcc-input" placeholder="Add recipients…">
+    </div>
+
+    <!-- Body -->
+    <div class="edp-ic-body-wrap">
+      <div class="edp-ic-body" id="edp-ic-body" contenteditable="true" data-placeholder="Start typing your email…"></div>
+      <div class="edp-quoted-toggle">⋯</div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="edp-ic-attachments" id="edp-ic-attachments"></div>
+
+    <!-- Toolbar -->
+    <div class="edp-ic-toolbar">
+      <div class="edp-rt-left">
+        <button class="edp-ic-attach-btn" onclick="document.getElementById('edp-ic-file-input').click()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          Add an attachment
+        </button>
+        <input type="file" id="edp-ic-file-input" style="display:none;" onchange="handleIcAttachment(this)" multiple>
       </div>
-    </div>
-
-    <!-- Note panel -->
-    <div id="edp-tc-panel-note" class="edp-tc-panel edp-tc-panel--note">
-      <div class="edp-tc-compose" id="edp-note-compose"
-           contenteditable="true"
-           data-placeholder="Add an internal note (@mention a teammate)..."></div>
-      <div class="edp-tc-toolbar">
-        <div class="edp-rt-left">
-          <button class="edp-rt-btn" data-tooltip="Bold" style="font-weight:700;font-size:13px;">B</button>
-          <button class="edp-rt-btn" data-tooltip="Italic" style="font-style:italic;font-size:13px;">i</button>
-          <button class="edp-rt-btn" data-tooltip="Mention teammate" style="font-size:13px;font-weight:500;">@</button>
-        </div>
-        <div class="edp-rt-right">
-          <button class="edp-tc-note-send" onclick="submitNoteFromTab()">Add note</button>
-        </div>
+      <div class="edp-rt-right">
+        <button class="edp-rt-btn edp-rt-discard" data-tooltip="Delete draft" onclick="discardInlineComposer()">
+          <svg width="13" height="14" viewBox="0 0 13 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3.5h11"/><path d="M4.5 3.5V2h4v1.5"/><rect x="2" y="3.5" width="9" height="9" rx="1"/><path d="M5 6.5v3.5"/><path d="M8 6.5v3.5"/></svg>
+        </button>
+        <button class="edp-rt-send" id="edp-ic-send-btn" onclick="sendInlineReply()">
+          Send email
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1L1 5l4.5 2L8 12l4-11z"/><path d="M5.5 7L12 1"/></svg>
+        </button>
       </div>
     </div>
   </div>
