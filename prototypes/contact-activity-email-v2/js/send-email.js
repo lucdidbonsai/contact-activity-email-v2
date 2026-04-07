@@ -319,6 +319,9 @@
   }
 
   function sendInlineReply() {
+    // Get the recipient name from the To chips
+    var chips = document.querySelectorAll('#edp-ic-to-chips .edp-ic-chip');
+    var name = chips.length > 0 ? chips[0].textContent.trim() : 'recipient';
     hideInlineComposer();
-    showToast('Reply sent.');
+    showToast('Email sent to ' + name + '.');
   }
