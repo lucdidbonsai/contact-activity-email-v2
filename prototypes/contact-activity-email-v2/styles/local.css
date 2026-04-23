@@ -20,15 +20,21 @@
     .subnavigation-items { gap: 20px; }
 
     /* ── Page scaffold ── */
+    /* page-content needs a fixed height so flex children can fill it */
+    .page-content.page-content-with-header { height: 100vh; }
     .contact-page-body {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 60px);
+    }
+    /* topbar partial and index.html each contribute a .contact-page-body sibling.
+       The first holds the header/nav; the second holds the tab content and must
+       fill the remaining viewport height. */
+    .contact-page-body + .contact-page-body {
+      flex: 1;
       overflow: hidden;
     }
-    /* Nested contact-page-body (inner from index.html inside outer from topbar partial) */
+    /* Also handle the nested case (fallback) */
     .contact-page-body .contact-page-body {
-      height: auto;
       flex: 1;
       overflow: hidden;
     }
