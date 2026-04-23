@@ -1932,6 +1932,7 @@
       margin-bottom: 8px; cursor: pointer; transition: border-color 0.12s;
     }
     .vis-option:hover { border-color: #d1d5db; }
-    .vis-option--selected { border-color: #22AD01; border-width: 2px; }
+    .vis-option--selected,
+    .vis-option--selected:hover { border-color: #22AD01; border-width: 2px; }
     .vis-option-title { font-size: 14px; font-weight: 500; color: var(--text-default); margin-bottom: 2px; }
     .vis-option-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; }

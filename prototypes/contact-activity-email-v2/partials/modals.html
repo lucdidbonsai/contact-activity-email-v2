@@ -168,13 +168,13 @@
         <div class="vis-section">
           <div class="vis-section-title">Visibility Settings</div>
           <div class="vis-section-desc">Manage what others can see from your emails</div>
-          <div class="vis-option" onclick="selectVisOption(this)">
+          <div class="vis-option vis-option--selected" id="vis-option-default" onclick="selectVisOption(this)">
             <div class="vis-option-body">
-              <div class="vis-option-title">Metadata only</div>
-              <div class="vis-option-desc">Show only participants and timestamps to others</div>
+              <div class="vis-option-title">Full access</div>
+              <div class="vis-option-desc">Everything is shared with your workspace (including the body, subject line, attachments)</div>
             </div>
           </div>
-          <div class="vis-option vis-option--selected" id="vis-option-default" onclick="selectVisOption(this)">
+          <div class="vis-option" onclick="selectVisOption(this)">
             <div class="vis-option-body">
               <div class="vis-option-title">Subject line and metadata</div>
               <div class="vis-option-desc">We'll share the subject, recipients and timestamp with anyone in your workspace</div>
@@ -182,8 +182,8 @@
           </div>
           <div class="vis-option" onclick="selectVisOption(this)">
             <div class="vis-option-body">
-              <div class="vis-option-title">Full access</div>
-              <div class="vis-option-desc">Everything is shared with your workspace (including the body, subject line, attachments)</div>
+              <div class="vis-option-title">Metadata only</div>
+              <div class="vis-option-desc">Show only participants and timestamps to others</div>
             </div>
           </div>
         </div>
