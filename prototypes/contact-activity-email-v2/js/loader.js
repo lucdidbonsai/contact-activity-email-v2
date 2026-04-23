@@ -41,16 +41,21 @@
     }, Promise.resolve());
   }
 
-  Promise.all(
-    partials.map(function (p) {
-      return fetch(p.src)
-        .then(function (r) { return r.text(); })
-        .then(function (html) {
-          var el = document.getElementById(p.id);
-          if (el) el.outerHTML = html;
-        });
-    })
-  ).then(function () {
+  function loadPartial(p) {
+    return fetch(p.src)
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var el = document.getElementById(p.id);
+        if (el) el.outerHTML = html;
+      });
+  }
+
+  // Load partials sequentially so topbar (which restructures the DOM) runs
+  // before tab partials are injected — prevents a race condition where tabs
+  // appear briefly then vanish as the DOM is reshuffled by the topbar partial.
+  partials.reduce(function (chain, p) {
+    return chain.then(function () { return loadPartial(p); });
+  }, Promise.resolve()).then(function () {
     return loadScriptsSequentially(appScripts);
   });
 })();
