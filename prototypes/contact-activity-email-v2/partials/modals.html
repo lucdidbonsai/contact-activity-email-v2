@@ -148,6 +148,60 @@
   </div>
 </div>
 
+<!-- ===== MODAL: Visibility Settings (Step 2 of Gmail connect flow) ===== -->
+<div class="modal-overlay hidden" id="modal-visibility-settings">
+  <div class="modal-wrap">
+    <div class="modal-dialog modal-dialog-sm vis-settings-dialog">
+      <div class="import-modal-inner" style="padding: 32px 32px 28px;">
+        <div class="import-modal-logo">
+          <svg width="38" height="28" viewBox="0 0 46 34" fill="none">
+            <path d="M0 4v26a4 4 0 004 4h8V15.5L0 4z" fill="#EA4335"/>
+            <path d="M46 4v26a4 4 0 01-4 4h-8V15.5L46 4z" fill="#4285F4"/>
+            <path d="M12 34V15.5L23 24l11-8.5V34H12z" fill="#FBBC05"/>
+            <path d="M0 4C0 1.8 1.8 0 4 0h38c2.2 0 4 1.8 4 4L23 18.5 0 4z" fill="#34A853"/>
+          </svg>
+        </div>
+        <div class="import-modal-title" style="margin-bottom:6px;">Gmail Settings</div>
+        <div class="import-modal-subtitle" style="margin-bottom:24px;">Set how emails and events are synced from your Gmail account.</div>
+
+        <!-- Visibility Settings section -->
+        <div class="vis-section">
+          <div class="vis-section-title">Visibility Settings</div>
+          <div class="vis-section-desc">Manage what others can see from your emails</div>
+          <div class="vis-option" onclick="selectVisOption(this)">
+            <div class="vis-option-body">
+              <div class="vis-option-title">Metadata only</div>
+              <div class="vis-option-desc">Show only participants and timestamps to others</div>
+            </div>
+          </div>
+          <div class="vis-option vis-option--selected" id="vis-option-default" onclick="selectVisOption(this)">
+            <div class="vis-option-body">
+              <div class="vis-option-title">Subject line and metadata</div>
+              <div class="vis-option-desc">We'll share the subject, recipients and timestamp with anyone in your workspace</div>
+            </div>
+          </div>
+          <div class="vis-option" onclick="selectVisOption(this)">
+            <div class="vis-option-body">
+              <div class="vis-option-title">Full access</div>
+              <div class="vis-option-desc">Everything is shared with your workspace (including the body, subject line, attachments)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Do not track section -->
+        <div class="vis-section" style="margin-bottom:24px;">
+          <div class="vis-section-title">Do not track</div>
+          <div class="vis-section-desc" style="margin-bottom:10px;">Optional: Emails or domains you do not want to sync</div>
+          <input type="text" class="form-field input-smd" placeholder="john.doe@acme.inc, acme.inc" style="width:100%;box-sizing:border-box;">
+        </div>
+
+        <button class="btn btn-primary import-modal-cta" style="font-size:14px;" onclick="saveVisibilitySettings()">Save Settings</button>
+      </div>
+    </div>
+    <button class="modal-close-btn" onclick="closeVisibilitySettingsModal()">&#x2715;</button>
+  </div>
+</div>
+
 <!-- ===== MODAL: Import Past Emails ===== -->
 <div class="modal-overlay hidden" id="modal-import">
   <div class="modal-wrap">
@@ -176,7 +230,7 @@
 </div>
 
 <!-- ===== MODAL: Send Email Composer ===== -->
-<div class="modal-overlay hidden" id="modal-send-email">
+<div class="modal-overlay hidden" id="modal-send-email" onclick="if(event.target===this)closeSendEmailModal()">
   <div class="modal-wrap sem-wrap">
     <div class="modal-dialog sem-dialog">
 

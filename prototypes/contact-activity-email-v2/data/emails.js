@@ -24,7 +24,12 @@
           to: 'Michael Fawler, jessica.moore@techstart.co',
           date: 'Jan 22, 3:15 PM',
           snip: 'I\'ve pushed the mood board review to Thursday to keep us on track...',
-          body: '<p>Hi both,</p><p>I\'ve pushed the mood board review to Thursday to keep us on track for the Feb 14 deliverable. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now?</p><p>Also flagging that the photography team needs a final answer on the location by end of week — Jess, can you confirm if we\'re using the Canary Wharf studio or moving to the East London space?</p><p>Thanks,<br>Tom</p>'
+          body: '<p>Hi both,</p><p>I\'ve pushed the mood board review to Thursday to keep us on track for the Feb 14 deliverable. One question: do you want to include the secondary colour palette in the first round, or should we keep it focused on the primary system for now?</p><p>Also flagging that the photography team needs a final answer on the location by end of week — Jess, can you confirm if we\'re using the Canary Wharf studio or moving to the East London space?</p><p>Thanks,<br>Tom</p>',
+          recipients: {
+            from: { name: 'Tom Bradley', email: 'tom.bradley@catalystconsulting.io' },
+            to: [{ name: 'Michael Fawler', email: 'michael.fawler@techstart.co' }],
+            cc: [{ name: 'Jessica Moore', email: 'jessica.moore@techstart.co' }]
+          }
         }
       ],
       comments: [
@@ -49,7 +54,12 @@
           to: 'Michael Fawler, billing@techstart.co',
           date: 'Jan 20, 9:31 AM',
           snip: 'Quick heads up — we\'re at 34 of 40 hours for the month...',
-          body: '<p>Michael,</p><p>Quick heads up — we\'re at 34 of 40 hours for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable?</p><p>If you\'d prefer we hold, I can scope a small add-on and send it over for sign-off before we continue. Let me know how you\'d like to handle it.</p><p>Best,<br>Amanda</p>'
+          body: '<p>Michael,</p><p>Quick heads up — we\'re at 34 of 40 hours for the month. The market positioning analysis took longer than scoped. Want us to pause and check in, or are you happy for us to go slightly over to complete the deliverable?</p><p>If you\'d prefer we hold, I can scope a small add-on and send it over for sign-off before we continue. Let me know how you\'d like to handle it.</p><p>Best,<br>Amanda</p>',
+          recipients: {
+            from: { name: 'Amanda Chen', email: 'amanda.chen@catalystconsulting.io' },
+            to: [{ name: 'Michael Fawler', email: 'michael.fawler@techstart.co' }],
+            cc: [{ name: '', email: 'billing@techstart.co' }]
+          }
         }
       ],
       comments: []
@@ -87,7 +97,12 @@
           to: 'Tom Bradley, priya.sharma@techstart.co',
           date: 'Jan 18, 12:03 PM',
           snip: 'The updated deck looks great. Priya had one note — can we swap the customer logos on slide 8?',
-          body: '<p>Tom,</p><p>The updated deck looks great. Priya had one note — can we swap the customer logos on slide 8? Two of them churned last quarter and it\'ll be awkward if prospects recognise them. Otherwise the narrative flow is exactly right and the case study on slide 11 lands really well.</p><p>Happy to jump on a quick call tomorrow if it\'s easier to run through the remaining tweaks together.</p><p>Michael</p>'
+          body: '<p>Tom,</p><p>The updated deck looks great. Priya had one note — can we swap the customer logos on slide 8? Two of them churned last quarter and it\'ll be awkward if prospects recognise them. Otherwise the narrative flow is exactly right and the case study on slide 11 lands really well.</p><p>Happy to jump on a quick call tomorrow if it\'s easier to run through the remaining tweaks together.</p><p>Michael</p>',
+          recipients: {
+            from: { name: 'Michael Fawler', email: 'michael.fawler@techstart.co' },
+            to: [{ name: 'Tom Bradley', email: 'tom.bradley@catalystconsulting.io' }],
+            cc: [{ name: 'Priya Sharma', email: 'priya.sharma@techstart.co' }]
+          }
         }
       ],
       comments: [
@@ -111,7 +126,12 @@
           to: 'Michael Fawler, Tom Bradley',
           date: 'Jan 15, 4:11 PM',
           snip: 'Attached is the pre-read for next week\'s positioning workshop...',
-          body: '<p>Michael, Tom,</p><p>Attached is the pre-read for next week\'s positioning workshop. Michael, can you confirm who from the exec team will attend? We\'re designing breakout exercises and need to know if we\'re working with five people or eight.</p><p>Tom — the agenda draft is on slide 3. Let me know if you want to add the competitive landscape section back in; I removed it to keep the day tighter but happy to reinstate it if it\'s useful context for the group.</p><p>See you both next Tuesday.</p><p>Amanda</p>'
+          body: '<p>Michael, Tom,</p><p>Attached is the pre-read for next week\'s positioning workshop. Michael, can you confirm who from the exec team will attend? We\'re designing breakout exercises and need to know if we\'re working with five people or eight.</p><p>Tom — the agenda draft is on slide 3. Let me know if you want to add the competitive landscape section back in; I removed it to keep the day tighter but happy to reinstate it if it\'s useful context for the group.</p><p>See you both next Tuesday.</p><p>Amanda</p>',
+          recipients: {
+            from: { name: 'Amanda Chen', email: 'amanda.chen@catalystconsulting.io' },
+            to: [{ name: 'Michael Fawler', email: 'michael.fawler@techstart.co' }],
+            cc: [{ name: 'Tom Bradley', email: 'tom.bradley@catalystconsulting.io' }]
+          }
         }
       ],
       comments: []
@@ -133,7 +153,12 @@
           to: 'amanda.chen@catalystconsulting.io, marketing@techstart.co',
           date: 'Jan 12, 8:55 AM',
           snip: 'Legal flagged one issue — we can\'t disclose the actual revenue numbers in section 3...',
-          body: '<p>Amanda,</p><p>Legal flagged one issue — we can\'t disclose the actual revenue numbers in section 3. Can you rework it to use percentages instead? "340% ROI in pipeline" rather than the absolute figures. The rest of the draft reads well and the intro is particularly strong.</p><p>One other thing: marketing would like to add a pull quote from the Northvolt CPO. I\'ll chase them for the approval and forward it over as soon as I have it.</p><p>Thanks,<br>Michael</p>'
+          body: '<p>Amanda,</p><p>Legal flagged one issue — we can\'t disclose the actual revenue numbers in section 3. Can you rework it to use percentages instead? "340% ROI in pipeline" rather than the absolute figures. The rest of the draft reads well and the intro is particularly strong.</p><p>One other thing: marketing would like to add a pull quote from the Northvolt CPO. I\'ll chase them for the approval and forward it over as soon as I have it.</p><p>Thanks,<br>Michael</p>',
+          recipients: {
+            from: { name: 'Michael Fawler', email: 'michael.fawler@techstart.co' },
+            to: [{ name: 'Amanda Chen', email: 'amanda.chen@catalystconsulting.io' }],
+            cc: [{ name: '', email: 'marketing@techstart.co' }]
+          }
         }
       ],
       comments: []
@@ -155,7 +180,12 @@
           to: 'tom.bradley@catalystconsulting.io',
           date: 'Jan 13, 9:15 AM',
           snip: 'Tom, great timing — I was going to reach out this week...',
-          body: '<p>Tom,</p><p>Great timing on this — I was going to reach out this week. Let\'s definitely continue. A rolling retainer makes more sense than project-by-project at this stage. Can you send over what a Q2 continuation would look like scope-wise? We may want to shift some of the hours toward the investor materials we discussed.</p><p>Michael</p>'
+          body: '<p>Tom,</p><p>Great timing on this — I was going to reach out this week. Let\'s definitely continue. A rolling retainer makes more sense than project-by-project at this stage. Can you send over what a Q2 continuation would look like scope-wise? We may want to shift some of the hours toward the investor materials we discussed.</p><p>Michael</p>',
+          recipients: {
+            from: { name: 'Michael Fawler', email: 'michael.fawler@techstart.co' },
+            to: [{ name: 'Tom Bradley', email: 'tom.bradley@catalystconsulting.io' }],
+            cc: []
+          }
         }
       ],
       comments: []

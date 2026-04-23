@@ -15,13 +15,23 @@
               </div>
             </div>
 
+            <!-- === SETUP REQUIRED STATE (Gmail connected but visibility settings not saved) === -->
+            <div id="email-setup-required-state" style="display: none;">
+              <div class="email-setup-required-card">
+                <svg width="46" height="34" viewBox="0 0 46 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:16px;">
+                  <path d="M0 4v26a4 4 0 004 4h8V15.5L0 4z" fill="#EA4335"/>
+                  <path d="M46 4v26a4 4 0 01-4 4h-8V15.5L46 4z" fill="#4285F4"/>
+                  <path d="M12 34V15.5L23 24l11-8.5V34H12z" fill="#FBBC05"/>
+                  <path d="M0 4C0 1.8 1.8 0 4 0h38c2.2 0 4 1.8 4 4L23 18.5 0 4z" fill="#34A853"/>
+                </svg>
+                <div class="email-setup-required-title">Sync your emails from Gmail</div>
+                <div class="email-setup-required-desc">View emails, link messages to contacts, and keep your communication history in one place.</div>
+                <button class="btn btn-default btn-smd email-setup-required-btn" onclick="openVisibilitySettingsModal()">Finish Gmail Setup</button>
+              </div>
+            </div>
+
             <!-- === CONNECTED STATE (hidden until after setup) === -->
             <div id="email-connected-state" style="display: none;">
-
-              <!-- Title row -->
-              <div class="tab-section-title-row">
-                <span class="tab-section-title">Emails</span>
-              </div>
 
               <!-- Toolbar: search + filters left | ··· right -->
               <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0 14px 0;">
@@ -78,14 +88,14 @@
                 <!-- Message 1: unread — Brand refresh timeline -->
                 <div class="email-thread-row email-thread-unread" onclick="openEmailPanel(0)" style="cursor:pointer;">
                   <div class="email-thread-avatar-col">
-                    <div class="user-avatar avatar-xs" style="background-image:url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                    <div class="email-thread-placeholder"></div>
                   </div>
                   <div class="email-thread-content">
                     <div class="email-thread-top">
                       <span class="email-thread-subject">Brand refresh timeline</span>
                       <span class="email-thread-date">Jan 22</span>
                     </div>
-                    <div class="email-thread-participants">From Tom Bradley</div>
+                    <div class="email-thread-participants">Tom Bradley, Michael Fawler</div>
                     <div class="email-thread-preview">I've pushed the mood board review to Thursday to keep us on track for the Feb 14 deliverable. One question: do you want...</div>
                   </div>
                 </div>
@@ -93,14 +103,14 @@
                 <!-- Message 2: read — Q1 Retainer hours update -->
                 <div class="email-thread-row" onclick="openEmailPanel(1)" style="cursor:pointer;">
                   <div class="email-thread-avatar-col">
-                    <div class="user-avatar avatar-xs" style="background-image:url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                    <div class="email-thread-placeholder"></div>
                   </div>
                   <div class="email-thread-content">
                     <div class="email-thread-top">
                       <span class="email-thread-subject">Q1 Retainer hours update</span>
                       <span class="email-thread-date">Jan 20</span>
                     </div>
-                    <div class="email-thread-participants">From Amanda Chen</div>
+                    <div class="email-thread-participants">Amanda Chen, Michael Fawler</div>
                     <div class="email-thread-preview">Quick heads up — we're at 34 of 40 hours for the month. The market positioning analysis took longer than scoped...</div>
                   </div>
                 </div>
@@ -108,14 +118,14 @@
                 <!-- Message 3: read — Sales deck feedback -->
                 <div class="email-thread-row" onclick="openEmailPanel(2)" style="cursor:pointer;">
                   <div class="email-thread-avatar-col">
-                    <div class="user-avatar avatar-xs" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                    <div class="email-thread-placeholder"></div>
                   </div>
                   <div class="email-thread-content">
                     <div class="email-thread-top">
                       <span class="email-thread-subject">Sales deck feedback</span>
                       <span class="email-thread-date">Jan 18</span>
                     </div>
-                    <div class="email-thread-participants">From Michael Fawler</div>
+                    <div class="email-thread-participants">Michael Fawler, Tom Bradley</div>
                     <div class="email-thread-preview">The updated deck looks great. Priya had one note — can we swap the customer logos on slide 8? Two of them churned...</div>
                   </div>
                 </div>
@@ -123,14 +133,14 @@
                 <!-- Message 4: unread — Workshop prep -->
                 <div class="email-thread-row email-thread-unread" onclick="openEmailPanel(3)" style="cursor:pointer;">
                   <div class="email-thread-avatar-col">
-                    <div class="user-avatar avatar-xs" style="background-image:url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                    <div class="email-thread-placeholder"></div>
                   </div>
                   <div class="email-thread-content">
                     <div class="email-thread-top">
                       <span class="email-thread-subject">Workshop prep – stakeholder list</span>
                       <span class="email-thread-date">Jan 15</span>
                     </div>
-                    <div class="email-thread-participants">From Amanda Chen</div>
+                    <div class="email-thread-participants">Amanda Chen, Michael Fawler</div>
                     <div class="email-thread-preview">Attached is the pre-read for next week's positioning workshop. Michael, can you confirm who from the exec team...</div>
                   </div>
                 </div>
@@ -138,14 +148,14 @@
                 <!-- Message 5: read — Case study draft -->
                 <div class="email-thread-row" onclick="openEmailPanel(4)" style="cursor:pointer;">
                   <div class="email-thread-avatar-col">
-                    <div class="user-avatar avatar-xs" style="background-image:url('https://ui-avatars.com/api/?name=MF&size=250&background=4c525a&color=ffffff&format=png');"></div>
+                    <div class="email-thread-placeholder"></div>
                   </div>
                   <div class="email-thread-content">
                     <div class="email-thread-top">
                       <span class="email-thread-subject">Case study draft – Northvolt</span>
                       <span class="email-thread-date">Jan 12</span>
                     </div>
-                    <div class="email-thread-participants">From Michael Fawler</div>
+                    <div class="email-thread-participants">Michael Fawler, Amanda Chen</div>
                     <div class="email-thread-preview">Legal flagged one issue — we can't disclose the actual revenue numbers in section 3. Can you rework it to use...</div>
                   </div>
                 </div>

@@ -1,19 +1,63 @@
   // ── Email detail panel ──
   var currentEmailIdx = 0;
   var emailPanelJustOpened = false;
+  var recipientsExpanded = false;
+
+  function toggleRecipients() {
+    recipientsExpanded = !recipientsExpanded;
+    var collapsed = document.getElementById('edp-recip-collapsed');
+    var expanded = document.getElementById('edp-recip-expanded');
+    var chevron = document.getElementById('edp-recip-chevron');
+    if (collapsed) collapsed.style.display = recipientsExpanded ? 'none' : 'flex';
+    if (expanded) expanded.style.display = recipientsExpanded ? 'block' : 'none';
+    if (chevron) chevron.style.transform = recipientsExpanded ? 'rotate(180deg)' : '';
+  }
 
   function renderEmailThread(idx) {
+    recipientsExpanded = false;
     var d = emailData[idx];
-    // Show only the single message for this email (last entry = the message itself)
     var msg = d.threads[d.threads.length - 1];
+    var recip = msg.recipients;
+    var primaryTo = recip && recip.to && recip.to.length > 0 ? recip.to[0].name || recip.to[0].email : msg.to;
+
     var html = '';
     html += '<div class="edp-thread-msg">';
     html += '<div class="edp-thread-msg-header">';
     html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + msg.senderAvatar + '\');flex-shrink:0;"></div>';
     html += '<div class="edp-thread-msg-meta">';
     html += '<div class="edp-thread-msg-sender">' + msg.senderName + '</div>';
-    html += '<div class="edp-thread-msg-to">to ' + msg.to + '</div>';
+
+    // Collapsed recipients row
+    html += '<div class="edp-recip-collapsed" id="edp-recip-collapsed" onclick="event.stopPropagation();toggleRecipients()" style="display:flex;align-items:center;gap:4px;cursor:pointer;">';
+    html += '<span class="edp-thread-msg-to">to ' + primaryTo + '</span>';
+    html += '<svg id="edp-recip-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0;color:var(--text-muted);transition:transform 0.15s;"><path d="M1 1l4 4 4-4"/></svg>';
     html += '</div>';
+
+    // Expanded recipients panel
+    if (recip) {
+      html += '<div class="edp-recip-expanded" id="edp-recip-expanded" style="display:none;">';
+      html += '<table class="edp-recip-table">';
+      html += '<tr>';
+      html += '<td class="edp-recip-label">From</td>';
+      html += '<td class="edp-recip-value"><span class="edp-recip-name">' + recip.from.name + '</span><span class="edp-recip-email">' + recip.from.email + '</span></td>';
+      html += '</tr>';
+      for (var ti = 0; ti < recip.to.length; ti++) {
+        html += '<tr>';
+        html += '<td class="edp-recip-label">' + (ti === 0 ? 'To' : '') + '</td>';
+        html += '<td class="edp-recip-value"><span class="edp-recip-name">' + (recip.to[ti].name || '') + '</span><span class="edp-recip-email">' + recip.to[ti].email + '</span></td>';
+        html += '</tr>';
+      }
+      for (var ci = 0; ci < recip.cc.length; ci++) {
+        html += '<tr>';
+        html += '<td class="edp-recip-label">' + (ci === 0 ? 'Cc' : '') + '</td>';
+        html += '<td class="edp-recip-value"><span class="edp-recip-name">' + (recip.cc[ci].name || '') + '</span><span class="edp-recip-email">' + recip.cc[ci].email + '</span></td>';
+        html += '</tr>';
+      }
+      html += '</table>';
+      html += '</div>';
+    }
+
+    html += '</div>'; // end meta
     html += '<span class="edp-thread-msg-date">' + msg.date + '</span>';
     html += '<div class="edp-thread-msg-actions">';
     html += '<button class="edp-action-btn" data-tooltip="Reply" onclick="openInlineComposer(\'reply\')">' + SVG_REPLY + '</button>';
