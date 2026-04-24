@@ -202,33 +202,6 @@
   </div>
 </div>
 
-<!-- ===== MODAL: Import Past Emails ===== -->
-<div class="modal-overlay hidden" id="modal-import">
-  <div class="modal-wrap">
-    <div class="modal-dialog modal-dialog-sm">
-      <div class="import-modal-inner">
-        <div class="import-modal-logo" id="import-modal-logo"></div>
-        <div class="import-modal-title">Do you want to import past emails?</div>
-        <div class="import-modal-subtitle">Import emails from the following dates:</div>
-        <div class="import-date-row">
-          <div class="import-date-field">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#22AD01" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><line x1="1" y1="5" x2="13" y2="5"/><line x1="4" y1="1" x2="4" y2="3"/><line x1="10" y1="1" x2="10" y2="3"/></svg>
-            <span>24/12/2025</span>
-          </div>
-          <span class="import-date-arrow">&#8594;</span>
-          <div class="import-date-field">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#22AD01" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><line x1="1" y1="5" x2="13" y2="5"/><line x1="4" y1="1" x2="4" y2="3"/><line x1="10" y1="1" x2="10" y2="3"/></svg>
-            <span>24/01/2026</span>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-smd import-modal-cta" onclick="finishImport()">Import Emails</button>
-        <div class="import-modal-skip" onclick="skipImport()">Maybe Later</div>
-      </div>
-    </div>
-    <button class="modal-close-btn" onclick="skipImport()">&#x2715;</button>
-  </div>
-</div>
-
 <!-- ===== MODAL: Send Email Composer ===== -->
 <div class="modal-overlay hidden" id="modal-send-email" onclick="if(event.target===this)closeSendEmailModal()">
   <div class="modal-wrap sem-wrap">

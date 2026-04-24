@@ -33,25 +33,14 @@
 
   function saveVisibilitySettings() {
     document.getElementById('modal-visibility-settings').classList.add('hidden');
-    showToast('Settings updated successfully.');
-    document.getElementById('import-modal-logo').innerHTML = gmailLogoLg;
-    document.getElementById('modal-import').classList.remove('hidden');
+    showToast('Gmail connected successfully.');
+    showEmailConnected(true);
   }
 
   function selectVisOption(el) {
     var options = document.querySelectorAll('.vis-option');
     options.forEach(function(o) { o.classList.remove('vis-option--selected'); });
     el.classList.add('vis-option--selected');
-  }
-
-  function finishImport() {
-    document.getElementById('modal-import').classList.add('hidden');
-    showEmailConnected(true); // import → show threads
-  }
-
-  function skipImport() {
-    document.getElementById('modal-import').classList.add('hidden');
-    showEmailConnected(false); // skip → empty state
   }
 
   function showEmailConnected(withThreads) {
@@ -122,9 +111,6 @@
   document.getElementById('modal-integration').addEventListener('click', function(e) {
     if (e.target === this) closeIntegModal();
   });
-  document.getElementById('modal-import').addEventListener('click', function(e) {
-    if (e.target === this) skipImport();
-  });
   document.getElementById('modal-visibility-settings').addEventListener('click', function(e) {
     if (e.target === this) closeVisibilitySettingsModal();
   });
@@ -138,5 +124,4 @@
     if (!document.getElementById('modal-send-email').classList.contains('hidden')) { closeSendEmailModal(); return; }
     if (!document.getElementById('modal-visibility-settings').classList.contains('hidden')) { closeVisibilitySettingsModal(); return; }
     if (!document.getElementById('modal-connect-gmail').classList.contains('hidden')) { closeConnectGmailModal(); return; }
-    if (!document.getElementById('modal-import').classList.contains('hidden')) { skipImport(); return; }
   });

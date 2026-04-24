@@ -1,0 +1,96 @@
+    html, body { overflow: hidden; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif; }
+    .page-content { min-height: 0; height: 100%; overflow: hidden; }
+
+    /* ── Sidebar theme (normally set via React inline styles) ── */
+    .sidenav {
+      --sidebar-primary-bg: var(--bg-sidebar, #ffffff);
+      --sidebar-primary-border: var(--border-content-alt, #d7d9d5);
+      --sidenav-text-color: var(--text-default, #121212);
+      --sidenav-item-hover-bg: var(--bg-hover-subtle, #fcfcfc);
+      --sidenav-item-selected-bg: var(--bg-grey-f1, #f1f1f1);
+    }
+    /* meetings icon has no rule in application.css — add it here */
+    .sidenav-features-item-icon.meetings {
+      top: 10px;
+      left: 11px;
+      width: 14px;
+    }
+
+    /* match production tab gap */
+    .subnavigation-items { gap: 20px; }
+
+    /* ── Page scaffold ── */
+    .page-content.page-content-with-header { height: 100vh; }
+    .contact-page-body {
+      display: flex;
+      flex-direction: column;
+    }
+    .contact-page-body + .contact-page-body {
+      flex: 1;
+      overflow: hidden;
+    }
+    .contact-page-body .contact-page-body {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Two-column content area ── */
+    .contact-content-area {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .contact-main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px 30px 40px 40px;
+    }
+    .contact-sidebar {
+      width: 340px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border-content);
+      overflow-y: auto;
+      background: var(--bg-content);
+    }
+
+    /* ── Tab section title row ── */
+    .tab-section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .tab-section-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-default);
+    }
+    .add-btn-wrap { position: relative; }
+
+    /* ── Tab visibility ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Add dropdown (shared by activity, meetings, etc.) ── */
+    .add-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 30px;
+      z-index: 50;
+      display: none;
+    }
+    .add-dropdown.open { display: block; }
+
+    /* ── Access toggle dropdown ── */
+    .access-select {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border: 1px solid var(--border-content);
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-default);
+    }

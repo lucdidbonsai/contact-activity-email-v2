@@ -1,0 +1,203 @@
+    /* ── Notes tab ── */
+    .contact-note-toggle {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--bg-grey-fa);
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .contact-note-toggle, .contact-note-toggle:focus, .contact-note-toggle:visited {
+      color: var(--text-default);
+    }
+    .contact-note-toggle:hover, .contact-note-toggle:active { color: var(--text-default); background: var(--bg-grey-f8); }
+    .contact-note-toggle-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      padding: 4px;
+      background: var(--bg-grey-f1);
+      border-radius: 5px;
+    }
+
+    /* ── Note items ── */
+    .note-item {
+      display: flex;
+      gap: 10px;
+      padding-bottom: 20px;
+    }
+    .note-item-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      width: 20px;
+    }
+    .note-edit-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted-alt);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .note-item-line {
+      width: 1px;
+      flex: 1;
+      background: var(--border-content);
+      min-height: 20px;
+    }
+    .note-item:last-child .note-item-line { display: none; }
+    .note-item-body { flex: 1; }
+    .note-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .note-meta strong { color: var(--text-default); font-weight: 600; }
+    .note-text {
+      font-size: 14px;
+      color: var(--text-default);
+      line-height: 1.6;
+    }
+
+    /* ── Note inline action buttons (Edit · Delete on hover) ── */
+    .note-inline-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .activity-item:hover .note-inline-actions,
+    .note-item:hover .note-inline-actions {
+      opacity: 1;
+    }
+    .note-inline-action,
+    .note-inline-action:hover,
+    .note-inline-action:visited,
+    .note-inline-action:active {
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none !important;
+      color: #22AD01 !important;
+      background: #ffffff;
+      border: 1px solid #e0e3e7;
+      border-radius: 6px;
+      padding: 4px 10px;
+      white-space: nowrap;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .note-inline-action:hover { background: #f7f8f7 !important; border-color: #d0d3d8 !important; }
+    .note-inline-delete,
+    .note-inline-delete:hover,
+    .note-inline-delete:visited,
+    .note-inline-delete:active { color: #eb5757 !important; }
+
+    /* ── Note action button (legacy, kept for toggle logic) ── */
+    .note-menu-btn { display: none; }
+    .note-dropdown { display: none; }
+
+    /* ── Note text: remove left border ── */
+    .note-text {
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+
+    /* ── Note edit mode (inline composer) ── */
+    .note-edit-area {
+      margin-bottom: 14px;
+    }
+    .note-composer-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-content);
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+      background: var(--bg-grey-fa);
+    }
+    .note-composer-toolbar-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.12s;
+      line-height: 1;
+    }
+    .note-composer-toolbar-btn:hover { background: var(--bg-grey-f1); }
+    .note-composer-toolbar-sep { width: 1px; height: 16px; background: var(--border-content); margin: 0 4px; }
+    .note-composer-body {
+      border: 1px solid var(--border-content);
+      border-radius: 0 0 6px 6px;
+      background: var(--bg-content);
+      min-height: 90px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text-default);
+      line-height: 1.6;
+      outline: none;
+    }
+    .note-composer-body:focus {
+      border-color: var(--border-content-alt);
+    }
+    .note-composer-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    /* ── Delete modal ── */
+    .delete-note-modal .modal-dialog {
+      width: 340px;
+      padding: 32px 28px 28px;
+      text-align: center;
+    }
+    .delete-note-modal-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-default);
+      margin-bottom: 12px;
+    }
+    .delete-note-modal-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 24px;
+    }
+    .btn-danger {
+      background: #eb5757;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.12s;
+    }
+    .btn-danger:hover { background: #d94f4f; }

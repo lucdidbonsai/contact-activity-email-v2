@@ -1,0 +1,168 @@
+    /* ── Activity feed ── */
+    .activity-feed { display: flex; flex-direction: column; gap: 0; }
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 6px;
+    }
+    .activity-item-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 36px;
+    }
+    .activity-item-line {
+      width: 1px;
+      flex: 1;
+      background: var(--border-content);
+      margin-top: 6px;
+    }
+    .activity-item:last-child .activity-item-line { display: none; }
+    .activity-item-body { flex: 1; min-width: 0; padding-bottom: 20px; overflow: hidden; }
+    .activity-meta {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .activity-meta strong { color: var(--text-default); font-weight: 600; }
+    .activity-meta a { color: var(--text-default); text-decoration: underline; cursor: pointer; }
+    .activity-meta-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .activity-meta-row .activity-meta { margin-bottom: 0; }
+    .activity-text {
+      font-size: 14px;
+      color: var(--text-default);
+      line-height: 1.6;
+    }
+    .activity-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--bg-grey-f5);
+    }
+
+    /* ── Meeting card (in activity feed) ── */
+    .meeting-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-content);
+      border-radius: 6px;
+      padding: 7px 12px;
+      margin-top: 8px;
+      background: var(--bg-content);
+      cursor: pointer;
+    }
+    .meeting-card:hover { background: var(--bg-grey-fa); }
+    .meeting-card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .meeting-card-title { font-size: 13px; font-weight: 500; color: var(--text-default); }
+
+    /* ── Document card (proposals, contracts) ── */
+    .doc-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-content);
+      border-radius: 6px;
+      padding: 7px 12px;
+      margin-top: 8px;
+      background: var(--bg-content);
+      cursor: pointer;
+    }
+    .doc-card:hover { background: var(--bg-grey-fa); }
+    .doc-card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .doc-card-title { font-size: 13px; font-weight: 500; color: var(--text-default); }
+    .activity-meta a { text-decoration: underline; cursor: pointer; color: inherit; }
+
+    /* ── Email activity feed items ── */
+    .email-activity-item .activity-item-body { padding-bottom: 20px; }
+    .email-preview-text {
+      font-size: 13px; color: var(--text-muted); line-height: 1.55;
+      margin-top: 5px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .email-view-link-meta,
+    .email-view-link-meta:hover,
+    .email-view-link-meta:visited,
+    .email-view-link-meta:active {
+      font-size: 14px; color: var(--color-primary) !important; font-weight: 500;
+      cursor: pointer; flex-shrink: 0;
+      text-decoration: none !important;
+    }
+    .email-activity-card-body {
+      font-size: 14px;
+      color: var(--text-default);
+      line-height: 1.6;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+    .email-activity-card {
+      position: relative;
+    }
+    .email-activity-card:hover,
+    .activity-item:hover .activity-text {
+      background: #f7f8f7 !important;
+    }
+    .email-view-hover-link,
+    .email-view-hover-link:hover,
+    .email-view-hover-link:visited,
+    .email-view-hover-link:active {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-primary) !important;
+      text-decoration: none !important;
+      opacity: 0;
+      transition: opacity 0.15s;
+      background: #ffffff;
+      border: 1px solid #e0e3e7;
+      border-radius: 6px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+    .email-view-hover-link:hover {
+      background: #f7f8f7 !important;
+      border-color: #d0d3d8 !important;
+    }
+    .email-activity-card:hover .email-view-hover-link {
+      opacity: 1;
+    }
+    .email-show-more {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin-top: 6px;
+      text-decoration: none !important;
+    }
+    .email-show-more:hover {
+      color: var(--text-default) !important;
+      text-decoration: none !important;
+    }
