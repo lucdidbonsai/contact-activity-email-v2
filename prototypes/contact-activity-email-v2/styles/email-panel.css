@@ -223,7 +223,7 @@
     .edp-thread-msg-header:hover { background: var(--bg-grey-fa); }
     .edp-thread-msg-meta { flex: 1; min-width: 0; }
     .edp-thread-msg-sender { font-size: 13px; font-weight: 600; color: var(--text-default); }
-    .edp-thread-msg-snip { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .edp-thread-msg-snip { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 24px 12px 24px; }
     .edp-thread-msg-to { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .edp-thread-msg-date { font-size: 12px; color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
     .edp-thread-msg-actions { display: flex; gap: 2px; align-items: center; flex-shrink: 0; opacity: 0; transition: opacity 0.12s; }
@@ -239,11 +239,14 @@
     .edp-recip-collapsed { cursor: pointer; user-select: none; }
     .edp-recip-collapsed:hover .edp-thread-msg-to { color: var(--text-default); }
     .edp-recip-expanded {
-      margin-top: 8px;
+      position: fixed;
+      z-index: 1500;
+      min-width: 260px;
       padding: 10px 12px;
-      background: var(--bg-grey-fa);
+      background: white;
       border: 1px solid var(--border-content);
       border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
     }
     .edp-recip-table { border-collapse: collapse; width: 100%; font-size: 12px; }
     .edp-recip-table tr { vertical-align: top; }

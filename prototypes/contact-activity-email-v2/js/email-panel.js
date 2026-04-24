@@ -9,8 +9,18 @@
     var chevron = document.querySelector('.edp-recip-chevron-' + msgIdx);
     if (!expanded) return;
     var isOpen = expanded.style.display !== 'none';
-    expanded.style.display = isOpen ? 'none' : 'block';
-    if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+    if (isOpen) {
+      expanded.style.display = 'none';
+      if (chevron) chevron.style.transform = '';
+    } else {
+      var trigger = expanded.previousElementSibling;
+      var triggerRect = trigger.getBoundingClientRect();
+      var panelRect = document.getElementById('email-detail-panel').getBoundingClientRect();
+      expanded.style.top = (triggerRect.bottom - panelRect.top + 4) + 'px';
+      expanded.style.left = (triggerRect.left - panelRect.left) + 'px';
+      expanded.style.display = 'block';
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    }
   }
 
   // Toggle an individual thread message between collapsed (snippet) and expanded (body).
@@ -26,8 +36,12 @@
     for (var i = 0; i < d.threads.length; i++) {
       var msg = d.threads[i];
       var isLast = (i === d.threads.length - 1);
-      var recip = msg.recipients;
-      var primaryTo = recip && recip.to && recip.to.length > 0
+      var recip = msg.recipients || {
+        from: { name: msg.senderName, email: '' },
+        to: (msg.to || '').split(',').map(function(s) { return { name: s.trim(), email: '' }; }),
+        cc: []
+      };
+      var primaryTo = recip.to && recip.to.length > 0
         ? recip.to[0].name || recip.to[0].email
         : msg.to;
 
@@ -40,12 +54,11 @@
       // Collapsed recipients row — always visible, independent toggle
       html += '<div class="edp-recip-collapsed" onclick="event.stopPropagation();toggleRecipients(' + i + ')" style="display:flex;align-items:center;gap:4px;cursor:pointer;">';
       html += '<span class="edp-thread-msg-to">to ' + primaryTo + '</span>';
-      html += '<svg class="edp-recip-chevron-' + i + '" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0;color:var(--text-muted);transition:transform 0.15s;"><path d="M1 1l4 4 4-4"/></svg>';
+      html += '<svg class="edp-recip-chevron edp-recip-chevron-' + i + '" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0;color:var(--text-muted);transition:transform 0.15s;"><path d="M1 1l4 4 4-4"/></svg>';
       html += '</div>';
 
       // Expanded recipients panel — hidden until chevron clicked
-      if (recip) {
-        html += '<div class="edp-recip-expanded edp-recip-expanded-' + i + '" style="display:none;">';
+      html += '<div class="edp-recip-expanded edp-recip-expanded-' + i + '" style="display:none;">';
         html += '<table class="edp-recip-table">';
         html += '<tr><td class="edp-recip-label">From</td>';
         html += '<td class="edp-recip-value"><span class="edp-recip-name">' + recip.from.name + '</span><span class="edp-recip-email">' + recip.from.email + '</span></td></tr>';
@@ -58,7 +71,6 @@
           html += '<td class="edp-recip-value"><span class="edp-recip-name">' + (recip.cc[ci].name || '') + '</span><span class="edp-recip-email">' + recip.cc[ci].email + '</span></td></tr>';
         }
         html += '</table></div>';
-      }
 
       html += '</div>'; // end meta
       html += '<span class="edp-thread-msg-date">' + msg.date + '</span>';
@@ -234,6 +246,11 @@
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.add-btn-wrap')) {
       document.getElementById('add-activity-menu').classList.remove('open');
+    }
+    // Close any open recipient popovers when clicking outside them
+    if (!e.target.closest('.edp-recip-collapsed')) {
+      document.querySelectorAll('.edp-recip-expanded').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelectorAll('.edp-recip-chevron').forEach(function(el) { el.style.transform = ''; });
     }
     if (!e.target.closest('.email-dots-wrap')) {
       if (emailDotsMenuOpen) {
