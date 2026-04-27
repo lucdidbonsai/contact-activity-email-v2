@@ -2,8 +2,7 @@
   var currentEmailIdx = 0;
   var emailPanelJustOpened = false;
 
-  // Toggle per-message recipients expand/collapse.
-  // Each message uses class selectors keyed by msgIdx to stay independent.
+  // Toggle recipients dropdown for the single visible message.
   function toggleRecipients(msgIdx) {
     var expanded = document.querySelector('.edp-recip-expanded-' + msgIdx);
     var chevron = document.querySelector('.edp-recip-chevron-' + msgIdx);
@@ -23,68 +22,113 @@
     }
   }
 
-  // Toggle an individual thread message between collapsed (snippet) and expanded (body).
-  function toggleThreadMsg(msgIdx) {
-    var msgs = document.querySelectorAll('.edp-thread-msg');
-    if (msgs[msgIdx]) msgs[msgIdx].classList.toggle('collapsed');
+  // Toggle the previous-messages history section.
+  function togglePrevMessages() {
+    var toggle = document.getElementById('edp-prev-toggle');
+    var container = document.getElementById('edp-prev-messages');
+    if (!toggle || !container) return;
+    var isOpen = toggle.classList.contains('open');
+    toggle.classList.toggle('open');
+    if (isOpen) {
+      container.style.display = 'none';
+    } else {
+      container.style.display = 'block';
+    }
+  }
+
+  function buildRecipTable(recip) {
+    var html = '<table class="edp-recip-table">';
+    html += '<tr><td class="edp-recip-label">From</td>';
+    html += '<td class="edp-recip-name">' + recip.from.name + '</td>';
+    html += '<td class="edp-recip-email">' + recip.from.email + '</td></tr>';
+    for (var ti = 0; ti < recip.to.length; ti++) {
+      html += '<tr><td class="edp-recip-label">' + (ti === 0 ? 'To' : '') + '</td>';
+      html += '<td class="edp-recip-name">' + (recip.to[ti].name || '') + '</td>';
+      html += '<td class="edp-recip-email">' + recip.to[ti].email + '</td></tr>';
+    }
+    for (var ci = 0; ci < recip.cc.length; ci++) {
+      html += '<tr><td class="edp-recip-label">' + (ci === 0 ? 'Cc' : '') + '</td>';
+      html += '<td class="edp-recip-name">' + (recip.cc[ci].name || '') + '</td>';
+      html += '<td class="edp-recip-email">' + recip.cc[ci].email + '</td></tr>';
+    }
+    html += '</table>';
+    return html;
   }
 
   function renderEmailThread(idx) {
     var d = emailData[idx];
     var html = '';
+    var lastIdx = d.threads.length - 1;
+    var msg = d.threads[lastIdx];
 
-    for (var i = 0; i < d.threads.length; i++) {
-      var msg = d.threads[i];
-      var isLast = (i === d.threads.length - 1);
-      var recip = msg.recipients || {
-        from: { name: msg.senderName, email: '' },
-        to: (msg.to || '').split(',').map(function(s) { return { name: s.trim(), email: '' }; }),
-        cc: []
-      };
-      var primaryTo = recip.to && recip.to.length > 0
-        ? recip.to[0].name || recip.to[0].email
-        : msg.to;
+    var recip = msg.recipients || {
+      from: { name: msg.senderName, email: '' },
+      to: (msg.to || '').split(',').map(function(s) { return { name: s.trim(), email: '' }; }),
+      cc: []
+    };
+    var primaryTo = recip.to && recip.to.length > 0
+      ? recip.to[0].name || recip.to[0].email
+      : msg.to;
 
-      html += '<div class="edp-thread-msg' + (isLast ? '' : ' collapsed') + '">';
-      html += '<div class="edp-thread-msg-header" onclick="toggleThreadMsg(' + i + ')">';
-      html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + msg.senderAvatar + '\');flex-shrink:0;"></div>';
-      html += '<div class="edp-thread-msg-meta">';
-      html += '<div class="edp-thread-msg-sender">' + msg.senderName + '</div>';
-
-      // Collapsed recipients row — always visible, independent toggle
-      html += '<div class="edp-recip-collapsed" onclick="event.stopPropagation();toggleRecipients(' + i + ')" style="display:flex;align-items:center;gap:4px;cursor:pointer;">';
-      html += '<span class="edp-thread-msg-to">to ' + primaryTo + '</span>';
-      html += '<svg class="edp-recip-chevron edp-recip-chevron-' + i + '" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0;color:var(--text-muted);transition:transform 0.15s;"><path d="M1 1l4 4 4-4"/></svg>';
+    // Previous messages toggle (only when there is history)
+    if (d.threads.length > 1) {
+      var prevCount = d.threads.length - 1;
+      html += '<div class="edp-prev-toggle" id="edp-prev-toggle" onclick="togglePrevMessages()">';
+      html += '<svg class="edp-prev-toggle-icon" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 1l4 4 4-4"/></svg>';
+      html += prevCount + ' previous message' + (prevCount > 1 ? 's' : '');
       html += '</div>';
 
-      // Expanded recipients panel — hidden until chevron clicked
-      html += '<div class="edp-recip-expanded edp-recip-expanded-' + i + '" style="display:none;">';
-        html += '<table class="edp-recip-table">';
-        html += '<tr><td class="edp-recip-label">From</td>';
-        html += '<td class="edp-recip-value"><span class="edp-recip-name">' + recip.from.name + '</span><span class="edp-recip-email">' + recip.from.email + '</span></td></tr>';
-        for (var ti = 0; ti < recip.to.length; ti++) {
-          html += '<tr><td class="edp-recip-label">' + (ti === 0 ? 'To' : '') + '</td>';
-          html += '<td class="edp-recip-value"><span class="edp-recip-name">' + (recip.to[ti].name || '') + '</span><span class="edp-recip-email">' + recip.to[ti].email + '</span></td></tr>';
-        }
-        for (var ci = 0; ci < recip.cc.length; ci++) {
-          html += '<tr><td class="edp-recip-label">' + (ci === 0 ? 'Cc' : '') + '</td>';
-          html += '<td class="edp-recip-value"><span class="edp-recip-name">' + (recip.cc[ci].name || '') + '</span><span class="edp-recip-email">' + recip.cc[ci].email + '</span></td></tr>';
-        }
-        html += '</table></div>';
-
-      html += '</div>'; // end meta
-      html += '<span class="edp-thread-msg-date">' + msg.date + '</span>';
-      html += '<div class="edp-thread-msg-actions">';
-      html += '<button class="edp-action-btn" data-tooltip="Reply" onclick="event.stopPropagation();openInlineComposer(\'reply\')">' + SVG_REPLY + '</button>';
-      html += '<button class="edp-action-btn" data-tooltip="Reply all" onclick="event.stopPropagation();openInlineComposer(\'replyall\')">' + SVG_REPLY_ALL + '</button>';
-      html += '<button class="edp-action-btn" data-tooltip="Forward" onclick="event.stopPropagation();openInlineComposer(\'forward\')">' + SVG_FORWARD + '</button>';
+      html += '<div class="edp-prev-messages" id="edp-prev-messages" style="display:none;">';
+      for (var i = 0; i < lastIdx; i++) {
+        var pm = d.threads[i];
+        var pmRecip = pm.recipients || {
+          from: { name: pm.senderName, email: '' },
+          to: (pm.to || '').split(',').map(function(s) { return { name: s.trim(), email: '' }; }),
+          cc: []
+        };
+        var pmTo = pmRecip.to && pmRecip.to.length > 0 ? pmRecip.to[0].name || pmRecip.to[0].email : pm.to;
+        html += '<div class="edp-prev-msg">';
+        html += '<div class="edp-prev-msg-header">';
+        html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + pm.senderAvatar + '\');flex-shrink:0;"></div>';
+        html += '<div class="edp-prev-msg-meta">';
+        html += '<span class="edp-prev-msg-sender">' + pm.senderName + '</span>';
+        html += '<span class="edp-prev-msg-to">to ' + pmTo + '</span>';
+        html += '</div>';
+        html += '<span class="edp-prev-msg-date">' + pm.date + '</span>';
+        html += '</div>';
+        html += '<div class="edp-prev-msg-body">' + pm.body + '</div>';
+        html += '</div>';
+      }
       html += '</div>';
-      html += '</div>'; // end header
-
-      html += '<div class="edp-thread-msg-snip">' + msg.snip + '</div>';
-      html += '<div class="edp-thread-msg-body">' + msg.body + '</div>';
-      html += '</div>'; // end thread-msg
     }
+
+    // Single main message — latest, always fully expanded
+    html += '<div class="edp-thread-msg">';
+    html += '<div class="edp-thread-msg-header">';
+    html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + msg.senderAvatar + '\');flex-shrink:0;"></div>';
+    html += '<div class="edp-thread-msg-meta">';
+    html += '<div class="edp-thread-msg-sender">' + msg.senderName + '</div>';
+
+    html += '<div class="edp-recip-collapsed" onclick="event.stopPropagation();toggleRecipients(0)" style="display:flex;align-items:center;gap:4px;cursor:pointer;">';
+    html += '<span class="edp-thread-msg-to">to ' + primaryTo + '</span>';
+    html += '<svg class="edp-recip-chevron edp-recip-chevron-0" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0;color:var(--text-muted);transition:transform 0.15s;"><path d="M1 1l4 4 4-4"/></svg>';
+    html += '</div>';
+
+    html += '<div class="edp-recip-expanded edp-recip-expanded-0" style="display:none;">';
+    html += buildRecipTable(recip);
+    html += '</div>';
+
+    html += '</div>'; // end meta
+    html += '<span class="edp-thread-msg-date">' + msg.date + '</span>';
+    html += '<div class="edp-thread-msg-actions">';
+    html += '<button class="edp-action-btn" data-tooltip="Reply" onclick="event.stopPropagation();openInlineComposer(\'reply\')">' + SVG_REPLY + '</button>';
+    html += '<button class="edp-action-btn" data-tooltip="Reply all" onclick="event.stopPropagation();openInlineComposer(\'replyall\')">' + SVG_REPLY_ALL + '</button>';
+    html += '<button class="edp-action-btn" data-tooltip="Forward" onclick="event.stopPropagation();openInlineComposer(\'forward\')">' + SVG_FORWARD + '</button>';
+    html += '</div>';
+    html += '</div>'; // end header
+
+    html += '<div class="edp-thread-msg-body">' + msg.body + '</div>';
+    html += '</div>'; // end thread-msg
 
     document.getElementById('edp-body').innerHTML = html;
   }
@@ -248,7 +292,7 @@
       document.getElementById('add-activity-menu').classList.remove('open');
     }
     // Close any open recipient popovers when clicking outside them
-    if (!e.target.closest('.edp-recip-collapsed')) {
+    if (!e.target.closest('.edp-recip-collapsed') && !e.target.closest('.edp-recip-expanded')) {
       document.querySelectorAll('.edp-recip-expanded').forEach(function(el) { el.style.display = 'none'; });
       document.querySelectorAll('.edp-recip-chevron').forEach(function(el) { el.style.transform = ''; });
     }

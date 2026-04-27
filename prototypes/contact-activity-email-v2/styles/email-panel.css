@@ -231,9 +231,6 @@
     .edp-thread-msg-body { padding: 0 24px 20px 58px; font-size: 14px; color: var(--text-default); line-height: 1.7; }
     .edp-thread-msg-body p { margin: 0 0 12px; }
     .edp-thread-msg-body p:last-child { margin-bottom: 0; }
-    .edp-thread-msg.collapsed .edp-thread-msg-body { display: none; }
-    .edp-thread-msg.collapsed .edp-thread-msg-snip { display: block; }
-    .edp-thread-msg:not(.collapsed) .edp-thread-msg-snip { display: none; }
 
     /* ── Collapsible recipients ── */
     .edp-recip-collapsed { cursor: pointer; user-select: none; }
@@ -241,24 +238,50 @@
     .edp-recip-expanded {
       position: fixed;
       z-index: 1500;
-      min-width: 260px;
-      padding: 10px 12px;
+      min-width: 300px;
+      padding: 10px 14px;
       background: white;
       border: 1px solid var(--border-content);
       border-radius: 6px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.12);
     }
-    .edp-recip-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-    .edp-recip-table tr { vertical-align: top; }
+    .edp-recip-table { border-collapse: collapse; font-size: 12px; }
+    .edp-recip-table tr { vertical-align: middle; }
     .edp-recip-label {
       color: var(--text-muted); font-weight: 500; white-space: nowrap;
-      padding: 2px 14px 2px 0; min-width: 38px;
+      padding: 3px 16px 3px 0; min-width: 38px;
     }
-    .edp-recip-value { color: var(--text-default); display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 0; }
-    .edp-recip-name { font-weight: 500; color: var(--text-default); }
-    .edp-recip-name:empty { display: none; }
-    .edp-recip-email { color: var(--text-muted); }
-    .edp-recip-name:not(:empty) + .edp-recip-email::before { content: '  '; white-space: pre; }
+    .edp-recip-table td.edp-recip-name {
+      font-weight: 500; color: var(--text-default); white-space: nowrap;
+      padding: 3px 12px 3px 0;
+    }
+    .edp-recip-table td.edp-recip-email { color: var(--text-muted); white-space: nowrap; padding: 3px 0; }
+
+    /* ── Previous messages history ── */
+    .edp-prev-toggle {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 24px;
+      font-size: 12px; color: var(--text-muted);
+      cursor: pointer; border-bottom: 1px solid var(--border-content);
+      user-select: none; transition: background 0.12s;
+    }
+    .edp-prev-toggle:hover { background: var(--bg-grey-fa); color: var(--text-default); }
+    .edp-prev-toggle-icon { transition: transform 0.15s; flex-shrink: 0; }
+    .edp-prev-toggle.open .edp-prev-toggle-icon { transform: rotate(180deg); }
+    .edp-prev-messages { border-bottom: 1px solid var(--border-content); }
+    .edp-prev-msg { border-bottom: 1px solid var(--border-content); }
+    .edp-prev-msg:last-child { border-bottom: none; }
+    .edp-prev-msg-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 24px;
+    }
+    .edp-prev-msg-meta { flex: 1; min-width: 0; }
+    .edp-prev-msg-sender { font-size: 13px; font-weight: 600; color: var(--text-default); display: block; }
+    .edp-prev-msg-to { font-size: 12px; color: var(--text-muted); display: block; }
+    .edp-prev-msg-date { font-size: 12px; color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
+    .edp-prev-msg-body { padding: 0 24px 16px 58px; font-size: 14px; color: var(--text-default); line-height: 1.7; }
+    .edp-prev-msg-body p { margin: 0 0 12px; }
+    .edp-prev-msg-body p:last-child { margin-bottom: 0; }
 
     /* ── Internal comments in drawer ── */
     .edp-comments-section { border-top: 1px solid var(--border-content); flex-shrink: 0; }
