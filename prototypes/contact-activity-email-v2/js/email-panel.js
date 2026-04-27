@@ -22,20 +22,6 @@
     }
   }
 
-  // Toggle the previous-messages history section.
-  function togglePrevMessages() {
-    var toggle = document.getElementById('edp-prev-toggle');
-    var container = document.getElementById('edp-prev-messages');
-    if (!toggle || !container) return;
-    var isOpen = toggle.classList.contains('open');
-    toggle.classList.toggle('open');
-    if (isOpen) {
-      container.style.display = 'none';
-    } else {
-      container.style.display = 'block';
-    }
-  }
-
   function buildRecipTable(recip) {
     var html = '<table class="edp-recip-table">';
     html += '<tr><td class="edp-recip-label">From</td>';
@@ -69,38 +55,6 @@
     var primaryTo = recip.to && recip.to.length > 0
       ? recip.to[0].name || recip.to[0].email
       : msg.to;
-
-    // Previous messages toggle (only when there is history)
-    if (d.threads.length > 1) {
-      var prevCount = d.threads.length - 1;
-      html += '<div class="edp-prev-toggle" id="edp-prev-toggle" onclick="togglePrevMessages()">';
-      html += '<svg class="edp-prev-toggle-icon" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 1l4 4 4-4"/></svg>';
-      html += prevCount + ' previous message' + (prevCount > 1 ? 's' : '');
-      html += '</div>';
-
-      html += '<div class="edp-prev-messages" id="edp-prev-messages" style="display:none;">';
-      for (var i = 0; i < lastIdx; i++) {
-        var pm = d.threads[i];
-        var pmRecip = pm.recipients || {
-          from: { name: pm.senderName, email: '' },
-          to: (pm.to || '').split(',').map(function(s) { return { name: s.trim(), email: '' }; }),
-          cc: []
-        };
-        var pmTo = pmRecip.to && pmRecip.to.length > 0 ? pmRecip.to[0].name || pmRecip.to[0].email : pm.to;
-        html += '<div class="edp-prev-msg">';
-        html += '<div class="edp-prev-msg-header">';
-        html += '<div class="user-avatar avatar-xs" style="background-image:url(\'' + pm.senderAvatar + '\');flex-shrink:0;"></div>';
-        html += '<div class="edp-prev-msg-meta">';
-        html += '<span class="edp-prev-msg-sender">' + pm.senderName + '</span>';
-        html += '<span class="edp-prev-msg-to">to ' + pmTo + '</span>';
-        html += '</div>';
-        html += '<span class="edp-prev-msg-date">' + pm.date + '</span>';
-        html += '</div>';
-        html += '<div class="edp-prev-msg-body">' + pm.body + '</div>';
-        html += '</div>';
-      }
-      html += '</div>';
-    }
 
     // Single main message — latest, always fully expanded
     html += '<div class="edp-thread-msg">';
